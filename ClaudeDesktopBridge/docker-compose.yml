@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  claude-desktop-bridge:
+    build: .
+    container_name: claude-desktop-bridge
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./screenshots:/app/screenshots
+      - ./.env:/app/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    # For GUI applications, we need to share the display
+    # This works on Linux hosts, for Windows/Mac additional setup is required
+    # volumes:
+    #   - /tmp/.X11-unix:/tmp/.X11-unix
+    # environment:
+    #   - DISPLAY=${DISPLAY}

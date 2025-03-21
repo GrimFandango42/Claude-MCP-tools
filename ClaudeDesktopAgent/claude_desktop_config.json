@@ -1,0 +1,20 @@
+{
+  "mcpServers": [
+    {
+      "filesystem": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@model-context-protocol/server-filesystem",
+          "C:\\Users\\Nithin\\Downloads",
+          "C:\\Users\\Nithin\\OneDrive\\Desktop"
+        ]
+      }
+    },
+    {
+      "screenshot": {
+        "url": "http://127.0.0.1:8090"
+      }
+    }
+  ]
+}
