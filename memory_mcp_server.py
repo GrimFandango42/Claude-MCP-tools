@@ -371,12 +371,18 @@ async def search_memories(query: str = None, tags: List[str] = None, limit: int 
 # WebSocket endpoint for MCP
 @app.websocket("/")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    logger.info("WebSocket connection established")
+    logger.info("WebSocket connection attempt received")
+    try:
+        await websocket.accept()
+        logger.info("WebSocket connection established successfully")
+    except Exception as e:
+        logger.error(f"Error accepting WebSocket connection: {str(e)}", exc_info=True)
+        return
     
     try:
         while True:
             # Receive message from client
+            logger.info("Waiting for message from client...")
             data = await websocket.receive_text()
             message = json.loads(data)
             logger.info(f"Received message: {message}")
@@ -624,6 +630,6 @@ def startup_event():
 # Run the server
 if __name__ == "__main__":
     host = "127.0.0.1"
-    port = 8093  # Different port to avoid conflicts
+    port = 5004  # Changed from 8093 to match default MCP port expectations
     logger.info(f"Starting Memory MCP server on {host}:{port}")
     uvicorn.run(app, host=host, port=port, log_level="info")
