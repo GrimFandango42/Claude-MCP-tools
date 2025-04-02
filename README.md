@@ -15,7 +15,8 @@ This project provides a set of tools that extend Claude's capabilities using the
 5. Managing GitHub repositories
 6. Analyzing financial datasets
 7. Interacting with Google Maps
-8. And more
+8. Managing Gmail emails and labels
+9. And more
 
 ## Project Structure
 
@@ -34,6 +35,7 @@ These servers are currently configured and active in the Claude Desktop configur
 | github | GitHub integration | Manage GitHub repositories and perform Git operations | Official NPM Package |
 | financial-datasets | Financial analysis | Access and analyze financial data | Custom Implementation |
 | googlemaps | Maps and location | Access Google Maps data and services | Official NPM Package |
+| gmail | Email management | Access and manage Gmail emails and labels | Third-party NPM Package |
 
 ### 2. Additional MCP Implementations
 
@@ -49,7 +51,7 @@ Implementations that are available in the repository but not currently active in
 
 - Node.js and npm
 - Claude Desktop app
-- API keys for specific services (Firecrawl, GitHub, Google Maps)
+- API keys for specific services (Firecrawl, GitHub, Google Maps, Gmail)
 - Windows environment
 
 ### Installation
@@ -75,7 +77,7 @@ This will install all required NPM packages for the MCP servers.
 
 ### MCP Server Configuration
 
-The current working configuration for Claude Desktop integrates seven MCP servers:
+The current working configuration for Claude Desktop integrates eight MCP servers:
 
 #### Filesystem Server
 
@@ -179,6 +181,20 @@ The current working configuration for Claude Desktop integrates seven MCP server
 }
 ```
 
+#### Gmail Server
+
+```json
+"gmail": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "npx -y @gongrzhe/server-gmail-autoauth-mcp"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
 ## Usage Examples
 
 ### File System Operations
@@ -235,6 +251,14 @@ Use Google Maps capabilities:
 
 ```text
 Can you find restaurants near my location and provide directions?
+```
+
+### Gmail Management
+
+Access and manage Gmail emails and labels:
+
+```text
+Can you show me my unread emails in the inbox?
 ```
 
 ## Troubleshooting
