@@ -252,6 +252,40 @@ The current working configuration for Claude Desktop integrates eleven MCP serve
 }
 ```
 
+### Adding a New Custom MCP Server to Claude Desktop
+
+When you develop a new custom MCP server within this project (following the pattern of placing it in its own directory with a launch script like `run_server_claude.bat`), you need to manually add it to your Claude Desktop configuration file.
+
+**IMPORTANT:** The configuration file you need to edit is located **outside** this project repository, typically at:
+`C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+
+1.  **Locate the `mcpServers` array** in the `claude_desktop_config.json` file.
+2.  **Add a new object** to this array for your custom server. Use a unique name for your server (e.g., `my-custom-server`).
+3.  **Configure the `command` and `args`** to point to the batch script that launches your server. Ensure you use the full, correct path to the script within your `Claude-MCP-tools` project directory.
+4.  Set `keepAlive` to `true` if the server should stay running.
+5.  Set `stderrToConsole` to `true` for easier debugging.
+
+**Example Template:**
+
+```json
+    {
+      "my-custom-server": {
+        "command": "cmd",
+        "args": [
+          "/c",
+          "C:\\AI_Projects\\Claude-MCP-tools\\my-custom-server-folder\\run_server_claude.bat"
+        ],
+        "keepAlive": true,
+        "stderrToConsole": true
+      }
+    }
+```
+
+*Replace `"my-custom-server"` with your chosen server name and `"C:\\AI_Projects\\Claude-MCP-tools\\my-custom-server-folder\\run_server_claude.bat"` with the actual path to your server's launch script.*
+
+6.  **Save the `claude_desktop_config.json` file.**
+7.  **Restart the Claude Desktop application** for the changes to take effect. Your new custom tool should now be available to Claude.
+
 ## Usage Examples
 
 ### File System Operations
