@@ -16,7 +16,9 @@ This project provides a set of tools that extend Claude's capabilities using the
 6. Analyzing financial datasets
 7. Interacting with Google Maps
 8. Managing Gmail emails and labels
-9. And more
+9. Fantasy Premier League data access
+10. Document conversion using Pandoc
+11. 3D modeling with Blender
 
 ## Project Structure
 
@@ -30,24 +32,37 @@ These servers are currently configured and active in the Claude Desktop configur
 |--------|----------|-------------|------|
 | filesystem | File system operations | Access and manipulate files and directories | Official NPM Package |
 | sequentialthinking | Step-by-step reasoning | Break down complex problems methodically | Official NPM Package |
-| firecrawl | Web search | Search and retrieve information from the web | Custom with API Key |
+| firecrawl | Web search | Search and retrieve information from the web | Official NPM Package (via npx) |
 | puppeteer | Web automation | Control browsers and interact with websites | Official NPM Package |
 | github | GitHub integration | Manage GitHub repositories and perform Git operations | Official NPM Package |
-| financial-datasets | Financial analysis | Access and analyze financial data | Custom Implementation |
+| financial-datasets | Financial analysis | Access and analyze financial data | Custom Implementation (`financial-datasets-mcp`) |
 | googlemaps | Maps and location | Access Google Maps data and services | Official NPM Package |
-| gmail | Email management | Access and manage Gmail emails and labels | Third-party NPM Package |
+| gmail | Email management | Access and manage Gmail emails and labels | Third-party NPM Package (`@gongrzhe/server-gmail-autoauth-mcp`) |
+| fantasy-pl | Fantasy Premier League | Access FPL data | Custom Python Implementation (`fpl_mcp`) |
+| mcp-pandoc | Document Conversion | Convert documents using Pandoc | Custom Implementation (`mcp-pandoc` via uvx) |
+| blender | 3D Modeling | Interact with Blender via Python API | Custom Implementation (`blender-mcp` via uvx) |
 
-### 2. Additional MCP Implementations
+### 2. Archived/Inactive Implementations
 
-Implementations that are available in the repository but not currently active in the Claude Desktop configuration:
+These implementations exist in the repository but are not currently configured in `claude_desktop_config.json`. They represent past experiments or alternative approaches:
 
-- **hfspace-mcp**: Hugging Face Space integration (experimental)
-- **http4k-mcp**: HTTP toolkit for MCP servers
-- **mcp-gdrive**: Google Drive integration
+- **financial-mcp**: Older financial data server attempt (replaced by `financial-datasets-mcp`). Associated files: `financial-mcp/`, `financial-mcp-custom/`, `financial-mcp*.bat`, `test-financial-mcp.js`.
+- **mcp-gdrive**: Google Drive integration experiments. Associated files: `mcp-gdrive/`, `drive_download.js`, `gdrive_*.bat`, `gdrive_*.js`, `gdrive_*.md`.
+- **hfspace-mcp**: Hugging Face Space integration (experimental).
+- **http4k-mcp / http4k-mcp-desktop**: HTTP toolkit / Java-based gateway experiments.
+- **Custom Git Server**: Python-based Git MCP (`git_mcp_server.py`, `git_operations.bat`, etc.). Replaced by the official `server-github`.
+- **Custom Memory Server**: Python-based Memory MCP (`memory_mcp_server.py`, `simple_memory_server.py`, `mcp-memory.bat`, etc.).
+- **Various Firecrawl Wrappers**: Multiple older `.js`, `.bat`, `.py` files for launching Firecrawl (e.g., `firecrawl_basic.*`, `firecrawl_core.*`, `firecrawl_wrapper.*`, etc.). The current method uses `npx -y firecrawl-mcp` directly.
 
 ## MCP Server Setup
 
 ### Prerequisites
+
+- **Blender 4.4 or newer** (ensures compatibility with geometry nodes enhancements)
+- Node.js and npm
+- Claude Desktop app
+- API keys for specific services (Firecrawl, GitHub, Google Maps, Gmail)
+- Windows environment
 
 - Node.js and npm
 - Claude Desktop app
@@ -77,7 +92,7 @@ This will install all required NPM packages for the MCP servers.
 
 ### MCP Server Configuration
 
-The current working configuration for Claude Desktop integrates eight MCP servers:
+The current working configuration for Claude Desktop integrates eleven MCP servers:
 
 #### Filesystem Server
 
@@ -195,6 +210,48 @@ The current working configuration for Claude Desktop integrates eight MCP server
 }
 ```
 
+#### Fantasy Premier League Server
+
+```json
+"fantasy-pl": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "C:\\AI_Projects\\Claude-MCP-tools\\fpl_mcp\\run_server_claude.bat"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
+#### Document Conversion Server
+
+```json
+"mcp-pandoc": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "C:\\AI_Projects\\Claude-MCP-tools\\mcp-pandoc\\run_server_claude.bat"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
+#### Blender Server
+
+```json
+"blender": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "C:\\AI_Projects\\Claude-MCP-tools\\blender-mcp\\run_server_claude.bat"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
 ## Usage Examples
 
 ### File System Operations
@@ -259,6 +316,30 @@ Access and manage Gmail emails and labels:
 
 ```text
 Can you show me my unread emails in the inbox?
+```
+
+### Fantasy Premier League Data Access
+
+Access FPL data:
+
+```text
+Can you provide me with the current FPL standings?
+```
+
+### Document Conversion
+
+Convert documents using Pandoc:
+
+```text
+Can you convert this Word document to a PDF?
+```
+
+### 3D Modeling with Blender
+
+Interact with Blender via Python API:
+
+```text
+Can you create a 3D model of a cube?
 ```
 
 ## Troubleshooting
