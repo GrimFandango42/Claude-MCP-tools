@@ -6,8 +6,7 @@
         "args": [
           "-y",
           "@model-context-protocol/server-filesystem",
-          "C:\\Users\\Nithin\\Downloads",
-          "C:\\Users\\Nithin\\OneDrive\\Desktop"
+          "C:\\AI_Projects\\Claude-MCP-tools"
         ]
       }
     },
