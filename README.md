@@ -10,7 +10,7 @@ This project serves as a central repository and reference for all Model Context 
 
 ### Standard MCP Skills (Configured in Claude Desktop)
 
-These skills are configured directly in the Claude Desktop configuration file located at `C:\Users\Nithin\AppData\Roaming\Claude`.
+These skills are configured directly in the Claude Desktop configuration file located typically at `%APPDATA%\Claude` on Windows.
 
 | Server | Function | Description | Configuration Type |
 |--------|----------|-------------|-------------------|
@@ -54,7 +54,7 @@ Based on integration experience, the following best practices are recommended fo
 - **Stable Communication:** Prefer direct stdin/stdout over WebSockets and ensure clean JSON-RPC communication.
 - **Windows Compatibility:** Handle Windows-specifics like signal handling, port management, and path formats carefully.
 - **Secure Authentication:** Use secure methods like Windows Credential Manager where applicable.
-- **Comprehensive Logging:** Implement structured logging to aid debugging (check `C:\Users\Nithin\AppData\Roaming\Claude\logs\`).
+- **Comprehensive Logging:** Implement structured logging to aid debugging (check `<Claude AppData Path>\logs\`).
 - **MCP Compliance:** Strictly adhere to JSON-RPC 2.0 and MCP specifications (initialize, shutdown, capabilities).
 
 Refer to the project memories for more detailed guidelines.
@@ -101,9 +101,9 @@ Refer to the project memories for more detailed guidelines.
 **Solutions:**
 
 1. Verify the target path is within the allowed directories configured for the `filesystem` MCP server in Claude Desktop.
-2. Ensure exact path matching, including correct case and backslashes (`\`) for Windows.
+2. Ensure exact path matching, including correct case and backslashes (`\\`) for Windows.
 3. Use canonical absolute paths as returned by `mcp0_list_allowed_directories`.
-4. Check Claude Desktop logs (`C:\Users\Nithin\AppData\Roaming\Claude\logs\`) for specific error details.
+4. Check Claude Desktop logs (typically located in `<Claude AppData Path>\logs\`) for specific error details.
 
 ## Future Development
 
