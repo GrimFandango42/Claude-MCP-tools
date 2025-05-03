@@ -1,0 +1,23 @@
+# Sample Test Suite for Test Automation MCP
+# This YAML file defines a sequence of test steps to be executed
+
+name: Basic Web Interaction Test
+browser: chromium
+headless: true
+
+steps:
+  - goto: "https://example.com"
+  - screenshot: {}  # Take full page screenshot
+  - assert: 
+      selector: "h1"
+      state: "visible"
+  - goto: "https://playwright.dev"
+  - click: ".navbar__item:has-text('Docs')"
+  - fill:
+      selector: "#docsearch-input"
+      value: "screenshots"
+  - screenshot: {}
+  - assert:
+      selector: "text=Screenshots"
+      state: "visible"
+      timeout: 3000

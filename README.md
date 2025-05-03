@@ -1,63 +1,69 @@
-# Claude Desktop MCP Skills Tracker
+# Claude-MCP-tools
 
-A comprehensive reference for all Model Context Protocol (MCP) skills integrated with Claude Desktop, including both standard and custom implementations.
+A collection of custom Model Context Protocol (MCP) servers for enhancing Claude Desktop capabilities. This project serves as a comprehensive toolkit for building, maintaining, and extending Claude's abilities through custom MCP servers.
 
 ## Overview
 
-This project serves as a central repository and reference for all Model Context Protocol (MCP) skills integrated with Claude Desktop, focusing on robust, local-first custom implementations alongside standard skills.
+This repository contains custom MCP servers that extend Claude Desktop's capabilities beyond the built-in tools. Each server follows the JSON-RPC protocol to communicate with Claude, providing specialized tools and contexts that Claude can access.
 
-## MCP Skills Reference
+### What is MCP?
 
-### Standard MCP Skills (Configured in Claude Desktop)
+MCP (Model Context Protocol) follows a client-server model:
 
-These skills are configured directly in the Claude Desktop configuration file located typically at `%APPDATA%\Claude` on Windows.
+- **Hosts** are LLM applications (e.g., Claude Desktop)
+- Each Host runs one or more **MCP Clients** that maintain a 1:1 JSON-RPC/STDIO transport with an MCP Server process
+- **Servers** provide context, tools, and prompts to Clients
+- Transport layer handles message framing over STDIN/STDOUT; logs go to STDERR
+- Lifecycle phases: initialize (capability negotiation), message exchange (tool calls), shutdown/exit
 
-| Server | Function | Description | Configuration Type |
-|--------|----------|-------------|-------------------|
-| filesystem | File system operations | Access and manipulate files and directories | Official NPM Package |
-| sequentialthinking | Step-by-step reasoning | Break down complex problems methodically | Official NPM Package |
-| firecrawl | Web search | Search and retrieve information from the web | Official NPM Package (via npx) |
-| puppeteer | Web automation | Control browsers and interact with websites | Official NPM Package |
-| github | GitHub integration | Manage GitHub repositories and perform Git operations | Official NPM Package |
-| gmail | Email management | Access and manage Gmail emails and labels | Official NPM Package |
-| googlemaps | Maps and location | Access Google Maps data and services | Official NPM Package |
+## MCP Server Inventory
 
-### Custom MCP Skills (Implemented in this Repository)
+### Custom Implemented MCP Servers
 
-| Server | Function | Description | Implementation |
-|--------|----------|-------------|---------------|
-| financial-datasets | Financial analysis | Access and analyze financial data including stocks, crypto, and economic indicators | Custom Python MCP Server |
-| blender-mcp | 3D Modeling | Create and manipulate basic 3D objects in Blender | Custom Python Addon |
-| gdrive-mcp-wrapper | Google Drive Access | Securely search and download files from Google Drive, converting formats locally | Custom Node.js Wrapper |
-| firecrawl | Web Scraping/Search | Enhanced web scraping and search with local processing and fallback | Custom Node.js Hybrid (using official package) |
+- **financial-datasets-mcp**: (Python) Accesses financial data (stocks, statements, crypto, economic indicators). Features structured JSON logging, graceful shutdown, and `pytest` testing. Located in `mcp-servers/financial-datasets-mcp`.
+- **firecrawl-mcp**: (Node.js - *Assumed*) Hybrid implementation with process-based execution and fallback mechanism for web scraping/search. (Location TBC - may be integrated elsewhere or archived).
+- **google-drive-mcp**: (Node.js - *Assumed*) Custom wrapper for Google Drive API with enhanced capabilities for downloading files. (Location TBC - may be integrated elsewhere or archived).
+- **knowledge-memory-mcp**: (Python) Provides persistent knowledge management with hybrid Zettelkasten and vector search capabilities. Follows local-first, privacy-preserving approach. Located in `servers/knowledge-memory-mcp`.
+- **mcp-nest-control**: (Node.js/NestJS) Controls Nest devices (thermostat, etc.). Located in `mcp-nest-control`.
+- **test-automation-mcp**: (Node.js) Enables end-to-end browser and app testing using Playwright. Features screenshot capture, test step execution, and performance metrics collection. Located in `servers/test-automation-mcp`.
 
-## Financial Datasets MCP Server
+### Standard Configured MCP Servers
 
-The Financial Datasets MCP server provides Claude Desktop with access to comprehensive financial data including:
+These are official or third-party MCP servers configured directly in Claude Desktop (via `claude_desktop_config.json`) without custom code maintenance in *this* repo:
 
-- Company financial statements (income statements, balance sheets, cash flow)
-- Stock price data and technical indicators
-- Economic indicators and market data
-- Cryptocurrency prices and market data
-- Financial news and sentiment analysis
+- **filesystem**: Standard MCP server for file system operations.
+- **sequentialthinking**: Provides structured thinking tools.
+- **puppeteer**: Browser automation and web interaction.
+- **firecrawl**: Standard web scraping and searching (distinct from the custom hybrid implementation potentially listed above).
+- **github**: GitHub repository integration.
+- **gmail**: Email operations via Gmail API.
+- **googlemaps**: Google Maps integration.
+- **pluggedin-mcp-proxy**: API proxy server (potentially custom but managed outside this repo structure, or a standard integration).
 
-### Setup Instructions
+### Experimental/Archived MCP Servers
 
-Setup instructions vary per custom MCP server. Refer to the specific directory for each server (e.g., `financial-datasets-mcp`, `blender-mcp`, etc.) for detailed setup guides.
+These servers were prototyped or explored but are not actively maintained or have been superseded:
 
-## Development Best Practices
+- **blender-mcp**: Addon for Blender 3D. Found in `archive/blender-mcp`.
+- **http4k-mcp**: Experimental central HTTP-based service gateway.
 
-Based on integration experience, the following best practices are recommended for developing custom MCP servers for Claude Desktop on Windows:
+## Configuration
 
-- **Prioritize Official Packages:** Use official MCP server packages (`npx -y @package/name`) whenever possible.
-- **Robust Process Management:** Employ wrappers (e.g., batch files, PM2 for Node.js) for stability and environment setup.
-- **Stable Communication:** Prefer direct stdin/stdout over WebSockets and ensure clean JSON-RPC communication.
-- **Windows Compatibility:** Handle Windows-specifics like signal handling, port management, and path formats carefully.
-- **Secure Authentication:** Use secure methods like Windows Credential Manager where applicable.
-- **Comprehensive Logging:** Implement structured logging to aid debugging (check `<Claude AppData Path>\logs\`).
-- **MCP Compliance:** Strictly adhere to JSON-RPC 2.0 and MCP specifications (initialize, shutdown, capabilities).
+Claude Desktop configuration file location:
+`C:\Users\[Username]\AppData\Roaming\Claude\claude_desktop_config.json`
 
-Refer to the project memories for more detailed guidelines.
+This file contains custom MCP server configurations and settings for standard servers.
+
+### Filesystem MCP Allowed Directories
+
+The filesystem MCP server (mcp0) has restricted access. Common allowed directories include:
+
+- `C:\Users\[Username]\Downloads`
+- `C:\Users\[Username]\OneDrive\Desktop` *(Path may vary)*
+- `C:\Users\[Username]\AppData\Roaming\Claude`
+- `C:\AI_Projects` *(Based on project structure)*
+
+*Note: Check your specific `claude_desktop_config.json` for the exact allowed paths.* Tools will fail if the target path is outside these allowed directories.
 
 ## Troubleshooting
 
@@ -85,46 +91,10 @@ Refer to the project memories for more detailed guidelines.
 
 - Authentication failures
 - API key not recognized
+- Server returns permission denied errors
 
 **Solutions:**
 
 1. Verify API keys are correctly set in the `.env` file
 2. Check for expired or invalid API keys
 3. Ensure environment variables are properly loaded
-
-#### 3. Filesystem Access Denied
-
-**Symptoms:**
-
-- MCP server reports "Access denied" or similar errors when trying to read/write files.
-
-**Solutions:**
-
-1. Verify the target path is within the allowed directories configured for the `filesystem` MCP server in Claude Desktop.
-2. Ensure exact path matching, including correct case and backslashes (`\\`) for Windows.
-3. Use canonical absolute paths as returned by `mcp0_list_allowed_directories`.
-4. Check Claude Desktop logs (typically located in `<Claude AppData Path>\logs\`) for specific error details.
-
-## Future Development
-
-Future plans include:
-
-- Ongoing maintenance and enhancement of existing custom MCPs.
-- Exploration of an `http4k`-based central gateway to integrate various HTTP services.
-- Tracking and integrating new standard MCP skills as they become available.
-
-## GitHub Repository Status
-
-The repository currently has 0 open issues. This status is regularly monitored and updated.
-
-| Category | Count |
-|----------|-------|
-| Open Issues | 0 |
-| Closed Issues | 0 |
-| Total Issues | 0 |
-
-## References
-
-- [Model Context Protocol Official Documentation](https://modelcontextprotocol.io/)
-- [Awesome MCP Servers](https://github.com/punkpeye/awesome-mcp-servers)
-- [MCP Examples](https://modelcontextprotocol.io/examples)

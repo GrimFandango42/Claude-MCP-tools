@@ -1,0 +1,10 @@
+{
+  "name": "test-automation",
+  "command": "cmd",
+  "args": [
+    "/c",
+    "set PLAYWRIGHT_BROWSERS_PATH=0 && npx -y @modelcontextprotocol/test-automation-mcp"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
