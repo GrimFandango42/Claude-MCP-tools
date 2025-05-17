@@ -22,125 +22,177 @@ MCP (Model Context Protocol) follows a client-server model:
 
 These servers are actively developed and maintained within this repository:
 
-- **financial-datasets-mcp**: (Python) Accesses financial data (stocks, statements, crypto, economic indicators). Features structured JSON logging, graceful shutdown, and `pytest` testing. Located in `servers/financial-datasets-mcp`.
+- **financial-datasets-mcp**: (Python) Accesses financial data via the Financial Datasets API. Features working endpoints for company facts, stock prices, financial statements (income, balance sheet, cash flow), and cryptocurrency data. Implements structured JSON logging, graceful shutdown, and enhanced error handling. Located in `servers/financial-mcp-server`.
 - **knowledge-memory-mcp**: (Python) Provides persistent knowledge management with features like note creation, retrieval, update, deletion, tagging, and search (hybrid Zettelkasten/vector approach planned). Follows a local-first, privacy-preserving approach. Located in `servers/knowledge-memory-mcp`.
-- **mcp-nest-control**: (Node.js/NestJS) Controls Google Nest devices (thermostat, etc.). Located in `servers/mcp-nest-control`.
-- **test-automation-mcp**: (Node.js) Enables end-to-end browser testing using Playwright. Features browser launch, navigation, interaction (clicks, fills), screenshot capture, assertions, and potential for performance metrics. Located in `servers/test-automation-mcp`.
+
+### Experimental MCP Servers
+
+These servers are in early development stages or have been archived:
+
+- **test-automation-mcp**: (Node.js) Originally aimed to provide a proxy-based server for testing Claude Desktop and other MCP servers, with features like application launching and log retrieval. Initial implementations in `servers/test-automation-mcp` faced connection stability challenges. The insights gained contributed to the development of the `mcp-server-template` (see below), which now provides a more reliable foundation and integrated testing capabilities for developing any MCP server, including future iterations of a dedicated test automation server.
+- **mcp-nest-control**: (Node.js) Google Nest device control via Smart Device Management API. Currently facing authentication challenges.
+- **mcp-pandoc**: (Node.js) Document conversion using Pandoc with support for multiple formats.
+- **mcp-http-gateway**: (Kotlin) Work in progress central HTTP gateway for unified service access.
+- **custom-win-mgmt-mcp**: (Node.js/TypeScript) Intended to provide Windows management functionalities (system info, process listing). Archived due to persistent 'transport closed unexpectedly' errors after initialization, likely related to `stdin` stream closure, similar to `test-automation-mcp`.
 
 ### Standard Configured MCP Servers
 
-These are official or third-party MCP servers configured directly in Claude Desktop (via its configuration file) without custom code maintenance *in this specific repo*:
+These are official or third-party servers configured for use with Claude Desktop:
 
-- **filesystem**: Standard MCP server for file system operations (provided by Claude Desktop).
-- **sequentialthinking**: Provides structured thinking tools (provided by Claude Desktop).
-- **puppeteer**: Browser automation and web interaction (likely using `@modelcontextprotocol/server-puppeteer`).
-- **firecrawl**: Web scraping and searching (likely using `@modelcontextprotocol/server-firecrawl`).
-- **github**: GitHub repository integration (likely using `@modelcontextprotocol/server-github`).
-- **gmail**: Email operations via Gmail API (potentially using `@gongrzhe/server-gmail-autoauth-mcp` or similar).
-- **googlemaps**: Google Maps integration (likely using `@modelcontextprotocol/server-google-maps`).
-- **pluggedin-mcp-proxy**: Purpose TBD - likely an API proxy server (potentially custom but managed elsewhere, or a standard integration).
+- **filesystem**: (Official) File operations within allowed directories.
+- **firecrawl**: (Official) Web scraping and content extraction.
+- **github**: (Official) GitHub repository operations.
+- **puppeteer**: (Official) Browser automation.
+- **sequentialthinking**: (Official) Step-by-step reasoning framework.
+- **pluggedin-mcp-proxy**: (Third-party) Integration with the Plugged API for real-time data access.
 
-### Archived / Experimental MCP Servers
+## Development Toolkit & Testing
 
-These servers were prototyped or explored but are not currently active or maintained within the main `servers` directory:
+### MCP Server Template
 
-- **blender-mcp**: Addon for Blender 3D. Found in `archive/blender-mcp`.
-- **firecrawl-mcp**: (Node.js - *Archived?*) Previous custom implementation attempt for web scraping/search. May exist in Git history or `archive`.
-- **google-drive-mcp**: (Node.js - *Archived?*) Previous custom wrapper for Google Drive API. May exist in Git history or `archive`.
-- **http4k-mcp**: Experimental central HTTP-based service gateway. Likely archived.
+- **Location**: `mcp-server-template/`
+- **Description**: A standardized, robust, and testable Node.js (TypeScript) template for rapidly developing new MCP servers. It is built upon the official `@modelcontextprotocol/server` library and includes:
+  - Structured project setup with TypeScript.
+  - Core server implementation (`src/index.ts`).
+  - Utilities for Winston-based structured logging (to `stderr`) and configuration validation.
+  - An example server (`src/examples/simple-server.ts`).
+  - A Jest testing framework with example unit tests (`test/server.test.ts`).
+  - An MCP protocol validation tool (`src/tools/validate-mcp.ts`) to ensure compliance.
 
-## Configuration
+- **Purpose**: This template is the recommended starting point for all new MCP server development within this project. It aims to simplify development, ensure adherence to MCP best practices, enhance reliability, and provide a consistent structure across servers.
 
-Claude Desktop configuration file location (Windows):
-`C:\Users\[Username]\AppData\Roaming\Claude\claude_desktop_config.json`
+### Automated Testing Strategy
 
-This file contains custom MCP server configurations (command, arguments, keepAlive settings) and settings for standard servers.
+The approach to MCP server-specific automated testing has evolved to leverage the capabilities integrated within the `mcp-server-template`.
 
-### Filesystem MCP Allowed Directories
+- **Unit Testing**: Each server developed from the template should include comprehensive unit tests using Jest to verify the functionality of its tools and internal logic.
+- **Protocol Compliance**: The `validate-mcp.ts` tool within the template can be used to perform automated checks, ensuring the server correctly handles MCP lifecycle messages (initialize, shutdown) and tool calls.
+- **Integration Testing**: While the template provides a strong foundation, further integration testing within the Claude Desktop environment remains crucial for each new server.
 
-The standard `filesystem` MCP server (mcp0) has restricted access. Common allowed directories include:
+This structured approach, centered around the `mcp-server-template`, aims to maximize confidence in MCP server implementations and streamline the development process.
 
-- `C:\Users\[Username]\Downloads`
-- `C:\Users\[Username]\OneDrive\Desktop` *(Path may vary depending on OneDrive setup)*
-- `C:\Users\[Username]\AppData\Roaming\Claude`
-- `C:\AI_Projects` *(Based on common project structure in this workspace)*
+## Claude Desktop Configuration Management
 
-*Note: Always check your specific `claude_desktop_config.json` for the exact allowed paths configured for the filesystem server. Tools will fail if the target path is outside these allowed directories.* Paths must be canonical and correctly cased.
+The Claude Desktop configuration file is located at `C:\Users\<Username>\AppData\Roaming\Claude\claude_desktop_config.json`. This file contains settings for all MCP servers and must be edited directly to add or modify server configurations.
 
-## Development Workflow
+### Configuration Patterns
 
-This project follows a local-first development philosophy.
+Successful MCP server configurations typically follow these patterns:
 
-1.  **Branching**: New features or significant changes should be developed on separate feature branches (e.g., `feature/test-automation-mcp`).
-2.  **Committing**: Commit changes locally frequently.
-3.  **Syncing (Local as Source of Truth)**: To update the remote repository (GitHub) to match your local state completely, use a force push:
+#### 1. NPX Direct Execution (Preferred)
+```json
+{
+  "command": "npx",
+  "args": [
+    "-y",
+    "@modelcontextprotocol/server-SERVERNAME"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
 
-   ```bash
-   # Ensure you are on the correct branch (e.g., master or main)
-   git checkout master
-   # Force push local state to remote, overwriting remote changes
-   git push origin master --force
-   ```
+#### 2. Environment Variables with API Keys
+```json
+{
+  "command": "cmd",
+  "args": [
+    "/c",
+    "set API_KEY=value && npx -y package-name"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
 
-   *Use `--force` with caution, as it overwrites remote history.*
-4.  **Pull Requests**: For collaborative review or merging feature branches into the main branch, create Pull Requests on GitHub.
+#### 3. Direct Node.js Execution
+```json
+{
+  "command": "node",
+  "args": [
+    "C:\\AI_Projects\\Claude-MCP-tools\\servers\\servername\\server.js"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
 
-## Troubleshooting
+#### 4. Batch File Execution
+```json
+{
+  "command": "cmd",
+  "args": [
+    "/c",
+    "cd /d C:\\AI_Projects\\Claude-MCP-tools\\servers\\servername && batch\\start.bat"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
+### Best Practices
+
+- Always include `keepAlive: true` to maintain connections.
+- Use `stderrToConsole: true` to capture server logs for debugging.
+- After changing the configuration, restart Claude Desktop.
+
+## Log Files and Debugging
+
+Claude Desktop stores log files, including those for MCP servers, in:
+`C:\Users\<Username>\AppData\Roaming\Claude\logs\`
+
+Key log files include:
+- `mcp-server-<servername>.log` - Logs specific to each MCP server
+- `mcp.log` - General MCP system logs
 
 ### Common Issues and Solutions
 
-#### 1. MCP Server Connection Failed
+#### Connection Stability Problems
 
-**Symptoms:**
+**Symptoms:** "Server transport closed unexpectedly" errors, servers that initialize but quickly disconnect.
 
-- Claude reports it cannot connect to the MCP server.
-- "Tool Not Available" error message in Claude.
-- Server process might not be running or is unresponsive.
+**Common Causes:**
+1. Premature closure of the stdin stream
+2. Uncaught exceptions causing process termination
+3. Improper signal handling
+4. Process exiting before completing the response
+
+**Solutions:**
+1. Use proxy architecture that separates MCP protocol handling from complex functionality
+2. Add empty data event handlers (`process.stdin.on('data', () => {})`)
+3. Implement comprehensive signal handlers (SIGINT, SIGTERM)
+4. Use `keepAlive: true` in MCP configuration
+5. For Windows, use batch file wrappers that maintain stdin properly
+
+#### API Authentication Issues
+
+**Symptoms:** 401/403 errors in logs, "Authentication failed" responses, "API key invalid" errors.
+
+**Causes:** Missing or invalid API keys, incorrect environment variable names, encoding issues in configuration files.
+
+**Detectable In:** Server-specific logs, response logs.
 
 **Solutions:**
 
-1.  **Verify Server Process:** Ensure the server executable/script is running (check Task Manager or use `tasklist | findstr "node"` / `tasklist | findstr "python"`).
-2.  **Check Configuration:** Double-check the `command` and `args` in `claude_desktop_config.json` are correct (path, executable name, flags).
-3.  **Review Logs:** Examine the server's specific log file in `C:\Users\[Username]\AppData\Roaming\Claude\logs\` (e.g., `mcp-server-test-automation.log`) and the general `mcp.log` for errors.
-4.  **Port Conflicts:** If the server uses a specific port (less common for STDIO MCP), check for conflicts using `netstat -ano | findstr "LISTENING"`.
-5.  **Firewall:** Ensure Windows Defender Firewall or other security software isn't blocking Node.js or Python execution.
-6.  **Restart Claude:** Sometimes a simple restart of Claude Desktop resolves connection glitches.
-
-#### 2. Filesystem MCP Access Denied
-
-**Symptoms:**
-
-- Tools like `mcp0_read_file` or `mcp0_write_file` fail with an "Access denied" or "path outside allowed directories" error.
-
-**Solutions:**
-
-1.  **Verify Path:** Ensure the target file path is *exactly* within one of the configured `allowedWritePaths` or `allowedReadPaths` in `claude_desktop_config.json` for the filesystem server.
-2.  **Check Casing/Separators:** Windows paths can be case-insensitive, but the MCP server might be strict. Use canonical paths (e.g., `C:\AI_Projects\...` not `c:/ai_projects/...`).
-3.  **Path Normalization Issues:** Occasionally, the MCP server might struggle with certain path formats. If a path *should* be allowed but fails, try accessing the file using a different tool (like Cascade's built-in `view_file` if applicable) as a workaround or investigate the server configuration further.
-
-#### 3. API Key Errors
-
-**Symptoms:**
-
-- Authentication failures for servers requiring API keys (e.g., Firecrawl, GitHub).
-- Server logs indicate missing or invalid credentials.
-
-**Solutions:**
-
-1.  **Check Configuration:** Ensure API keys are correctly set in the `claude_desktop_config.json`, often using the `cmd /c "set KEY=value && npx ..."` pattern.
-2.  **Verify Key Validity:** Confirm the API key itself is active and has the necessary permissions.
-3.  **Environment Variables:** If the server relies on system environment variables, ensure they are set correctly *before* Claude Desktop starts the server process.
+1. **Check Configuration:** Ensure API keys are correctly set in the `claude_desktop_config.json`, often using the `cmd /c "set KEY=value && npx ..."` pattern. Verify the key name (`API_KEY`, `GITHUB_TOKEN`, `FINANCIAL_DATASETS_API_KEY`, etc.) matches what the server expects.
+2. **Verify Key Validity:** Confirm the API key itself is active and has the necessary permissions for the intended actions.
+3. **Environment Variables:** If the server relies on system environment variables, ensure they are set correctly *before* Claude Desktop starts the server process. Using the `cmd /c "set ..."` pattern is generally more reliable for MCP configuration.
+4. **Check Encoding:** For Python-based servers using .env files, ensure proper UTF-8 encoding without BOM or null bytes between characters.
 
 ## Getting Started
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/GrimFandango42/Claude-MCP-tools.git
    cd Claude-MCP-tools
    ```
 
-2.  **Install Dependencies:** Navigate to individual server directories (e.g., `servers/test-automation-mcp`) and install their dependencies (e.g., `npm install` for Node.js, `pip install -r requirements.txt` or `uv sync` for Python).
-3.  **Configure Claude Desktop:** Add/update the server configurations in your `claude_desktop_config.json` as needed.
-4.  **Run Servers:** Start the MCP servers manually or ensure Claude Desktop is configured to launch them.
-5.  **Restart Claude Desktop:** Apply configuration changes.
+2. **Install Dependencies:** Navigate to individual server directories (e.g., `servers/test-automation-mcp`) and install their dependencies (e.g., `npm install` for Node.js, `pip install -r requirements.txt` or `uv sync` for Python).
+3. **Configure Claude Desktop:** Add/update the server configurations in your `C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json` as needed (refer to patterns above and specific server READMEs). **Remember to back up this file before editing manually.**
+4. **Restart Claude Desktop:** A restart is typically required for Claude Desktop to pick up changes to `claude_desktop_config.json` or recognize newly started servers.
+5. **Run Servers:** Start the MCP servers manually (e.g., using their `run-server.bat`, `run_server_claude.bat` or `python server.py` commands) or ensure Claude Desktop is configured to launch them automatically based on your JSON config.
+
+## Contributing
+
+Contributions are welcome! Please follow standard fork-and-pull-request workflows. Ensure code is well-tested and documented.
