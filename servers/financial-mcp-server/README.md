@@ -1,0 +1,84 @@
+# Financial Datasets MCP Server
+
+MCP server that provides access to financial data via the Financial Datasets API (https://api.financialdatasets.ai).
+
+## Features
+
+- Structured JSON logging to stderr for optimal compatibility with Claude Desktop
+- Graceful shutdown handling via proper signal management
+- Enhanced error handling with detailed diagnostic information
+- Direct access to financial data endpoints including:
+  - Company Facts (free)
+  - Stock Prices (paid)
+  - Income Statements (paid)
+
+## Setup
+
+1. Install dependencies:
+
+```bash
+# Using pip
+pip install -r requirements.txt
+
+# Or using uv (recommended)
+uv sync
+```
+
+2. Set up your API key:
+
+```bash
+# Linux/macOS
+export FINANCIAL_DATASETS_API_KEY="your-api-key"
+
+# Windows CMD
+set FINANCIAL_DATASETS_API_KEY=your-api-key
+
+# Windows PowerShell
+$env:FINANCIAL_DATASETS_API_KEY="your-api-key"
+```
+
+3. Run the server:
+
+```bash
+python server.py
+```
+
+## Claude Desktop Integration
+
+Add the following to your Claude Desktop configuration file (`claude_desktop_config.json`):
+
+```json
+"financial-datasets": {
+  "command": "cmd",
+  "args": [
+    "/c",
+    "cd /d C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server && set FINANCIAL_DATASETS_API_KEY=abecc087-a3d7-4498-bd31-81b29626a7dc && python server.py"
+  ],
+  "keepAlive": true,
+  "stderrToConsole": true
+}
+```
+
+> **Note**: Remember to replace the API key with your own or use the appropriate environment variable setup for your system.
+
+## Testing
+
+Run the included test utilities to validate API endpoints:
+
+```bash
+# Test all endpoints
+python test_all_endpoints.py
+
+# Test a specific endpoint
+python test_api.py
+```
+
+## Troubleshooting
+
+If you encounter "Resource not found (404)" errors, verify that:
+
+1. Your API key is valid and active
+2. The endpoint paths in `mcp_server.py` match the current API documentation
+3. You have sufficient API credits for paid endpoints
+
+Check Claude Desktop logs at `C:\Users\<Username>\AppData\Roaming\Claude\logs\mcp-server-financial-datasets.log` for detailed error messages.
