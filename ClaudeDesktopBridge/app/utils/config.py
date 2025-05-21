@@ -11,11 +11,12 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Security Settings
-    API_KEY: str = os.getenv("API_KEY", "")
-    API_KEY_NAME: str = "X-API-Key"
+    API_KEY: Optional[str] = None
+    API_KEY_NAME: str = "x-api-key"
+    CORS_ALLOWED_ORIGINS: List[str] = ["*"]
     
     # Anthropic API Settings
-    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+    ANTHROPIC_API_KEY: Optional[str] = None
     ANTHROPIC_API_URL: str = "https://api.anthropic.com/v1/messages"
     
     # File Storage Settings

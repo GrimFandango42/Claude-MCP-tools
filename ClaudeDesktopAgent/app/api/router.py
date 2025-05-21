@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from app.utils.security import get_api_key
 from app.api.routes import screenshot, tools, mcp
 
 # Create main API router
-api_router = APIRouter(prefix="/api")
+api_router = APIRouter(prefix="/api", dependencies=[Depends(get_api_key)])
 
 # Include module-specific routers
 api_router.include_router(tools.router, prefix="/tools", tags=["tools"])

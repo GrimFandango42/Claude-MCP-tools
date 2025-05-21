@@ -1,6 +1,6 @@
 import os
 from pydantic_settings import BaseSettings
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -12,20 +12,21 @@ class Settings(BaseSettings):
     APP_NAME: str = "Claude Desktop Agent"
     APP_VERSION: str = "0.1.0"
     API_PREFIX: str = "/api"
-    DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
+    DEBUG: bool = False
     
     # Server settings
     HOST: str = "0.0.0.0"
-    PORT: int = int(os.getenv("PORT", 8000))
+    PORT: int = 8000
     
     # Anthropic API settings
-    ANTHROPIC_API_KEY: Optional[str] = os.getenv("ANTHROPIC_API_KEY")
+    ANTHROPIC_API_KEY: Optional[str] = None
     ANTHROPIC_API_URL: str = "https://api.anthropic.com/v1/messages"
     ANTHROPIC_MODEL: str = "claude-3-opus-20240229"
     
     # Security settings
-    API_KEY: Optional[str] = os.getenv("API_KEY")
+    API_KEY: Optional[str] = None
     API_KEY_NAME: str = "x-api-key"
+    CORS_ALLOWED_ORIGINS: List[str] = ["*"]
     
     # Storage settings
     SCREENSHOTS_DIR: str = os.path.join(os.getcwd(), "screenshots")

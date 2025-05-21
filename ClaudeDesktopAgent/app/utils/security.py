@@ -11,16 +11,22 @@ api_key_header = APIKeyHeader(name=settings.API_KEY_NAME, auto_error=False)
 
 async def get_api_key(api_key: str = Security(api_key_header)):
     """Validate API key"""
-    # If no API key is configured, allow all requests (for development)
-    if not settings.API_KEY:
+    if not settings.API_KEY:  # Covers None or empty string
+        if settings.DEBUG:
+            logger.warning("API key is not configured. Allowing request in DEBUG mode.")
+            return True
+        else:
+            logger.error("API key is not configured. Denying request in non-DEBUG mode.")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="API key is required for this application."
+            )
+    else:
+        # API key is configured, validate it
+        if api_key != settings.API_KEY:
+            logger.warning(f"Invalid API key received: {api_key}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid API key"
+            )
         return True
-    
-    # If API key is configured, validate it
-    if api_key != settings.API_KEY:
-        logger.warning(f"Invalid API key: {api_key}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid API key"
-        )
-    
-    return True

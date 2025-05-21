@@ -1,29 +1,29 @@
 # Core dependencies
-fastapi==0.95.1
-uvicorn==0.22.0
-pydantic==1.10.7
-requests==2.31.0
-python-dotenv==1.0.0
-pywin32==306; sys_platform == 'win32'
+fastapi==0.115.12
+uvicorn==0.34.2
+pydantic==2.11.4
+requests==2.32.3
+python-dotenv==1.1.0
+pywin32==310; sys_platform == 'win32'
 
 # Claude API
-anthropic==0.5.0
+anthropic==0.51.0
 
 # Computer control
 pyautogui==0.9.54
-pillow==10.0.0
+pillow==11.2.1
 keyboard==0.13.5
 mouse==0.7.1
-pynput==1.7.6
-psutil==5.9.5
+pynput==1.8.1
+psutil==7.0.0
 
 # Web automation
-selenium==4.10.0
-webdriver-manager==3.8.6
+selenium==4.32.0
+webdriver-manager==4.0.2
 
 # GUI
-streamlit>=1.29.0
+streamlit>=1.45.1
 
 # Testing
-pytest==7.3.1
-httpx==0.24.1
+pytest==8.3.5
+httpx==0.28.1

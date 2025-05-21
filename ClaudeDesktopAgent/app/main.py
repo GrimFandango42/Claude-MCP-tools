@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from app.api.router import api_router
 from app.utils.logger import setup_logger
+from app.utils.config import settings
 
 # Load environment variables
 load_dotenv()
@@ -23,7 +24,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development only, restrict in production
+    allow_origins=settings.CORS_ALLOWED_ORIGINS,  # For development only, restrict in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,9 +37,13 @@ app.include_router(api_router)
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.error(f"Global exception: {exc}", exc_info=True)
+    if settings.DEBUG:
+        content = {"detail": "Internal server error", "error_type": exc.__class__.__name__, "message": str(exc)}
+    else:
+        content = {"detail": "Internal server error"}
     return JSONResponse(
         status_code=500,
-        content={"detail": "Internal server error", "message": str(exc)}
+        content=content
     )
 
 # Health check endpoint
@@ -48,6 +53,6 @@ async def health_check():
 
 # Main entry point
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))
+    port = settings.PORT
     logger.info(f"Starting Claude Desktop Agent on port {port}")
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=settings.DEBUG)

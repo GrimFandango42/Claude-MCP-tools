@@ -20,7 +20,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict this to specific origins
+    allow_origins=settings.CORS_ALLOWED_ORIGINS,  # In production, restrict this to specific origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,9 +53,13 @@ async def log_requests(request: Request, call_next):
 async def global_exception_handler(request: Request, exc: Exception):
     """Global exception handler"""
     logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
+    if settings.DEBUG:
+        content = {"detail": "An unexpected error occurred", "error_type": exc.__class__.__name__, "message": str(exc)}
+    else:
+        content = {"detail": "An unexpected error occurred. Please contact support."}
     return JSONResponse(
         status_code=500,
-        content={"detail": f"An unexpected error occurred: {str(exc)}"},
+        content=content,
     )
 
 if __name__ == "__main__":
