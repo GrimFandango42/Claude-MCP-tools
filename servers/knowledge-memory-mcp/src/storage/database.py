@@ -1,0 +1,113 @@
+"""Database module for Knowledge Memory MCP Server.
+
+This module handles database initialization, connections, and schema management.
+"""
+
+import logging
+import os
+import sqlite3
+import signal
+import sys
+import uuid
+
+logger = logging.getLogger('knowledge-memory-mcp.database')
+
+class Database:
+    """SQLite database manager for Knowledge Memory MCP Server."""
+    
+    def __init__(self, db_path):
+        """Initialize database connection and tables.
+        
+        Args:
+            db_path: Path to the SQLite database file
+        """
+        self.db_path = db_path
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        
+        # Initialize connection with foreign key support
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        self.conn.execute("PRAGMA foreign_keys = ON")
+        self.conn.row_factory = sqlite3.Row
+        
+        # Create tables if they don't exist
+        self._create_tables()
+        logger.info(f"Database initialized at {db_path}")
+    
+    def _create_tables(self):
+        """Create database tables if they don't exist."""
+        cursor = self.conn.cursor()
+        
+        # Notes table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS notes (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+        
+        # Tags table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS tags (
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL UNIQUE
+        )
+        """)
+        
+        # Note-Tag relationships
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS note_tags (
+            note_id TEXT,
+            tag_id TEXT,
+            PRIMARY KEY (note_id, tag_id),
+            FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+        )
+        """)
+        
+        # Links between notes
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS note_links (
+            id TEXT PRIMARY KEY,
+            source_id TEXT NOT NULL,
+            target_id TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (source_id) REFERENCES notes(id) ON DELETE CASCADE,
+            FOREIGN KEY (target_id) REFERENCES notes(id) ON DELETE CASCADE
+        )
+        """)
+        
+        # Vector embeddings
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS note_embeddings (
+            note_id TEXT PRIMARY KEY,
+            embedding BLOB NOT NULL,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
+        )
+        """)
+        
+        self.conn.commit()
+        logger.info("Database tables created successfully")
+    
+    def generate_id(self):
+        """Generate a unique ID for database records."""
+        return str(uuid.uuid4())
+    
+    def execute(self, query, params=()):
+        """Execute a query and return the cursor."""
+        cursor = self.conn.cursor()
+        cursor.execute(query, params)
+        return cursor
+    
+    def commit(self):
+        """Commit changes to the database."""
+        self.conn.commit()
+    
+    def close(self):
+        """Close the database connection."""
+        if self.conn:
+            self.conn.close()
+            logger.info("Database connection closed")
