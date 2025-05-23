@@ -1,0 +1,13 @@
+# MCP Framework
+mcp>=1.0.0
+
+# Windows automation
+pyautogui>=0.9.54
+pywin32>=306
+Pillow>=10.0.0
+
+# Logging
+json-logging>=1.3.0
+
+# Utilities
+pathlib2>=2.3.7

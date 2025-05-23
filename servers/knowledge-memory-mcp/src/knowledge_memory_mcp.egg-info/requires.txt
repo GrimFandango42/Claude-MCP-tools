@@ -1,0 +1,6 @@
+fastmcp>=0.7.0
+python-json-logger>=2.0.0
+numpy>=1.22.0
+
+[dev]
+pytest>=7.0.0

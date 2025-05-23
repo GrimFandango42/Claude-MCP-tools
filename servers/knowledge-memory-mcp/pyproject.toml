@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "knowledge-memory-mcp"
 version = "1.6.0"
 description = "Knowledge Memory MCP Server"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "fastmcp>=0.7.0",
     "python-json-logger>=2.0.0",

@@ -35,43 +35,23 @@ for handler in logging.getLogger().handlers:
         logging.getLogger().removeHandler(handler)
 
 try:
-    # Import FastMCP - we'll use direct import with error handling
-    from fastmcp import FastMCPServer
-    logger.info("FastMCP library found and imported successfully")
+    # Import FastMCP with the correct pattern for current version
+    from mcp.server.fastmcp import FastMCP
+    logger.info("Imported FastMCP from mcp.server.fastmcp")
 except ImportError:
-    try:
-        # Alternate import pattern - some versions use a different structure
-        from mcp.server.fastmcp import FastMCP as FastMCPServer
-        logger.info("Imported FastMCP from mcp.server.fastmcp")
-    except ImportError:
-        logger.error("Failed to import FastMCP. Please install with: pip install fastmcp")
-        # Don't exit - our error handler below will ensure graceful failure
+    logger.error("Failed to import FastMCP. Please install with: uv sync")
+    sys.exit(1)
 
 # Constants
-FINANCIAL_DATASETS_API_BASE = "https://api.financialdatasets.ai/v1"
+FINANCIAL_DATASETS_API_BASE = "https://api.financialdatasets.ai"
 API_KEY = os.environ.get("FINANCIAL_DATASETS_API_KEY", "")
 
 if not API_KEY:
     logger.warning("No FINANCIAL_DATASETS_API_KEY found in environment variables")
 
-# Fallback implementation if FastMCP fails to import
-class DummyMCP:
-    def tool(self, *args, **kwargs):
-        def decorator(func):
-            return func
-        return decorator
-    
-    def run(self, *args, **kwargs):
-        logger.error("Cannot run server: FastMCP not available")
-        print(json.dumps({"jsonrpc": "2.0", "error": {"code": -32603, "message": "FastMCP not available"}, "id": None}))
-
-# Use real or dummy MCP based on import success
-try:
-    mcp = FastMCPServer()
-    logger.info("Using FastMCPServer for MCP implementation")
-except NameError:
-    mcp = DummyMCP()
-    logger.error("Using dummy MCP implementation due to import errors")
+# Initialize FastMCP server
+mcp = FastMCP("financial-datasets")
+logger.info("Using FastMCP for MCP implementation")
 
 # Helper function to make API requests with enhanced error handling
 def make_request(url: str, endpoint_type: str):
@@ -91,7 +71,7 @@ def make_request(url: str, endpoint_type: str):
         }
     
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
+        "X-API-KEY": API_KEY,
         "Content-Type": "application/json"
     }
     
@@ -142,7 +122,7 @@ def make_request(url: str, endpoint_type: str):
 
 # ==================== COMPANY DATA ENDPOINTS ====================
 
-@mcp.tool
+@mcp.tool()
 def get_company_facts(ticker: str):
     """
     Get company general information like name, industry, sector, market cap, etc.
@@ -155,7 +135,7 @@ def get_company_facts(ticker: str):
     return make_request(url, "company_facts")
 
 
-@mcp.tool
+@mcp.tool()
 def get_stock_prices(
     ticker: str,
     start_date: str,
@@ -188,7 +168,7 @@ def get_stock_prices(
     return make_request(url, "stock_prices")
 
 
-@mcp.tool
+@mcp.tool()
 def get_income_statements(
     ticker: str,
     period: str = "annual",

@@ -1,0 +1,10 @@
+mcp>=1.0.0
+httpx>=0.22.0
+python-json-logger>=2.0.7
+
+[dev]
+black
+isort
+
+[test]
+pytest>=7.0.0

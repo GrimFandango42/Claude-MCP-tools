@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: knowledge-memory-mcp
+Version: 1.6.0
+Summary: Knowledge Memory MCP Server
+Requires-Python: >=3.10
+Requires-Dist: fastmcp>=0.7.0
+Requires-Dist: python-json-logger>=2.0.0
+Requires-Dist: numpy>=1.22.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"

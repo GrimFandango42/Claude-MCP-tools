@@ -24,6 +24,7 @@ These servers are actively developed and maintained within this repository:
 
 - **financial-datasets-mcp**: (Python) Accesses financial data via the Financial Datasets API. Features working endpoints for company facts, stock prices, financial statements (income, balance sheet, cash flow), and cryptocurrency data. Implements structured JSON logging, graceful shutdown, and enhanced error handling. Located in `servers/financial-mcp-server`.
 - **knowledge-memory-mcp**: (Python) Provides persistent knowledge management with features like note creation, retrieval, update, deletion, tagging, and search (hybrid Zettelkasten/vector approach planned). Follows a local-first, privacy-preserving approach. Located in `servers/knowledge-memory-mcp`.
+- **windows-computer-use**: (Python) 🚀 **NEW** Windows Computer Use implementation providing desktop automation and Computer Use API compatibility. Features screenshot capture, mouse/keyboard automation, PowerShell execution, WSL bridge integration, and application control. Designed for coding workflows with Claude Code and VS Code in WSL environments. Located in `servers/windows-computer-use`.
 
 ### Experimental MCP Servers
 
@@ -192,6 +193,32 @@ Key log files include:
 3. **Configure Claude Desktop:** Add/update the server configurations in your `C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json` as needed (refer to patterns above and specific server READMEs). **Remember to back up this file before editing manually.**
 4. **Restart Claude Desktop:** A restart is typically required for Claude Desktop to pick up changes to `claude_desktop_config.json` or recognize newly started servers.
 5. **Run Servers:** Start the MCP servers manually (e.g., using their `run-server.bat`, `run_server_claude.bat` or `python server.py` commands) or ensure Claude Desktop is configured to launch them automatically based on your JSON config.
+
+## Examples and Testing
+
+This repository includes comprehensive examples to help you test and explore the capabilities of your MCP server ecosystem:
+
+### Example Files
+
+- **[Comprehensive MCP Examples](examples/comprehensive_mcp_examples.md)**: 10 detailed examples showcasing complex multi-server workflows that demonstrate the full breadth and depth of your MCP capabilities. These examples combine multiple servers to create powerful automation pipelines for real-world use cases like financial analysis, research automation, and business intelligence.
+
+- **[Quick Server Tests](examples/quick_server_tests.md)**: Simple individual server tests to validate that each MCP server is working correctly. Use these first to ensure your servers are operational before attempting complex workflows.
+
+### Getting Started with Examples
+
+1. **Start with Quick Tests**: Use the individual server tests to verify each server is functioning
+2. **Progress to Complex Workflows**: Try the comprehensive examples that showcase multi-server integrations
+3. **Monitor Performance**: Watch for server connection issues, API rate limits, and output validation
+4. **Check Logs**: Monitor Claude Desktop logs at `C:\Users\<Username>\AppData\Roaming\Claude\logs\` for any issues
+
+### Example Categories
+
+The examples cover these key areas:
+- **Financial Intelligence**: Market analysis, investment research, competitive intelligence
+- **Document Processing**: Web scraping, format conversion, knowledge management
+- **Automation**: Desktop monitoring, productivity tracking, workflow optimization
+- **Data Analysis**: Sports analytics, business intelligence, research synthesis
+- **Content Strategy**: SEO analysis, competitive content research, strategic planning
 
 ## Contributing
 
