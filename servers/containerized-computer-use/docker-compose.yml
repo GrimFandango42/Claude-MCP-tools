@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  computer-use:
+    build: .
+    container_name: windows-computer-use
+    ports:
+      - "5900:5900"  # VNC port
+      - "8080:8080"  # MCP WebSocket port
+    environment:
+      - DISPLAY=:1
+      - VNC_RESOLUTION=1920x1080
+      - VNC_PW=vnc123
+      - MCP_MODE=websocket
+    volumes:
+      - ./shared:/app/shared
+      - ./workspaces:/app/workspaces
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    privileged: false
+    networks:
+      - computer-use-net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+networks:
+  computer-use-net:
+    driver: bridge
+    
+volumes:
+  shared:
+  workspaces:

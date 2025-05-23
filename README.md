@@ -24,7 +24,8 @@ These servers are actively developed and maintained within this repository:
 
 - **financial-datasets-mcp**: (Python) Accesses financial data via the Financial Datasets API. Features working endpoints for company facts, stock prices, financial statements (income, balance sheet, cash flow), and cryptocurrency data. Implements structured JSON logging, graceful shutdown, and enhanced error handling. Located in `servers/financial-mcp-server`.
 - **knowledge-memory-mcp**: (Python) Provides persistent knowledge management with features like note creation, retrieval, update, deletion, tagging, and search (hybrid Zettelkasten/vector approach planned). Follows a local-first, privacy-preserving approach. Located in `servers/knowledge-memory-mcp`.
-- **windows-computer-use**: (Python) 🚀 **NEW** Windows Computer Use implementation providing desktop automation and Computer Use API compatibility. Features screenshot capture, mouse/keyboard automation, PowerShell execution, WSL bridge integration, and application control. Designed for coding workflows with Claude Code and VS Code in WSL environments. Located in `servers/windows-computer-use`.
+- **windows-computer-use**: (Python) ✅ **PRODUCTION READY** Windows Computer Use implementation providing desktop automation and Computer Use API compatibility. Features screenshot capture, mouse/keyboard automation, PowerShell execution, WSL bridge integration, and application control. Implements all Computer Use API tools: `computer_20250124`, `text_editor_20250429`, and `bash_20250124`. Successfully tested with full GUI automation and WSL environment control. Located in `servers/windows-computer-use`.
+- **containerized-computer-use**: (Docker) 🚧 **IN DEVELOPMENT** Containerized implementation of Computer Use API running in Docker with VNC access. Provides enhanced security, isolation, and portability while maintaining full API compatibility. Features VNC-based GUI automation, isolated execution environment, and cross-platform support. Located in `servers/containerized-computer-use`.
 
 ### Experimental MCP Servers
 
@@ -81,6 +82,7 @@ The Claude Desktop configuration file is located at `C:\Users\<Username>\AppData
 Successful MCP server configurations typically follow these patterns:
 
 #### 1. NPX Direct Execution (Preferred)
+
 ```json
 {
   "command": "npx",
@@ -94,6 +96,7 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 2. Environment Variables with API Keys
+
 ```json
 {
   "command": "cmd",
@@ -107,6 +110,7 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 3. Direct Node.js Execution
+
 ```json
 {
   "command": "node",
@@ -119,6 +123,7 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 4. Batch File Execution
+
 ```json
 {
   "command": "cmd",
@@ -153,12 +158,14 @@ Key log files include:
 **Symptoms:** "Server transport closed unexpectedly" errors, servers that initialize but quickly disconnect.
 
 **Common Causes:**
+
 1. Premature closure of the stdin stream
 2. Uncaught exceptions causing process termination
 3. Improper signal handling
 4. Process exiting before completing the response
 
 **Solutions:**
+
 1. Use proxy architecture that separates MCP protocol handling from complex functionality
 2. Add empty data event handlers (`process.stdin.on('data', () => {})`)
 3. Implement comprehensive signal handlers (SIGINT, SIGTERM)
@@ -219,6 +226,31 @@ The examples cover these key areas:
 - **Automation**: Desktop monitoring, productivity tracking, workflow optimization
 - **Data Analysis**: Sports analytics, business intelligence, research synthesis
 - **Content Strategy**: SEO analysis, competitive content research, strategic planning
+
+## Claude 4 Integration Strategy
+
+With Claude 4's enhanced capabilities, our MCP development strategy focuses on complementary value rather than duplicating native features:
+
+### Key Claude 4 Features to Leverage
+
+- **Native Code Execution**: Claude 4's built-in code execution reduces the need for custom execution servers
+- **Enhanced File Handling**: Improved document processing workflows significantly enhances document-based servers
+- **Improved MCP Connector**: Better connection stability and debugging for all MCP servers
+
+### Strategic Focus Areas
+
+1. **External API Integrations**: Financial data, specialized services, local system access
+2. **Domain-Specific Tools**: Industry-specific calculations, protocols, standards
+3. **Local System Access**: Windows management, file system operations, hardware control
+4. **Computer Use Implementation**: Desktop automation and GUI control with strong isolation
+5. **Legacy System Bridges**: Connecting to older systems without modern APIs
+
+### Implementation Priorities
+
+- **Unique Value Only**: Build servers that provide capabilities Claude 4 cannot
+- **Enhanced Integration**: Design for seamless work with native capabilities
+- **Local-First**: Emphasize privacy and local control where Claude 4 has limitations
+- **Containerization**: Improve isolation and security without sacrificing functionality
 
 ## Contributing
 
