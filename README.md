@@ -24,7 +24,8 @@ These servers are actively developed and maintained within this repository:
 
 - **financial-datasets-mcp**: (Python) Accesses financial data via the Financial Datasets API. Features working endpoints for company facts, stock prices, financial statements (income, balance sheet, cash flow), and cryptocurrency data. Implements structured JSON logging, graceful shutdown, and enhanced error handling. Located in `servers/financial-mcp-server`.
 - **knowledge-memory-mcp**: (Python) Provides persistent knowledge management with features like note creation, retrieval, update, deletion, tagging, and search (hybrid Zettelkasten/vector approach planned). Follows a local-first, privacy-preserving approach. Located in `servers/knowledge-memory-mcp`.
-- **windows-computer-use**: (Python) 🚀 **NEW** Windows Computer Use implementation providing desktop automation and Computer Use API compatibility. Features screenshot capture, mouse/keyboard automation, PowerShell execution, WSL bridge integration, and application control. Designed for coding workflows with Claude Code and VS Code in WSL environments. Located in `servers/windows-computer-use`.
+- **windows-computer-use**: (Python) ✅ **PRODUCTION READY** Windows Computer Use implementation providing desktop automation and Computer Use API compatibility. Features screenshot capture, mouse/keyboard automation, PowerShell execution, WSL bridge integration, and application control. Implements all Computer Use API tools: `computer_20250124`, `text_editor_20250429`, and `bash_20250124`. Successfully tested with full GUI automation and WSL environment control. Located in `servers/windows-computer-use`.
+- **docker-orchestration-mcp**: (Python) ✅ **PRODUCTION READY** Autonomous Docker container orchestration and deployment management. Provides comprehensive Docker ecosystem control with 19+ tools for container lifecycle management, image operations, network control, volume management, and system monitoring. Features Docker SDK integration, comprehensive error handling, and seamless Claude Desktop integration. Successfully tested with Docker Desktop integration and container operations. Located in `servers/docker-orchestration-mcp`.
 
 ### Experimental MCP Servers
 
@@ -74,13 +75,14 @@ This structured approach, centered around the `mcp-server-template`, aims to max
 
 ## Claude Desktop Configuration Management
 
-The Claude Desktop configuration file is located at `C:\Users\<Username>\AppData\Roaming\Claude\claude_desktop_config.json`. This file contains settings for all MCP servers and must be edited directly to add or modify server configurations.
+The Claude Desktop configuration file is located at `C:\\Users\\<Username>\\AppData\\Roaming\\Claude\\claude_desktop_config.json`. This file contains settings for all MCP servers and must be edited directly to add or modify server configurations.
 
 ### Configuration Patterns
 
 Successful MCP server configurations typically follow these patterns:
 
 #### 1. NPX Direct Execution (Preferred)
+
 ```json
 {
   "command": "npx",
@@ -94,6 +96,7 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 2. Environment Variables with API Keys
+
 ```json
 {
   "command": "cmd",
@@ -107,11 +110,12 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 3. Direct Node.js Execution
+
 ```json
 {
   "command": "node",
   "args": [
-    "C:\\AI_Projects\\Claude-MCP-tools\\servers\\servername\\server.js"
+    "C:\\\\AI_Projects\\\\Claude-MCP-tools\\\\servers\\\\servername\\\\server.js"
   ],
   "keepAlive": true,
   "stderrToConsole": true
@@ -119,12 +123,13 @@ Successful MCP server configurations typically follow these patterns:
 ```
 
 #### 4. Batch File Execution
+
 ```json
 {
   "command": "cmd",
   "args": [
     "/c",
-    "cd /d C:\\AI_Projects\\Claude-MCP-tools\\servers\\servername && batch\\start.bat"
+    "cd /d C:\\\\AI_Projects\\\\Claude-MCP-tools\\\\servers\\\\servername && batch\\\\start.bat"
   ],
   "keepAlive": true,
   "stderrToConsole": true
@@ -140,7 +145,7 @@ Successful MCP server configurations typically follow these patterns:
 ## Log Files and Debugging
 
 Claude Desktop stores log files, including those for MCP servers, in:
-`C:\Users\<Username>\AppData\Roaming\Claude\logs\`
+`C:\\Users\\<Username>\\AppData\\Roaming\\Claude\\logs\\`
 
 Key log files include:
 - `mcp-server-<servername>.log` - Logs specific to each MCP server
@@ -153,14 +158,16 @@ Key log files include:
 **Symptoms:** "Server transport closed unexpectedly" errors, servers that initialize but quickly disconnect.
 
 **Common Causes:**
+
 1. Premature closure of the stdin stream
 2. Uncaught exceptions causing process termination
 3. Improper signal handling
 4. Process exiting before completing the response
 
 **Solutions:**
+
 1. Use proxy architecture that separates MCP protocol handling from complex functionality
-2. Add empty data event handlers (`process.stdin.on('data', () => {})`)
+2. Add empty data event handlers (`process.stdin.on('data', () => {})`) 
 3. Implement comprehensive signal handlers (SIGINT, SIGTERM)
 4. Use `keepAlive: true` in MCP configuration
 5. For Windows, use batch file wrappers that maintain stdin properly
@@ -190,7 +197,7 @@ Key log files include:
    ```
 
 2. **Install Dependencies:** Navigate to individual server directories (e.g., `servers/test-automation-mcp`) and install their dependencies (e.g., `npm install` for Node.js, `pip install -r requirements.txt` or `uv sync` for Python).
-3. **Configure Claude Desktop:** Add/update the server configurations in your `C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json` as needed (refer to patterns above and specific server READMEs). **Remember to back up this file before editing manually.**
+3. **Configure Claude Desktop:** Add/update the server configurations in your `C:\\Users\\<YourUsername>\\AppData\\Roaming\\Claude\\claude_desktop_config.json` as needed (refer to patterns above and specific server READMEs). **Remember to back up this file before editing manually.**
 4. **Restart Claude Desktop:** A restart is typically required for Claude Desktop to pick up changes to `claude_desktop_config.json` or recognize newly started servers.
 5. **Run Servers:** Start the MCP servers manually (e.g., using their `run-server.bat`, `run_server_claude.bat` or `python server.py` commands) or ensure Claude Desktop is configured to launch them automatically based on your JSON config.
 
@@ -209,7 +216,7 @@ This repository includes comprehensive examples to help you test and explore the
 1. **Start with Quick Tests**: Use the individual server tests to verify each server is functioning
 2. **Progress to Complex Workflows**: Try the comprehensive examples that showcase multi-server integrations
 3. **Monitor Performance**: Watch for server connection issues, API rate limits, and output validation
-4. **Check Logs**: Monitor Claude Desktop logs at `C:\Users\<Username>\AppData\Roaming\Claude\logs\` for any issues
+4. **Check Logs**: Monitor Claude Desktop logs at `C:\\Users\\<Username>\\AppData\\Roaming\\Claude\\logs\\` for any issues
 
 ### Example Categories
 
