@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "n8n-workflow-generator": {
+      "command": "node",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server\\server.js"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    }
+  }
+}

@@ -1,0 +1,589 @@
+#!/usr/bin/env python3
+"""
+Windows Computer Use MCP Server - Computer Use API Compliant
+Provides Computer Use API compatible tools for Windows desktop automation.
+
+This server implements the exact tool specifications from Anthropic's Computer Use API:
+- computer_20250124: Enhanced computer control with all actions
+- text_editor_20250429: File editing without undo_edit command  
+- bash_20250124: WSL command execution
+
+Compatible with Claude 4, Claude Sonnet 3.7, and Claude Desktop.
+"""
+
+import sys
+import json
+import base64
+import subprocess
+import time
+from typing import Dict, Any, List, Optional, Tuple
+import pyautogui
+from PIL import ImageGrab, Image
+import tempfile
+import os
+from pathlib import Path
+try:
+    import win32api
+    import win32con
+    import win32gui
+    WIN32_AVAILABLE = True
+except ImportError:
+    WIN32_AVAILABLE = False
+
+# Configure pyautogui safety
+pyautogui.FAILSAFE = True
+pyautogui.PAUSE = 0.1
+
+class ComputerUseAPI:
+    """Computer Use API compliant implementation for Windows."""
+    
+    def __init__(self):
+        # Get screen dimensions for tool configuration
+        self.screen_width, self.screen_height = pyautogui.size()
+        self.current_directory = os.getcwd()
+        self.editor_files = {}  # Track open files for text editor
+        
+        # Log initialization to stderr only
+        print(f"[windows-computer-use] Initialized: {self.screen_width}x{self.screen_height}", file=sys.stderr)
+        
+    def computer_20250124(self, action: str, **kwargs) -> Dict[str, Any]:
+        """
+        Enhanced computer control tool compatible with Computer Use API.
+        
+        Actions: key, hold_key, type, cursor_position, mouse_move, left_mouse_down,
+        left_mouse_up, left_click, left_click_drag, right_click, middle_click, 
+        double_click, triple_click, scroll, wait, screenshot
+        """
+        try:
+            if action == "screenshot":
+                return self._take_screenshot()
+            
+            elif action == "cursor_position":
+                x, y = pyautogui.position()
+                return {
+                    "output": f"Cursor position: ({x}, {y})",
+                    "coordinate": [x, y]
+                }
+            
+            elif action == "mouse_move":
+                coordinate = kwargs.get("coordinate")
+                if not coordinate or len(coordinate) != 2:
+                    return {"output": "ERROR: mouse_move requires coordinate [x, y]"}
+                x, y = coordinate
+                pyautogui.moveTo(x, y)
+                return {"output": f"Moved cursor to ({x}, {y})"}
+            
+            elif action == "left_click":
+                coordinate = kwargs.get("coordinate")
+                text = kwargs.get("text", "")  # Key combo to hold during click
+                
+                if coordinate:
+                    x, y = coordinate
+                    if text:  # Hold keys while clicking
+                        with pyautogui.hold(text.split('+')):
+                            pyautogui.click(x, y)
+                    else:
+                        pyautogui.click(x, y)
+                    return {"output": f"Left clicked at ({x}, {y})"}
+                else:
+                    # Click at current position
+                    if text:
+                        with pyautogui.hold(text.split('+')):
+                            pyautogui.click()
+                    else:
+                        pyautogui.click()
+                    return {"output": "Left clicked at current position"}
+            
+            elif action == "right_click":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.rightClick(x, y)
+                    return {"output": f"Right clicked at ({x}, {y})"}
+                else:
+                    pyautogui.rightClick()
+                    return {"output": "Right clicked at current position"}
+            
+            elif action == "middle_click":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.middleClick(x, y)
+                    return {"output": f"Middle clicked at ({x}, {y})"}
+                else:
+                    pyautogui.middleClick()
+                    return {"output": "Middle clicked at current position"}
+            
+            elif action == "double_click":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.doubleClick(x, y)
+                    return {"output": f"Double clicked at ({x}, {y})"}
+                else:
+                    pyautogui.doubleClick()
+                    return {"output": "Double clicked at current position"}
+            
+            elif action == "triple_click":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.tripleClick(x, y)
+                    return {"output": f"Triple clicked at ({x}, {y})"}
+                else:
+                    pyautogui.tripleClick()
+                    return {"output": "Triple clicked at current position"}
+            
+            elif action == "left_click_drag":
+                start_coordinate = kwargs.get("start_coordinate")
+                end_coordinate = kwargs.get("end_coordinate")
+                if not start_coordinate or not end_coordinate:
+                    return {"output": "ERROR: left_click_drag requires start_coordinate and end_coordinate"}
+                x1, y1 = start_coordinate
+                x2, y2 = end_coordinate
+                pyautogui.drag(x1, y1, x2, y2, duration=0.5)
+                return {"output": f"Dragged from ({x1}, {y1}) to ({x2}, {y2})"}
+            
+            elif action == "left_mouse_down":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.moveTo(x, y)
+                pyautogui.mouseDown()
+                return {"output": "Left mouse button pressed down"}
+            
+            elif action == "left_mouse_up":
+                coordinate = kwargs.get("coordinate")
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.moveTo(x, y)
+                pyautogui.mouseUp()
+                return {"output": "Left mouse button released"}
+            
+            elif action == "scroll":
+                coordinate = kwargs.get("coordinate")
+                direction = kwargs.get("direction", "down")
+                clicks = kwargs.get("clicks", 3)
+                
+                if coordinate:
+                    x, y = coordinate
+                    pyautogui.moveTo(x, y)
+                
+                scroll_amount = clicks if direction == "up" else -clicks
+                pyautogui.scroll(scroll_amount)
+                return {"output": f"Scrolled {direction} {clicks} clicks"}
+            
+            elif action == "key":
+                key = kwargs.get("key")
+                if not key:
+                    return {"output": "ERROR: key action requires key parameter"}
+                pyautogui.press(key)
+                return {"output": f"Pressed key: {key}"}
+            
+            elif action == "hold_key":
+                key = kwargs.get("key")
+                duration = kwargs.get("duration", 1.0)
+                if not key:
+                    return {"output": "ERROR: hold_key action requires key parameter"}
+                pyautogui.keyDown(key)
+                time.sleep(duration)
+                pyautogui.keyUp(key)
+                return {"output": f"Held key {key} for {duration} seconds"}
+            
+            elif action == "type":
+                text = kwargs.get("text")
+                if not text:
+                    return {"output": "ERROR: type action requires text parameter"}
+                pyautogui.typewrite(text)
+                return {"output": f"Typed: {text}"}
+            
+            elif action == "wait":
+                duration = kwargs.get("duration", 1.0)
+                time.sleep(duration)
+                return {"output": f"Waited {duration} seconds"}
+            
+            else:
+                return {"output": f"ERROR: Unknown action: {action}"}
+                
+        except Exception as e:
+            return {"output": f"ERROR: Computer action failed: {str(e)}"}
+    
+    def text_editor_20250429(self, command: str, **kwargs) -> Dict[str, Any]:
+        """
+        Enhanced text editor tool without undo_edit (Claude 4 Computer Use API spec).
+        
+        Commands: view, create, str_replace
+        """
+        try:
+            if command == "view":
+                path = kwargs.get("path")
+                if not path:
+                    return {"output": "ERROR: view command requires path parameter"}
+                
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    
+                    lines = content.split('\n')
+                    line_count = len(lines)
+                    
+                    view_range = kwargs.get("view_range")
+                    if view_range and len(view_range) == 2:
+                        start_line, end_line = view_range
+                        start_line = max(1, start_line) - 1  # Convert to 0-based
+                        end_line = min(line_count, end_line)
+                        
+                        displayed_lines = lines[start_line:end_line]
+                        content_to_show = '\n'.join(displayed_lines)
+                        
+                        return {
+                            "output": f"Viewing lines {start_line + 1}-{end_line} of {path}:\n{content_to_show}",
+                            "lines_shown": f"{start_line + 1}-{end_line}",
+                            "total_lines": line_count
+                        }
+                    else:
+                        return {
+                            "output": f"Viewing {path}:\n{content}",
+                            "total_lines": line_count
+                        }
+                        
+                except FileNotFoundError:
+                    return {"output": f"ERROR: File not found: {path}"}
+                except Exception as e:
+                    return {"output": f"ERROR: Failed to read file: {str(e)}"}
+            
+            elif command == "create":
+                path = kwargs.get("path")
+                file_text = kwargs.get("file_text", "")
+                if not path:
+                    return {"output": "ERROR: create command requires path parameter"}
+                
+                try:
+                    # Create directory if it doesn't exist
+                    os.makedirs(os.path.dirname(path), exist_ok=True)
+                    
+                    with open(path, 'w', encoding='utf-8') as f:
+                        f.write(file_text)
+                    
+                    return {"output": f"Created file: {path}"}
+                    
+                except Exception as e:
+                    return {"output": f"ERROR: Failed to create file: {str(e)}"}
+            
+            elif command == "str_replace":
+                path = kwargs.get("path")
+                old_str = kwargs.get("old_str")
+                new_str = kwargs.get("new_str")
+                
+                if not all([path, old_str is not None, new_str is not None]):
+                    return {"output": "ERROR: str_replace command requires path, old_str, and new_str parameters"}
+                
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    
+                    if old_str not in content:
+                        return {"output": f"ERROR: String not found in file: {old_str}"}
+                    
+                    # Perform replacement
+                    new_content = content.replace(old_str, new_str)
+                    
+                    with open(path, 'w', encoding='utf-8') as f:
+                        f.write(new_content)
+                    
+                    return {"output": f"Replaced text in {path}"}
+                    
+                except FileNotFoundError:
+                    return {"output": f"ERROR: File not found: {path}"}
+                except Exception as e:
+                    return {"output": f"ERROR: Failed to replace text: {str(e)}"}
+            
+            else:
+                return {"output": f"ERROR: Unknown text editor command: {command}"}
+                
+        except Exception as e:
+            return {"output": f"ERROR: Text editor command failed: {str(e)}"}
+    
+    def bash_20250124(self, command: str) -> Dict[str, Any]:
+        """
+        Enhanced bash tool with improved capabilities. Execute bash commands in WSL environment.
+        """
+        try:
+            # Execute command in WSL
+            result = subprocess.run(
+                ["wsl", "bash", "-c", command],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            output = result.stdout
+            error = result.stderr
+            exit_code = result.returncode
+            
+            response = {
+                "output": output,
+                "exit_code": exit_code
+            }
+            
+            if error:
+                response["output"] += f"\nSTDERR: {error}"
+            
+            return response
+            
+        except subprocess.TimeoutExpired:
+            return {"output": "ERROR: Command timed out after 30 seconds"}
+        except FileNotFoundError:
+            return {"output": "ERROR: WSL or bash not found. Please ensure WSL is installed and configured."}
+        except Exception as e:
+            return {"output": f"ERROR: Bash command failed: {str(e)}"}
+    
+    def _take_screenshot(self) -> Dict[str, Any]:
+        """Take a screenshot and return base64 encoded image."""
+        try:
+            screenshot = ImageGrab.grab()
+            
+            # Use BytesIO instead of temporary file to avoid file access issues
+            from io import BytesIO
+            img_buffer = BytesIO()
+            screenshot.save(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            
+            # Encode as base64
+            image_data = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+            img_buffer.close()
+            
+            return {
+                "output": f"Screenshot taken: {screenshot.size[0]}x{screenshot.size[1]}",
+                "image": image_data,
+                "width": screenshot.size[0],
+                "height": screenshot.size[1]
+            }
+            
+        except Exception as e:
+            return {"output": f"ERROR: Screenshot failed: {str(e)}"}
+
+
+def main():
+    """Main MCP server implementation."""
+    print("[windows-computer-use] Starting server...", file=sys.stderr)
+    computer_api = ComputerUseAPI()
+    
+    # Read input from stdin
+    for line in sys.stdin:
+        try:
+            request = json.loads(line.strip())
+            
+            # Handle MCP protocol
+            if request.get("method") == "initialize":
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id"),
+                    "result": {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {
+                            "tools": {}
+                        },
+                        "serverInfo": {
+                            "name": "windows-computer-use",
+                            "version": "2.0.0"
+                        }
+                    }
+                }
+            
+            elif request.get("method") == "tools/list":
+                tools = [
+                    {
+                        "name": "computer_20250124",
+                        "description": "Computer control tool for screenshots, mouse, keyboard actions",
+                        "inputSchema": {
+                            "type": "object",
+                            "properties": {
+                                "action": {
+                                    "type": "string",
+                                    "description": "Action to perform",
+                                    "enum": ["screenshot", "cursor_position", "mouse_move", "left_click", 
+                                           "right_click", "middle_click", "double_click", "triple_click",
+                                           "left_click_drag", "left_mouse_down", "left_mouse_up", "scroll",
+                                           "key", "hold_key", "type", "wait"]
+                                },
+                                "coordinate": {
+                                    "type": "array",
+                                    "items": {"type": "number"},
+                                    "description": "X, Y coordinates for mouse actions"
+                                },
+                                "start_coordinate": {
+                                    "type": "array", 
+                                    "items": {"type": "number"},
+                                    "description": "Start coordinates for drag"
+                                },
+                                "end_coordinate": {
+                                    "type": "array",
+                                    "items": {"type": "number"}, 
+                                    "description": "End coordinates for drag"
+                                },
+                                "text": {
+                                    "type": "string",
+                                    "description": "Text to type or key combinations"
+                                },
+                                "key": {
+                                    "type": "string",
+                                    "description": "Key to press"
+                                },
+                                "direction": {
+                                    "type": "string",
+                                    "enum": ["up", "down"],
+                                    "description": "Scroll direction"
+                                },
+                                "clicks": {
+                                    "type": "number",
+                                    "description": "Number of scroll clicks"
+                                },
+                                "duration": {
+                                    "type": "number",
+                                    "description": "Duration in seconds"
+                                }
+                            },
+                            "required": ["action"]
+                        }
+                    },
+                    {
+                        "name": "text_editor_20250429",
+                        "description": "Text file editor with view, create, str_replace commands",
+                        "inputSchema": {
+                            "type": "object",
+                            "properties": {
+                                "command": {
+                                    "type": "string",
+                                    "description": "Editor command",
+                                    "enum": ["view", "create", "str_replace"]
+                                },
+                                "path": {
+                                    "type": "string",
+                                    "description": "File path"
+                                },
+                                "file_text": {
+                                    "type": "string",
+                                    "description": "Content for new file"
+                                },
+                                "old_str": {
+                                    "type": "string",
+                                    "description": "Text to replace"
+                                },
+                                "new_str": {
+                                    "type": "string",
+                                    "description": "Replacement text"
+                                },
+                                "view_range": {
+                                    "type": "array",
+                                    "items": {"type": "number"},
+                                    "description": "Line range [start, end]"
+                                }
+                            },
+                            "required": ["command", "path"]
+                        }
+                    },
+                    {
+                        "name": "bash_20250124",
+                        "description": "Execute bash commands in WSL environment",
+                        "inputSchema": {
+                            "type": "object",
+                            "properties": {
+                                "command": {
+                                    "type": "string",
+                                    "description": "Bash command to execute"
+                                }
+                            },
+                            "required": ["command"]
+                        }
+                    }
+                ]
+                response = {
+                    "jsonrpc": "2.0", 
+                    "id": request.get("id"),
+                    "result": {
+                        "tools": tools
+                    }
+                }
+            
+            elif request.get("method") == "resources/list":
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id"),
+                    "result": {
+                        "resources": []
+                    }
+                }
+            
+            elif request.get("method") == "prompts/list":
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id"),
+                    "result": {
+                        "prompts": []
+                    }
+                }
+            
+            elif request.get("method") == "tools/call":
+                tool_name = request["params"]["name"]
+                arguments = request["params"]["arguments"]
+                
+                if tool_name == "computer_20250124":
+                    result = computer_api.computer_20250124(**arguments)
+                elif tool_name == "text_editor_20250429":
+                    result = computer_api.text_editor_20250429(**arguments)
+                elif tool_name == "bash_20250124":
+                    result = computer_api.bash_20250124(**arguments)
+                else:
+                    result = {"output": f"ERROR: Unknown tool: {tool_name}"}
+                
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id"),
+                    "result": {
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": json.dumps(result, indent=2)
+                            }
+                        ]
+                    }
+                }
+            
+            else:
+                response = {
+                    "jsonrpc": "2.0",
+                    "id": request.get("id"),
+                    "error": {
+                        "code": -32601,
+                        "message": f"Method not found: {request.get('method')}"
+                    }
+                }
+            
+            print(json.dumps(response))
+            sys.stdout.flush()
+            
+        except Exception as e:
+            print(f"[windows-computer-use] Error: {str(e)}", file=sys.stderr)
+            
+            request_id_in_error = None
+            if 'request' in locals() and isinstance(request, dict): # Check if request is defined and is a dict
+                request_id_in_error = request.get("id")
+            
+            if request_id_in_error is None:
+                request_id_in_error = "unknown_request_id" # Default to a string if id is null or not found
+
+            error_response = {
+                "jsonrpc": "2.0",
+                "id": request_id_in_error,
+                "error": {
+                    "code": -32603,
+                    "message": f"Internal error: {str(e)}"
+                }
+            }
+            print(json.dumps(error_response))
+            sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()
