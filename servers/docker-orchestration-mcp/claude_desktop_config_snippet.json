@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "docker-orchestration": {
+      "command": "python",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp\\src\\server.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp\\src"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Autonomous Docker container orchestration and deployment management"
+    }
+  }
+}
