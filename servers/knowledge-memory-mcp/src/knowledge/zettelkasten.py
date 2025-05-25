@@ -35,11 +35,35 @@ class ZettelkastenManager:
         """
         note_id = self.db.generate_id()
         
-        # Insert note
-        self.db.execute(
-            "INSERT INTO notes (id, title, content) VALUES (?, ?, ?)",
-            (note_id, title, content)
-        )
+        # Debug: Check table schema
+        cursor = self.db.execute("PRAGMA table_info(notes)")
+        schema = cursor.fetchall()
+        logger.info(f"Notes table schema: {[dict(row) for row in schema]}")
+        
+        # Insert note with Python datetime
+        now = datetime.now().isoformat()
+        logger.info(f"Attempting insert with values: note_id={note_id}, title={title[:50]}, content={content[:50]}, now={now}")
+        
+        try:
+            self.db.execute(
+                "INSERT INTO notes (id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+                (note_id, title, content, now, now)
+            )
+            logger.info("Insert successful!")
+        except Exception as e:
+            logger.error(f"Insert failed with error: {e}")
+            logger.error(f"Error type: {type(e)}")
+            # Try a simpler insert to test
+            try:
+                logger.info("Trying insert without timestamps...")
+                self.db.execute(
+                    "INSERT INTO notes (id, title, content) VALUES (?, ?, ?)",
+                    (note_id + "_test", title + " (no timestamps)", content)
+                )
+                logger.info("Insert without timestamps successful!")
+            except Exception as e2:
+                logger.error(f"Even simple insert failed: {e2}")
+            raise e
         
         # Process tags if provided
         if tags:

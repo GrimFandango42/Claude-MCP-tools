@@ -34,7 +34,7 @@ class Database:
         logger.info(f"Database initialized at {db_path}")
     
     def _create_tables(self):
-        """Create database tables with proper foreign key handling."""
+        """Create database tables if they don't exist."""
         cursor = self.conn.cursor()
         
         # Check if notes table exists and has correct schema
@@ -49,23 +49,7 @@ class Database:
             )
             if not has_created_at_default:
                 logger.info("Recreating notes table due to schema mismatch")
-                
-                # SAFE FOREIGN KEY RECREATION SEQUENCE
-                # 1. Temporarily disable foreign keys to avoid constraint errors
-                cursor.execute("PRAGMA foreign_keys = OFF")
-                logger.info("Foreign key constraints temporarily disabled")
-                
-                # 2. Drop tables in dependency order (dependent tables first)
-                cursor.execute("DROP TABLE IF EXISTS note_embeddings")
-                cursor.execute("DROP TABLE IF EXISTS note_links") 
-                cursor.execute("DROP TABLE IF EXISTS note_tags")
                 cursor.execute("DROP TABLE IF EXISTS notes")
-                cursor.execute("DROP TABLE IF EXISTS tags")
-                logger.info("All existing tables dropped safely")
-                
-                # 3. Re-enable foreign keys for table creation
-                cursor.execute("PRAGMA foreign_keys = ON")
-                logger.info("Foreign key constraints re-enabled")
         
         # Notes table
         cursor.execute("""

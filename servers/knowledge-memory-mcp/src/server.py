@@ -117,6 +117,46 @@ def get_statistics() -> dict:
         "indexed_vectors": vector_store.get_embedding_count()
     }
 
+@mcp.tool()
+def debug_database_schema() -> dict:
+    """Debug database schema and connection."""
+    try:
+        # Check table schema
+        cursor = db.execute("PRAGMA table_info(notes)")
+        schema = cursor.fetchall()
+        schema_info = [dict(row) for row in schema]
+        
+        # Check if we can do a simple select
+        cursor = db.execute("SELECT COUNT(*) as count FROM notes")
+        count_result = cursor.fetchone()
+        
+        # Test insert without timestamps
+        test_id = db.generate_id()
+        simple_insert_error = None
+        try:
+            db.execute(
+                "INSERT INTO notes (id, title, content) VALUES (?, ?, ?)",
+                (test_id, "Test Title", "Test Content")
+            )
+            db.conn.rollback()  # Rollback the test insert
+            simple_insert_success = True
+        except Exception as e:
+            simple_insert_success = False
+            simple_insert_error = str(e)
+        
+        return {
+            "schema": schema_info,
+            "note_count": dict(count_result)["count"] if count_result else 0,
+            "simple_insert_success": simple_insert_success,
+            "simple_insert_error": simple_insert_error if not simple_insert_success else None,
+            "database_path": db.db_path
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "error_type": type(e).__name__
+        }
+
 # Register signal handlers for graceful shutdown
 import signal
 

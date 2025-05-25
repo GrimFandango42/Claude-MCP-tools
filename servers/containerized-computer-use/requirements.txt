@@ -1,8 +1,28 @@
+# Containerized Computer Use MCP Server Requirements
+
+# MCP Framework
+mcp==1.0.0
+
+# Docker Management
+docker==7.0.0
+
+# Computer Use Dependencies
 pyautogui==0.9.54
 pillow==10.2.0
 python-xlib==0.33
 pynput==1.7.6
 opencv-python==4.9.0.80
 numpy==1.26.4
+
+# Async Support
+asyncio-mqtt==0.16.2
+
+# Utilities
+requests==2.31.0
+websocket-client==1.7.0
+
+# Linux-specific screenshot support
 pyscreenshot==3.1
-fastmcp==0.3.5
+
+# X11 support for containerized environment
+python3-xlib==0.15
