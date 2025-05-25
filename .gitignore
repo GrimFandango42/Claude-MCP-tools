@@ -12,3 +12,8 @@ ENV/
 .vscode/ 
 # Screenshots 
 screenshots/ 
+
+# Config files with sensitive tokens
+updated_config.json
+updated_config_fixed.json
+updated_reliable_config.json

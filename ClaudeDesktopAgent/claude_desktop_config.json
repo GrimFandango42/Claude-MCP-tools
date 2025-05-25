@@ -1,19 +1,59 @@
 {
-  "mcpServers": [
-    {
-      "filesystem": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@model-context-protocol/server-filesystem",
-          "C:\\AI_Projects\\Claude-MCP-tools"
-        ]
-      }
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@model-context-protocol/server-filesystem", "C:\\AI_Projects\\Claude-MCP-tools"],
+      "env": {}
     },
-    {
-      "screenshot": {
-        "url": "http://127.0.0.1:8090"
-      }
+    "windows-computer-use": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\windows-computer-use\\server_mcp_framework.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\windows-computer-use",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\windows-computer-use"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "docker-orchestration": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp\\src\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp\\src"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "financial-datasets": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "knowledge-memory": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\knowledge-memory-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\knowledge-memory-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\knowledge-memory-mcp"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "n8n-workflow": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
     }
-  ]
+  }
 }

@@ -544,29 +544,314 @@ class DockerOrchestrationServer:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    # Placeholder implementations for remaining methods
-    async def _remove_container(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _get_container_logs(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _create_network(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _list_networks(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _create_volume(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _list_volumes(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _deploy_application_stack(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _check_container_health(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _get_system_resources(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _validate_configuration(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
-    async def _diagnose_container_issues(self, **kwargs): 
-        return {"success": True, "message": "Implementation in progress"}
+    # Complete implementations for all Docker operations
+    async def _remove_container(self, container_id: str, force: bool = False) -> Dict[str, Any]:
+        """Remove a container (must be stopped first unless force=True)"""
+        try:
+            container = self.client.containers.get(container_id)
+            container.remove(force=force)
+            
+            return {
+                "success": True,
+                "container_id": container_id,
+                "action": "removed",
+                "forced": force,
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.NotFound:
+            return {"success": False, "error": f"Container {container_id} not found"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _get_container_logs(self, container_id: str, tail: int = 100, follow: bool = False) -> Dict[str, Any]:
+        """Get logs from a container"""
+        try:
+            container = self.client.containers.get(container_id)
+            logs = container.logs(tail=tail, follow=follow).decode('utf-8')
+            
+            return {
+                "success": True,
+                "container_id": container_id,
+                "logs": logs,
+                "tail": tail,
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.NotFound:
+            return {"success": False, "error": f"Container {container_id} not found"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _create_network(self, name: str, driver: str = "bridge", options: Optional[Dict] = None) -> Dict[str, Any]:
+        """Create a Docker network"""
+        try:
+            network = self.client.networks.create(
+                name=name,
+                driver=driver,
+                options=options or {}
+            )
+            
+            return {
+                "success": True,
+                "network_id": network.id,
+                "network_name": name,
+                "driver": driver,
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.APIError as e:
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _list_networks(self, filters: Optional[Dict] = None) -> Dict[str, Any]:
+        """List Docker networks"""
+        try:
+            networks = self.client.networks.list(filters=filters or {})
+            
+            network_list = []
+            for network in networks:
+                network_info = {
+                    "id": network.id,
+                    "name": network.name,
+                    "driver": network.attrs.get('Driver'),
+                    "scope": network.attrs.get('Scope'),
+                    "created": network.attrs.get('Created'),
+                    "containers": list(network.attrs.get('Containers', {}).keys())
+                }
+                network_list.append(network_info)
+            
+            return {
+                "success": True,
+                "networks": network_list,
+                "count": len(network_list),
+                "filters_applied": filters or {}
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _create_volume(self, name: str, driver: str = "local", options: Optional[Dict] = None) -> Dict[str, Any]:
+        """Create a Docker volume"""
+        try:
+            volume = self.client.volumes.create(
+                name=name,
+                driver=driver,
+                driver_opts=options or {}
+            )
+            
+            return {
+                "success": True,
+                "volume_name": name,
+                "driver": driver,
+                "mountpoint": volume.attrs.get('Mountpoint'),
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.APIError as e:
+            return {"success": False, "error": str(e)}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _list_volumes(self, filters: Optional[Dict] = None) -> Dict[str, Any]:
+        """List Docker volumes"""
+        try:
+            volumes = self.client.volumes.list(filters=filters or {})
+            
+            volume_list = []
+            for volume in volumes:
+                volume_info = {
+                    "name": volume.name,
+                    "driver": volume.attrs.get('Driver'),
+                    "mountpoint": volume.attrs.get('Mountpoint'),
+                    "created": volume.attrs.get('CreatedAt'),
+                    "labels": volume.attrs.get('Labels', {})
+                }
+                volume_list.append(volume_info)
+            
+            return {
+                "success": True,
+                "volumes": volume_list,
+                "count": len(volume_list),
+                "filters_applied": filters or {}
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _deploy_application_stack(self, name: str, services: List[Dict], 
+                                       network_name: Optional[str] = None, 
+                                       create_network: bool = True) -> Dict[str, Any]:
+        """Deploy a multi-container application stack"""
+        try:
+            deployed_containers = []
+            network_created = False
+            
+            # Create network if specified and doesn't exist
+            if network_name and create_network:
+                try:
+                    self.client.networks.get(network_name)
+                except docker.errors.NotFound:
+                    await self._create_network(network_name)
+                    network_created = True
+            
+            # Deploy each service
+            for i, service_config in enumerate(services):
+                service_config['name'] = f"{name}_{service_config.get('name', f'service_{i}')}"
+                if network_name:
+                    service_config['network'] = network_name
+                
+                result = await self._deploy_container(**service_config)
+                deployed_containers.append(result)
+            
+            return {
+                "success": True,
+                "stack_name": name,
+                "network_name": network_name,
+                "network_created": network_created,
+                "services_deployed": len(services),
+                "containers": deployed_containers,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e), "stack_name": name}
+    
+    async def _check_container_health(self, container_id: str) -> Dict[str, Any]:
+        """Check the health status of a container"""
+        try:
+            container = self.client.containers.get(container_id)
+            
+            # Get health status from container attributes
+            health_status = container.attrs.get('State', {}).get('Health', {})
+            
+            return {
+                "success": True,
+                "container_id": container_id,
+                "container_name": container.name,
+                "status": container.status,
+                "health": health_status,
+                "running": container.status == 'running',
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.NotFound:
+            return {"success": False, "error": f"Container {container_id} not found"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _get_system_resources(self) -> Dict[str, Any]:
+        """Get Docker system resource usage"""
+        try:
+            # Get system information
+            system_info = self.client.info()
+            
+            # Get container statistics
+            containers = self.client.containers.list(all=True)
+            running_containers = [c for c in containers if c.status == 'running']
+            
+            return {
+                "success": True,
+                "system_info": {
+                    "containers": system_info.get('Containers', 0),
+                    "containers_running": system_info.get('ContainersRunning', 0),
+                    "containers_paused": system_info.get('ContainersPaused', 0),
+                    "containers_stopped": system_info.get('ContainersStopped', 0),
+                    "images": system_info.get('Images', 0),
+                    "server_version": system_info.get('ServerVersion'),
+                    "total_memory": system_info.get('MemTotal', 0),
+                    "cpu_count": system_info.get('NCPU', 0)
+                },
+                "running_containers": len(running_containers),
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _validate_configuration(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate deployment configuration before execution"""
+        try:
+            validation_results = {
+                "valid": True,
+                "errors": [],
+                "warnings": []
+            }
+            
+            # Validate required fields
+            if not config.get('image'):
+                validation_results['errors'].append("Missing required 'image' field")
+                validation_results['valid'] = False
+            
+            # Validate port mappings
+            ports = config.get('ports', {})
+            if ports and not isinstance(ports, dict):
+                validation_results['errors'].append("Ports must be a dictionary")
+                validation_results['valid'] = False
+            
+            # Validate environment variables
+            environment = config.get('environment', {})
+            if environment and not isinstance(environment, dict):
+                validation_results['errors'].append("Environment must be a dictionary")
+                validation_results['valid'] = False
+            
+            # Check if image exists (warning, not error)
+            if config.get('image'):
+                try:
+                    self.client.images.get(config['image'])
+                except docker.errors.ImageNotFound:
+                    validation_results['warnings'].append(f"Image '{config['image']}' not found locally - will attempt to pull")
+            
+            return {
+                "success": True,
+                "validation": validation_results,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    async def _diagnose_container_issues(self, container_id: str) -> Dict[str, Any]:
+        """Diagnose and analyze container problems"""
+        try:
+            container = self.client.containers.get(container_id)
+            
+            # Gather diagnostic information
+            diagnostics = {
+                "container_info": {
+                    "id": container.id,
+                    "name": container.name,
+                    "status": container.status,
+                    "created": container.attrs.get('Created'),
+                    "started": container.attrs.get('State', {}).get('StartedAt'),
+                    "finished": container.attrs.get('State', {}).get('FinishedAt')
+                },
+                "state": container.attrs.get('State', {}),
+                "recent_logs": container.logs(tail=50).decode('utf-8', errors='ignore'),
+                "resource_usage": None,
+                "network_info": container.attrs.get('NetworkSettings', {}),
+                "mount_info": container.attrs.get('Mounts', []),
+                "recommendations": []
+            }
+            
+            # Get resource usage if running
+            if container.status == 'running':
+                try:
+                    stats = container.stats(stream=False)
+                    diagnostics['resource_usage'] = stats
+                except:
+                    diagnostics['recommendations'].append("Could not retrieve resource usage statistics")
+            
+            # Add recommendations based on status
+            if container.status == 'exited':
+                exit_code = container.attrs.get('State', {}).get('ExitCode', 0)
+                if exit_code != 0:
+                    diagnostics['recommendations'].append(f"Container exited with code {exit_code} - check logs for errors")
+            
+            if not diagnostics['recent_logs'].strip():
+                diagnostics['recommendations'].append("No recent logs available - container may have startup issues")
+            
+            return {
+                "success": True,
+                "container_id": container_id,
+                "diagnostics": diagnostics,
+                "timestamp": datetime.now().isoformat()
+            }
+        except docker.errors.NotFound:
+            return {"success": False, "error": f"Container {container_id} not found"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
 async def main():
     """Main entry point for the Docker Orchestration MCP Server"""
