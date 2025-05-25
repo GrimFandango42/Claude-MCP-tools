@@ -55,12 +55,12 @@ RUN apt-get update && apt-get install -y \
 # Install Python packages for Computer Use
 RUN pip3 install --no-cache-dir \
     pyautogui \
-    pillow \
+    pillow>=10.2.0 \
     python-xlib \
     pynput \
     opencv-python \
     numpy \
-    requests \
+    requests>=2.32.0 \
     websocket-client \
     fastmcp
 
