@@ -1,7 +1,7 @@
 # Core dependencies
 fastapi==0.95.1
 uvicorn==0.22.0
-pydantic==1.10.7
+pydantic>=2.5.3
 requests==2.31.0
 python-dotenv==1.0.0
 pywin32==306; sys_platform == 'win32'
@@ -11,7 +11,7 @@ anthropic==0.5.0
 
 # Computer control
 pyautogui==0.9.54
-pillow==10.0.0
+pillow>=10.2.0
 keyboard==0.13.5
 mouse==0.7.1
 pynput==1.7.6
