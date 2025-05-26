@@ -1,0 +1,32 @@
+# API Gateway MCP Server Dependencies
+# Core MCP Framework
+mcp>=1.0.0
+
+# API Clients
+openai>=1.40.0
+anthropic>=0.35.0
+google-cloud-aiplatform>=1.60.0
+boto3>=1.35.0
+
+# HTTP and Async Support
+aiohttp>=3.9.0
+httpx>=0.25.0
+asyncio-throttle>=1.0.2
+
+# Caching and Storage
+redis>=5.0.0
+diskcache>=5.6.0
+
+# Security and Authentication
+cryptography>=41.0.0
+keyring>=24.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+structlog>=23.0.0
+tenacity>=8.2.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0

@@ -1,0 +1,62 @@
+{
+  "providers": {
+    "openai": {
+      "enabled": true,
+      "api_key": "",
+      "base_url": "https://api.openai.com/v1",
+      "rate_limits": {
+        "per_minute": 500,
+        "per_hour": 10000,
+        "per_day": 200000
+      },
+      "timeout_seconds": 30,
+      "retry_attempts": 3
+    },
+    "anthropic": {
+      "enabled": true,
+      "api_key": "",
+      "base_url": "https://api.anthropic.com",
+      "rate_limits": {
+        "per_minute": 200,
+        "per_hour": 4000,
+        "per_day": 100000
+      },
+      "timeout_seconds": 30,
+      "retry_attempts": 3
+    }
+  },
+  "cache": {
+    "type": "memory",
+    "max_size": 2000,
+    "redis_url": "redis://localhost:6379",
+    "default_ttl_seconds": 1800,
+    "ttl_by_endpoint": {
+      "embeddings": 86400,
+      "chat/completions": 300,
+      "images/generations": 7200,
+      "models": 21600
+    }
+  },
+  "routing": {
+    "default_provider": "openai",
+    "smart_routing": true,
+    "fallback_enabled": true,
+    "cost_optimization": true
+  },
+  "monitoring": {
+    "detailed_logging": true,
+    "cost_tracking": true,
+    "performance_metrics": true,
+    "alert_thresholds": {
+      "error_rate_percent": 10,
+      "response_time_ms": 5000,
+      "hourly_cost_usd": 10.0
+    }
+  },
+  "security": {
+    "encrypt_api_keys": false,
+    "rate_limit_enforcement": true,
+    "request_validation": true,
+    "cors_enabled": false
+  }
+}
