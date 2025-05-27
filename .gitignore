@@ -18,3 +18,5 @@ screenshots/
 updated_config.json
 updated_config_fixed.json
 updated_reliable_config.json
+
+servers/windows-computer-use/get-pip.py
