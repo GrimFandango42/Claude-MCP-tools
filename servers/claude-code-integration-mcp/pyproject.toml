@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-code-integration-mcp"
+version = "1.0.0"
+description = "Enhanced Claude Code Integration MCP Server with session management and SDK compliance"
+authors = [
+    {name = "Claude", email = "claude@anthropic.com"}
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "anthropic>=0.25.0"
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.scripts]
+claude-code-integration-mcp = "claude_code_integration:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+strict = true

@@ -1,0 +1,15 @@
+{
+  "claude-code-integration-mcp": {
+    "command": "python.exe",
+    "args": [
+      "-m", 
+      "claude_code_integration"
+    ],
+    "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\claude-code-integration-mcp",
+    "env": {
+      "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\claude-code-integration-mcp\\src",
+      "ANTHROPIC_API_KEY": "YOUR_API_KEY_HERE",
+      "CLAUDE_CODE_USE_MOCK": "true"
+    }
+  }
+}
