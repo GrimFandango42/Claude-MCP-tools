@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "claude-code-integration": {
+      "command": "python",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\claude-code-integration-mcp\\enhanced_server.py"
+      ],
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\claude-code-integration-mcp",
+        "PATH": "/home/nithin/.nvm/versions/node/v24.1.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      }
+    }
+  }
+}

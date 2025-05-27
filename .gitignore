@@ -20,3 +20,12 @@ updated_config_fixed.json
 updated_reliable_config.json
 
 servers/windows-computer-use/get-pip.py
+
+# Dashboards
+mcp-dashboard/
+
+# Temporary or backup files
+servers/windows-computer-use/get-pip.py.1
+
+# Python virtual environments
+servers/windows-computer-use/claude_env/
