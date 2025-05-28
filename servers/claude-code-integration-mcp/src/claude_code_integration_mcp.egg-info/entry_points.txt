@@ -1,0 +1,2 @@
+[console_scripts]
+claude-code-integration-mcp = claude_code_integration:main

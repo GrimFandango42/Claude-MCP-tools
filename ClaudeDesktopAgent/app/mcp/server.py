@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import tools
-from app.mcp.tools import ScreenshotTool, AnalyzeScreenshotTool
+from app.mcp.tools import ScreenshotTool, AnalyzeScreenshotTool, ExecuteShellCommandTool
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +36,7 @@ mcp_app.add_middleware(
 
 # Initialize tools
 screenshot_tool = ScreenshotTool()
+execute_shell_command_tool = ExecuteShellCommandTool() # New tool
 
 # Get Anthropic API key from environment variables
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
@@ -51,7 +52,8 @@ else:
 
 # Register all tools
 tools = {
-    "screenshot": screenshot_tool
+    "screenshot": screenshot_tool,
+    "execute_shell_command": execute_shell_command_tool # New tool registered
 }
 
 # Add analyze_screenshot_tool if available
@@ -82,7 +84,7 @@ async def mcp_websocket_endpoint(websocket: WebSocket):
                     "id": message_id,
                     "result": {
                         "capabilities": {
-                            "tools": {}
+                            "tools": {} # Standard capabilities, tools are listed via tools/list
                         },
                         "serverInfo": {
                             "name": "Claude Desktop Custom MCP Server",
@@ -92,49 +94,10 @@ async def mcp_websocket_endpoint(websocket: WebSocket):
                 }))
             
             elif method == "tools/list":
-                # List available tools
+                # List available tools by fetching their schemas
                 tool_list = []
-                
-                # Add screenshot tool
-                tool_list.append({
-                    "name": "screenshot",
-                    "description": "Capture a screenshot of the screen",
-                    "inputSchema": {
-                        "type": "object",
-                        "properties": {
-                            "full_screen": {
-                                "type": "boolean",
-                                "description": "Whether to capture the full screen or a specific region"
-                            },
-                            "region": {
-                                "type": "array",
-                                "items": {"type": "integer"},
-                                "description": "Region to capture [x, y, width, height]"
-                            }
-                        }
-                    }
-                })
-                
-                # Add analyze_screenshot tool if available
-                if analyze_screenshot_tool:
-                    tool_list.append({
-                        "name": "analyze_screenshot",
-                        "description": "Analyze a screenshot using Claude Vision API",
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "image_path": {
-                                    "type": "string",
-                                    "description": "Path to the image file to analyze"
-                                },
-                                "prompt": {
-                                    "type": "string",
-                                    "description": "Prompt to send to Claude Vision API"
-                                }
-                            },
-                            "required": ["image_path"]
-                        }
-                    })
+                for tool_instance in tools.values():
+                    tool_list.append(tool_instance.get_schema()) # Using get_schema() from BaseTool
                 
                 await websocket.send_text(json.dumps({
                     "jsonrpc": "2.0",
@@ -165,56 +128,67 @@ async def mcp_websocket_endpoint(websocket: WebSocket):
                 
                 try:
                     tool = tools[tool_name]
-                    result = await tool.execute(**arguments)
+                    result_data = await tool.execute(**arguments) # result_data is the direct output from tool.execute
                     
-                    # Convert result to MCP response format
+                    # Construct the MCP result content.
+                    # For execute_shell_command, the result_data is already the dictionary we want to send.
+                    # For others, it might need specific formatting.
+                    
+                    content_items = []
                     if tool_name == "screenshot":
-                        # Return image content
-                        await websocket.send_text(json.dumps({
-                            "jsonrpc": "2.0",
-                            "id": message_id,
-                            "result": {
-                                "content": [
-                                    {
-                                        "type": "image",
-                                        "url": f"file://{result['file_path']}",
-                                        "mime_type": "image/png"
-                                    },
-                                    {
-                                        "type": "text",
-                                        "text": f"Screenshot captured at {result['timestamp']}. Dimensions: {result['width']}x{result['height']}"
-                                    }
-                                ]
+                        content_items = [
+                            {
+                                "type": "image",
+                                "url": f"file://{result_data['file_path']}", # Assuming file_path is in result_data
+                                "mime_type": "image/png"
+                            },
+                            {
+                                "type": "text",
+                                "text": f"Screenshot captured at {result_data['timestamp']}. Dimensions: {result_data['width']}x{result_data['height']}"
                             }
-                        }))
+                        ]
                     elif tool_name == "analyze_screenshot":
-                        # Return text content
-                        await websocket.send_text(json.dumps({
+                         content_items = [
+                            {
+                                "type": "text",
+                                "text": result_data.get('description', 'Analysis complete.') # Use .get for safety
+                            }
+                        ]
+                    elif tool_name == "execute_shell_command":
+                        # The result_data from ExecuteShellCommandTool is already the desired JSON object
+                        # We can wrap it in a text block or send as structured data if MCP spec allows
+                        # For simplicity, sending stdout and stderr as text, and success/return_code as part of a structured message.
+                        # The prompt asks for the tool's return to be the direct dictionary.
+                        # MCP's "result" field can be any JSON value. So we can directly pass it.
+                        # However, the example responses for other tools wrap results in a "content" list.
+                        # Let's be consistent if possible, or just return the raw dict if that's simpler.
+                        # The prompt's return schema for the tool itself IS the dict.
+                        # The MCP spec for "tools/call" usually expects a "result" that could be this dict.
+                        # Let's assume the result of the tool call is the direct dictionary from execute_command.
+                         await websocket.send_text(json.dumps({
                             "jsonrpc": "2.0",
                             "id": message_id,
-                            "result": {
-                                "content": [
-                                    {
-                                        "type": "text",
-                                        "text": result['analysis']
-                                    }
-                                ]
-                            }
+                            "result": result_data # Directly sending the tool's output dict
                         }))
+                         continue # Skip generic response packaging
                     else:
-                        # Generic response
-                        await websocket.send_text(json.dumps({
-                            "jsonrpc": "2.0",
-                            "id": message_id,
-                            "result": {
-                                "content": [
-                                    {
-                                        "type": "text",
-                                        "text": str(result)
-                                    }
-                                ]
+                        # Generic response for other tools if any
+                        content_items = [
+                            {
+                                "type": "text",
+                                "text": str(result_data)
                             }
-                        }))
+                        ]
+
+                    # If not execute_shell_command (which has its own send_text above)
+                    await websocket.send_text(json.dumps({
+                        "jsonrpc": "2.0",
+                        "id": message_id,
+                        "result": {
+                            "content": content_items
+                        }
+                    }))
+
                 except Exception as e:
                     logger.error(f"Error executing tool {tool_name}: {str(e)}", exc_info=True)
                     await websocket.send_text(json.dumps({
@@ -254,5 +228,5 @@ async def server_info() -> Dict[str, Any]:
     return {
         "name": "Claude Desktop Custom MCP Server",
         "version": "1.0.0",
-        "description": "Custom MCP server for Claude Desktop with screenshot capabilities"
+        "description": "Custom MCP server for Claude Desktop with screenshot and shell command capabilities"
     }

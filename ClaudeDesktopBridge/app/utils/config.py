@@ -1,5 +1,5 @@
 import os
-from pydantic import BaseSettings
+from pydantic import BaseSettings # type: ignore
 from typing import List, Dict, Any, Optional
 
 class Settings(BaseSettings):
@@ -25,7 +25,10 @@ class Settings(BaseSettings):
     ALLOWED_COMMANDS: List[str] = [
         "dir", "ls", "echo", "type", "cat", "find", "grep", "ping", 
         "ipconfig", "ifconfig", "systeminfo", "tasklist", "ps", "whoami",
-        "python", "pip", "npm", "node", "powershell"
+        "python", "pip", "npm", "node", "powershell",
+        # New commands added as per subtask
+        "gcloud", "kubectl", "git", "code", "pwd" 
+        # Note: "ls" and "echo" were already present, "code" added.
     ]
     
     ALLOWED_APPS: List[str] = [

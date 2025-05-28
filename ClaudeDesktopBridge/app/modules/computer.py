@@ -1,4 +1,3 @@
-import pyautogui
 import base64
 import io
 from PIL import Image
@@ -14,9 +13,17 @@ from app.utils.config import settings
 # Setup logger
 logger = setup_logger(__name__)
 
-# Configure PyAutoGUI
-pyautogui.FAILSAFE = True  # Move mouse to upper-left corner to abort
-pyautogui.PAUSE = 0.1  # Add small pause between PyAutoGUI commands
+# PyAutoGUI availability flag and import
+PYAUTOGUI_AVAILABLE = True
+try:
+    import pyautogui
+    # Configure PyAutoGUI defaults if successfully imported
+    pyautogui.FAILSAFE = True
+    pyautogui.PAUSE = 0.1 
+except (ImportError, ModuleNotFoundError, OSError) as e:
+    PYAUTOGUI_AVAILABLE = False
+    # Assuming logger might not be fully set up if this is a top-level import issue during startup
+    print(f"WARNING: PyAutoGUI import failed: {e}. GUI automation will be unavailable.")
 
 class ComputerModule:
     def __init__(self):
@@ -31,6 +38,8 @@ class ComputerModule:
     
     def capture_screenshot(self, full_screen: bool = True, region: Optional[Tuple[int, int, int, int]] = None) -> Dict[str, Any]:
         """Capture a screenshot of the desktop or a specific region"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Capture screenshot
             if full_screen:
@@ -61,7 +70,8 @@ class ComputerModule:
                 "image_data": img_str,
                 "width": width,
                 "height": height,
-                "timestamp": timestamp
+                "timestamp": timestamp,
+                "file_path": filepath # Added file_path to return as it's useful
             }
         except Exception as e:
             logger.error(f"Error capturing screenshot: {str(e)}", exc_info=True)
@@ -69,6 +79,7 @@ class ComputerModule:
     
     async def analyze_screenshot(self, image_data: str, background_tasks: Optional[BackgroundTasks] = None) -> Dict[str, Any]:
         """Analyze a screenshot using Claude Vision API"""
+        # This method does not directly use pyautogui, so no PYAUTOGUI_AVAILABLE check needed here.
         if not self.anthropic_api_key:
             logger.error("ANTHROPIC_API_KEY not found in environment variables")
             raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
@@ -119,7 +130,7 @@ class ComputerModule:
             
             return {
                 "description": description,
-                "image_data": image_data,
+                "image_data": image_data, # Returning input image_data for context if needed
                 "confidence": confidence
             }
         except Exception as e:
@@ -128,6 +139,8 @@ class ComputerModule:
     
     def click(self, x: int, y: int, button: Literal["left", "right", "middle"] = "left", clicks: int = 1) -> None:
         """Perform a mouse click at the specified coordinates"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Move mouse to position
             pyautogui.moveTo(x, y)
@@ -145,11 +158,13 @@ class ComputerModule:
             logger.error(f"Error clicking at ({x}, {y}): {str(e)}", exc_info=True)
             raise
     
-    def type_text(self, text: str, interval: Optional[float] = None) -> None:
+    def type_text(self, text: str, interval: Optional[float] = 0.0) -> None: # Default interval to 0.0 as per pyautogui docs
         """Type text at the current cursor position"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Type text
-            pyautogui.typewrite(text, interval=interval)
+            pyautogui.typewrite(text, interval=interval) # interval was Optional[float] = None, pyautogui default is 0.0
             
             logger.info(f"Typed text: {text[:20]}..." if len(text) > 20 else f"Typed text: {text}")
         except Exception as e:
@@ -158,9 +173,11 @@ class ComputerModule:
     
     def key_press(self, key: str, press_duration: Optional[float] = None) -> None:
         """Press a specific key"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Press key
-            if press_duration is not None:
+            if press_duration is not None and press_duration > 0: # Ensure duration is positive if provided
                 pyautogui.keyDown(key)
                 time.sleep(press_duration)
                 pyautogui.keyUp(key)
@@ -172,11 +189,13 @@ class ComputerModule:
             logger.error(f"Error pressing key: {str(e)}", exc_info=True)
             raise
     
-    def mouse_move(self, x: int, y: int, duration: Optional[float] = None) -> None:
+    def mouse_move(self, x: int, y: int, duration: Optional[float] = 0.0) -> None: # Default duration to 0.0 as per pyautogui docs
         """Move the mouse to the specified coordinates"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Move mouse
-            pyautogui.moveTo(x, y, duration=duration)
+            pyautogui.moveTo(x, y, duration=duration) # duration was Optional[float] = None, pyautogui default is 0.0
             
             logger.info(f"Moved mouse to ({x}, {y})")
         except Exception as e:
@@ -185,6 +204,8 @@ class ComputerModule:
     
     def scroll(self, amount: int, x: Optional[int] = None, y: Optional[int] = None) -> None:
         """Scroll the mouse wheel"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Move mouse to position if specified
             if x is not None and y is not None:
@@ -200,21 +221,19 @@ class ComputerModule:
     
     def drag(self, start_x: int, start_y: int, end_x: int, end_y: int, 
              button: Literal["left", "right", "middle"] = "left", 
-             duration: Optional[float] = None) -> None:
+             duration: Optional[float] = 0.0) -> None: # Default duration to 0.0 as per pyautogui docs
         """Perform a drag operation from one point to another"""
+        if not PYAUTOGUI_AVAILABLE:
+            raise RuntimeError("PyAutoGUI is not available due to import errors.")
         try:
             # Move to start position
             pyautogui.moveTo(start_x, start_y)
             
             # Perform drag
-            if button == "left":
-                pyautogui.dragTo(end_x, end_y, duration=duration, button='left')
-            elif button == "right":
-                pyautogui.dragTo(end_x, end_y, duration=duration, button='right')
-            elif button == "middle":
-                pyautogui.dragTo(end_x, end_y, duration=duration, button='middle')
+            # pyautogui.dragTo uses button parameter directly
+            pyautogui.dragTo(end_x, end_y, duration=duration, button=button)
             
-            logger.info(f"Dragged from ({start_x}, {start_y}) to ({end_x}, {end_y})")
+            logger.info(f"Dragged from ({start_x}, {start_y}) to ({end_x}, {end_y}) using {button} button")
         except Exception as e:
             logger.error(f"Error dragging: {str(e)}", exc_info=True)
             raise
