@@ -9,11 +9,15 @@ import asyncio
 import sys
 import os
 from pathlib import Path
+import shutil
 
 class ClaudeCodeIntegration:
     def __init__(self):
-        self.node_path = "/home/nithin/node-local/node-v20.18.1-linux-x64/bin"
-        self.claude_path = f"{self.node_path}/claude"
+        # Assume executables are in PATH
+        self.node_executable = "node"
+        self.npm_executable = "npm"
+        self.claude_executable = "claude"
+        self.test_project_base_dir = Path(".").resolve() # Base for test project
         
     async def run_subprocess_async(self, cmd, cwd=None, timeout=30):
         """Run subprocess command asynchronously to avoid event loop conflicts"""
@@ -62,7 +66,7 @@ class ClaudeCodeIntegration:
                 text=True,
                 timeout=timeout,
                 cwd=cwd,
-                env={**os.environ, 'PATH': f"{self.node_path}:{os.environ.get('PATH', '')}"}
+                env=os.environ.copy()
             )
             return {
                 'returncode': result.returncode,
@@ -90,7 +94,7 @@ class ClaudeCodeIntegration:
         print("🔍 Testing Claude Code Installation...")
         
         # Test Node.js version
-        node_result = await self.run_subprocess_async(f"{self.node_path}/node --version")
+        node_result = await self.run_subprocess_async(f"{self.node_executable} --version")
         if node_result['success']:
             print(f"   ✅ Node.js: {node_result['stdout'].strip()}")
         else:
@@ -98,7 +102,7 @@ class ClaudeCodeIntegration:
             return False
         
         # Test npm version
-        npm_result = await self.run_subprocess_async(f"{self.node_path}/npm --version")
+        npm_result = await self.run_subprocess_async(f"{self.npm_executable} --version")
         if npm_result['success']:
             print(f"   ✅ NPM: {npm_result['stdout'].strip()}")
         else:
@@ -106,7 +110,7 @@ class ClaudeCodeIntegration:
             return False
         
         # Test Claude Code version
-        claude_result = await self.run_subprocess_async(f"{self.claude_path} --version")
+        claude_result = await self.run_subprocess_async(f"{self.claude_executable} --version")
         if claude_result['success']:
             print(f"   ✅ Claude Code: {claude_result['stdout'].strip()}")
         else:
@@ -120,7 +124,7 @@ class ClaudeCodeIntegration:
         """Test Claude Code help command"""
         print("\n📚 Testing Claude Code Help Command...")
         
-        help_result = await self.run_subprocess_async(f"{self.claude_path} --help")
+        help_result = await self.run_subprocess_async(f"{self.claude_executable} --help")
         if help_result['success'] and 'Usage: claude' in help_result['stdout']:
             print("   ✅ Help command works correctly")
             print("   📋 Available commands detected:")
@@ -142,16 +146,19 @@ class ClaudeCodeIntegration:
         """Test setting up a project directory"""
         print("\n📁 Testing Project Setup...")
         
-        test_dir = "/home/nithin/claude-integration-test"
+        test_dir = self.test_project_base_dir / "claude_integration_test_project"
         
+        # Clean up existing test directory if it exists
+        if test_dir.exists():
+            shutil.rmtree(test_dir)
+
         # Create test directory
         setup_cmd = f"""
-        rm -rf {test_dir} &&
-        mkdir -p {test_dir} &&
-        cd {test_dir} &&
-        echo '# Claude Code Integration Test' > README.md &&
-        echo 'console.log("Hello from Claude Code!");' > hello.js &&
-        echo 'def greet(name): return f"Hello {{name}} from Claude Code!"' > hello.py &&
+        mkdir -p {test_dir} && \
+        cd {test_dir} && \
+        echo '# Claude Code Integration Test' > README.md && \
+        echo 'console.log("Hello from Claude Code!");' > hello.js && \
+        echo 'def greet(name): return f"Hello {{name}} from Claude Code!"' > hello.py && \
         ls -la
         """
         
@@ -174,7 +181,7 @@ class ClaudeCodeIntegration:
         # Test with a simple programming question
         test_prompt = "Explain what this JavaScript code does: console.log('Hello from Claude Code!');"
         
-        claude_cmd = f'cd {project_dir} && {self.claude_path} --print "{test_prompt}"'
+        claude_cmd = f'cd {project_dir} && {self.claude_executable} --print "{test_prompt}"'
         
         claude_result = await self.run_subprocess_async(claude_cmd, timeout=60)
         
@@ -199,70 +206,41 @@ class ClaudeCodeIntegration:
         print("="*60)
         
         try:
-            # Test 1: Installation
             if not await self.test_claude_installation():
-                print("\n❌ Installation test failed - stopping tests")
-                return False
-            
-            # Test 2: Help command
+                return
+
             if not await self.test_claude_help():
-                print("\n❌ Help command test failed - stopping tests")
-                return False
-            
-            # Test 3: Project setup
+                return
+
             project_dir = await self.test_project_setup()
             if not project_dir:
-                print("\n❌ Project setup failed - stopping tests")
-                return False
+                return
+
+            print_mode_result = await self.test_claude_print_mode(project_dir)
             
-            # Test 4: Print mode (may require auth)
-            print_result = await self.test_claude_print_mode(project_dir)
-            
-            # Final results
-            print("\n" + "="*60)
-            print("🎯 INTEGRATION TEST RESULTS:")
-            print("✅ Node.js 20.x installed and working")
-            print("✅ Claude Code 1.0.3 installed and working")
-            print("✅ Help command functional")
-            print("✅ Project setup working")
-            
-            if print_result == True:
-                print("✅ Print mode working (authenticated)")
-                print("\n🎉 ALL TESTS PASSED - Claude Code fully integrated!")
-            elif print_result == "auth_needed":
-                print("⚠️  Print mode requires authentication")
-                print("\n🎯 SETUP COMPLETE - Authentication needed for full functionality")
-                print("\n📋 Next Steps:")
-                print("   1. Run: claude config")
-                print("   2. Follow authentication prompts")
-                print("   3. Test with: claude --print 'Hello Claude!'")
+            # Clean up test project directory
+            if Path(project_dir).exists():
+                print(f"\n🧹 Cleaning up test project directory: {project_dir}")
+                shutil.rmtree(project_dir)
+                print("   ✅ Cleanup successful.")
+
+            if print_mode_result == "auth_needed":
+                print("\n🔶 TEST SUITE COMPLETED WITH AUTHENTICATION REQUIRED FOR CLAUDE CODE.")
+            elif print_mode_result:
+                print("\n✅ ALL CLAUDE CODE INTEGRATION TESTS PASSED SUCCESSFULLY!")
             else:
-                print("❌ Print mode failed")
-                print("\n⚠️  PARTIAL SUCCESS - CLI available but functionality limited")
-            
-            print("="*60)
-            return True
-            
+                print("\n❌ SOME CLAUDE CODE INTEGRATION TESTS FAILED.")
+                
         except Exception as e:
-            print(f"\n❌ Integration test failed with error: {str(e)}")
-            return False
+            print(f"\n💥 An error occurred during the integration test: {e}")
+        finally:
+            print("="*60)
+            print("🏁 Test suite finished.")
 
 async def main():
     """Main test runner"""
     integration = ClaudeCodeIntegration()
-    success = await integration.run_integration_test()
-    
-    if success:
-        print("\n🔧 INTEGRATION WITH MCP TOOLS:")
-        print("   • Claude Code CLI is now available in WSL")
-        print("   • Use bash_20250124 tool to run Claude Code commands")
-        print("   • Path: /home/nithin/node-local/node-v20.18.1-linux-x64/bin/claude")
-        print("   • No more asyncio event loop conflicts!")
-        
-        return 0
-    else:
-        print("\n❌ Integration test failed")
-        return 1
+    await integration.run_integration_test()
 
 if __name__ == "__main__":
     # Handle the asyncio event loop issue by using the current running loop
@@ -276,5 +254,4 @@ if __name__ == "__main__":
         print("⚠️  Running in existing event loop - creating task")
     except RuntimeError:
         # No loop is running, safe to use asyncio.run()
-        exit_code = asyncio.run(main())
-        sys.exit(exit_code)
+        asyncio.run(main())

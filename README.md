@@ -103,45 +103,44 @@ This ecosystem also integrates the following operational servers:
 - **`mcp-pandoc`**: Document format conversion and content transformation.
 - **`fantasy-pl`**: Sports analytics for Fantasy Premier League management.
 
-## ⚡ Quick Start
+## 🛠️ Claude Code CLI Utilities
 
-### Prerequisites
+This project includes utilities to interact with and test the **Claude Code CLI**, a separate command-line tool from Anthropic. These utilities are located in the `claude-code-integration-mcp/` directory.
 
-- Python 3.10+ and Node.js 18+
-- Docker Desktop (for containerized servers like `containerized-computer-use` and `docker-orchestration-mcp`)
+**Important:** These are *not* MCP servers that Claude Desktop connects to directly. They are helper scripts for developers working with the Claude Code CLI.
 
-### Installation
+### 1. Claude Code Wrapper (`claude_code_wrapper.py`)
 
-1. **Clone the repository**:
+- **Purpose**: Provides a Python wrapper to execute Claude Code CLI tasks. It's designed to mitigate `asyncio` event loop conflicts that can occur when calling the CLI from other asynchronous Python applications.
+- **Functionality**:
+  - Automatically attempts to locate the `claude-code` executable in common installation paths.
+  - Executes CLI commands synchronously using `subprocess.run`.
+  - Can be used as a Python module or directly from the command line.
+- **Usage (Command Line)**:
 
-    ```bash
-    git clone https://github.com/your-username/Claude-MCP-tools.git
-    cd Claude-MCP-tools
-    ```
+  ```bash
+  python claude-code-integration-mcp/claude_code_wrapper.py "<task_description>" [optional_project_path]
+  ```
 
-2. **Set up individual servers**: Navigate to each server's directory in `servers/` and follow the specific README instructions for dependency installation (e.g., `pip install -r requirements.txt` for Python, `npm install` for Node.js).
+- **Prerequisites**: Requires the Claude Code CLI to be installed and accessible in the system's PATH or one of the searched locations.
 
-3. **Configure Claude Desktop**: Add server configurations to your `claude_desktop_config.json`. Refer to the example file in the root and individual server READMEs for specific command and argument details. An example entry:
+### 2. Claude Code Integration Test (`claude_code_integration_test.py`)
 
-    ```json
-    {
-      "name": "filesystem",
-      "command": "python",
-      "args": [
-        "-m",
-        "mcp.server.main",
-        "--module",
-        "servers.filesystem.filesystem_server"
-      ],
-      "working_directory": "C:/AI_Projects/Claude-MCP-tools",
-      "keepAlive": true,
-      "stderrToConsole": true
-    }
-    ```
+- **Purpose**: A Python-based test suite to verify the installation and basic functionality of the Claude Code CLI.
+- **Functionality**:
+  - Checks for Node.js, NPM, and Claude Code CLI installations and their versions (assumes they are in the system PATH).
+  - Tests basic CLI commands like `claude --help`.
+  - Sets up a temporary test project and attempts to run a simple task using `claude --print`.
+  - Cleans up the test project directory after execution.
+- **Usage**:
 
-Restart Claude Desktop after any configuration changes. Refer to individual server READMEs or `PROJECT_MEMORY_COMPREHENSIVE.md` for specific configuration patterns.
+  ```bash
+  python claude-code-integration-mcp/claude_code_integration_test.py
+  ```
 
-## 🎯 Key Capabilities
+- **Prerequisites**: Requires the Claude Code CLI to be installed, configured (including authentication if needed), and accessible in the system's PATH.
+
+## 🚀 Key Capabilities
 
 This MCP server ecosystem unlocks a wide range of capabilities:
 
