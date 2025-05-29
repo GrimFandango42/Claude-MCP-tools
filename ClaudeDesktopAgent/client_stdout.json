@@ -1,0 +1,1 @@
+{"initialize_response": {"jsonrpc": "2.0", "id": "client-init-4", "result": {"capabilities": {"tools": {}}, "serverInfo": {"name": "Claude Desktop Custom MCP Server", "version": "1.0.0"}}}, "code_open_response": {"jsonrpc": "2.0", "id": "test-code-open", "result": {"success": false, "stdout": "", "stderr": "/bin/sh: 1: code: not found", "return_code": 127}}}
