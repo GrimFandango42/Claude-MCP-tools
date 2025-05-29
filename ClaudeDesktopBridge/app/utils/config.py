@@ -1,5 +1,6 @@
 import os
-from pydantic import BaseSettings # type: ignore
+# from pydantic import BaseSettings # Old import
+from pydantic_settings import BaseSettings # New import for Pydantic v2 compatibility
 from typing import List, Dict, Any, Optional
 
 class Settings(BaseSettings):
@@ -19,16 +20,14 @@ class Settings(BaseSettings):
     ANTHROPIC_API_URL: str = "https://api.anthropic.com/v1/messages"
     
     # File Storage Settings
-    SCREENSHOTS_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'screenshots')
+    SCREENSHOTS_DIR: str = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'screenshots') # Used abspath for robustness
     
     # Security Allowlists
     ALLOWED_COMMANDS: List[str] = [
         "dir", "ls", "echo", "type", "cat", "find", "grep", "ping", 
         "ipconfig", "ifconfig", "systeminfo", "tasklist", "ps", "whoami",
         "python", "pip", "npm", "node", "powershell",
-        # New commands added as per subtask
         "gcloud", "kubectl", "git", "code", "pwd" 
-        # Note: "ls" and "echo" were already present, "code" added.
     ]
     
     ALLOWED_APPS: List[str] = [
@@ -38,6 +37,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = ".env"
+        env_file_encoding = 'utf-8' # Added for robustness
 
 # Create settings instance
 settings = Settings()
