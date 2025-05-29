@@ -15,12 +15,128 @@ This project provides a robust ecosystem of **18 operational MCP servers**, enab
 - ✅ **9 Custom Production Servers**: Developed specifically for this project.
 - ✅ **9 Third-party & Official Servers**: Integrated and configured for use.
 
+## 🚀 Quick Start & Claude Desktop Setup Guide
+
+### Essential Setup Principles
+
+For optimal Claude Desktop performance with MCP servers, follow these strategic guidelines:
+
+#### **Tool Selection Priority Framework**
+1. **Context First**: Always check existing knowledge and project state before starting major tasks
+2. **Simplest Effective Tool**: Choose the most direct tool for each task
+3. **Avoid Redundancy**: Don't use multiple tools for the same information
+4. **Validate Availability**: Verify tools are active before attempting to use them
+
+#### **Critical Tool Categories & Decision Logic**
+
+**Computer Control**
+- Use `computer_20250124` for all screen interactions (screenshots, clicks, typing)
+- Always take screenshot first to understand current state
+- Pattern: screenshot → analyze → action → verify
+
+**File Operations Hierarchy**
+- `read_file`/`write_file`: Direct single-file operations
+- `text_editor_20250429`: Multi-line editing with find/replace
+- `list_directory`/`search_files`: File system exploration
+- `filesystem MCP`: Complex file operations across multiple directories
+
+**Repository Operations**
+- **Local Repository Sync**: Use bash/git commands (`fetch`, `pull`, `stash`, `merge`)
+- **GitHub API Operations**: Use GitHub MCP tools for remote repository inspection/modification
+- **Key Distinction**: Local filesystem operations require bash; remote GitHub operations use API tools
+
+**MCP Server Management Pattern**
+- Check notes → analyze current MCP setup → filesystem operations → configuration update → document progress
+- For MCP server deployment: Use filesystem tools for config management, bash for dependency/server operations
+- Always backup existing configurations before modifications (`claude_desktop_config.json`)
+- Document server setup progress with specific tags (mcp-server, setup-progress)
+
+**Configuration Management Best Practices**
+1. **Backup First**: Always create timestamped backups before modifications
+2. **Direct File Operations**: Use filesystem tools for Claude Desktop config updates
+3. **Validation**: Read back configurations to confirm changes
+4. **Documentation**: Note configuration locations, changes made, and restart requirements
+
+#### **Project State Persistence Pattern**
+- **Major Milestones**: Create notes with descriptive tags and current status
+- **Configuration Changes**: Always document what was changed, backed up, and next steps
+- **Setup Progress**: Track dependencies, server status, configuration states
+- **Recovery Information**: Include paths, commands, and rollback procedures
+
+#### **Efficiency-First Decision Tree**
+1. **Direct API Calls** (Highest Efficiency - 10-100 tokens)
+   - File Tasks → filesystem MCP
+   - Database → SQLite MCP
+   - Code Editing → text_editor_20250429
+   - System Commands → bash_20250124
+   - Git Operations → GitHub MCP
+
+2. **GUI Interaction** (Moderate Efficiency - 500-2000 tokens)
+   - Visual Apps → computer_20250124 (ONLY when no API alternative)
+   - Desktop Software → computer_20250124 (when absolutely necessary)
+
+3. **Specialized Domains** (Targeted Efficiency - 100-500 tokens)
+   - Financial Data → Financial Datasets MCP
+   - Workflows → N8n MCP
+   - Containers → Docker MCP
+
+4. **Complex Reasoning** (Cost-Justified - 2000+ tokens)
+   - Multi-file Analysis → Claude Code (when simpler tools insufficient)
+   - Architecture Design → Claude Code (complex decision making)
+
+**Critical Efficiency Checks**
+Before using `computer_20250124`, ask:
+- Can I use direct file operations instead? (filesystem MCP)
+- Is there a command-line equivalent? (bash_20250124)
+- Does an API exist for this task? (specialized MCPs)
+- Am I choosing visual interaction out of habit?
+
+#### **Tool Combination Patterns**
+- **Project Analysis**: search_notes → analyze_project → create_note
+- **Web Research**: web_search → web_fetch → repl (if analysis needed)
+- **Development**: search_notes → github_* → bash_20250124 → create_note
+- **Computer Automation**: computer_20250124 screenshot → action → verify screenshot
+- **MCP Server Lifecycle**: search_notes → filesystem (backup) → bash (setup) → filesystem (config) → create_note
+
+### Claude Desktop Configuration
+
+Your `claude_desktop_config.json` should be located at:
+
+**Windows**: `C:\Users\<Username>\AppData\Roaming\Claude\claude_desktop_config.json`
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+**Example Configuration Structure**:
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "C:\\AI_Projects"],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "claude-desktop-agent": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\ClaudeDesktopAgent\\simple_mcp_server_8091.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\ClaudeDesktopAgent",
+      "env": {"MCP_PORT": "8091"},
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Enhanced screenshot capture and secure shell command execution"
+    }
+  }
+}
+```
+
 ## 📁 Project Structure
 
 ```text
 Claude-MCP-tools/
 ├── .github/                    # GitHub Actions workflows and issue templates
 ├── .vscode/                    # VSCode workspace settings and launch configurations
+├── ClaudeDesktopAgent/         # ✨ NEW: Enhanced desktop agent with shell commands
+├── ClaudeDesktopBridge/        # ✨ NEW: System integration framework
 ├── examples/                   # Usage examples and test workflows for MCP servers
 │   ├── comprehensive_mcp_examples.md
 │   └── quick_server_tests.md
@@ -49,43 +165,52 @@ Claude-MCP-tools/
 
 ## 🚀 Core Custom Servers
 
-### 1. **Claude Code Integration MCP** (`claude-code-integration-mcp`) ✨ **NEW**
+### 1. **ClaudeDesktopAgent** (`ClaudeDesktopAgent`) ✨ **NEW**
+
+- **Capabilities**: Enhanced desktop agent with resilient screenshot capture and secure shell command execution
+- **Features**: 
+  - Robust error handling for GUI environments
+  - Security allowlist for shell commands (`gcloud`, `kubectl`, `git`, `code`, `pwd`, `echo`)
+  - Improved computer control resilience
+- **Integration**: Works with ClaudeDesktopBridge for comprehensive system automation
+
+### 2. **Claude Code Integration MCP** (`claude-code-integration-mcp`) ✨ **NEW**
 
 - **Capabilities**: Enables a hybrid AI development workflow by integrating Claude Desktop (strategic orchestrator) with a specialized Claude Code CLI (execution agent) for local/remote repository operations.
 - **Features**: Task delegation, monitoring, and context preservation across AI agents for software development tasks.
 
-### 2. **Windows Computer Use MCP** (`windows-computer-use`)
+### 3. **Windows Computer Use MCP** (`windows-computer-use`)
 
 - **Capabilities**: Provides native Windows desktop automation. Fully compliant with Anthropic's Computer Use API, supporting all 16 enhanced actions including advanced mouse/keyboard control, screenshot capture, and window management.
 - **Tools**: `computer_20250124`, `text_editor_20250429`, `bash_20250124` (WSL integration).
 
-### 3. **Containerized Computer Use MCP** (`containerized-computer-use`)
+### 4. **Containerized Computer Use MCP** (`containerized-computer-use`)
 
 - **Capabilities**: Offers a secure, isolated environment for desktop automation using Docker and VNC (XVFB + Fluxbox). Also Computer Use API compliant.
 - **Benefits**: Cross-platform compatibility, enhanced security for sensitive operations.
 
-### 4. **API Gateway MCP** (`api-gateway-mcp`)
+### 5. **API Gateway MCP** (`api-gateway-mcp`)
 
 - **Capabilities**: Manages access to multiple AI provider APIs (e.g., OpenAI, Anthropic) with intelligent routing, cost optimization, response caching, and usage analytics.
 - **Tools**: `call_api`, `list_providers`, `get_usage_stats`, `estimate_cost`, `manage_cache`, `gateway_status`.
 
-### 5. **Docker Orchestration MCP** (`docker-orchestration-mcp`)
+### 6. **Docker Orchestration MCP** (`docker-orchestration-mcp`)
 
 - **Capabilities**: Provides comprehensive control over Docker environments, including container lifecycle management, image operations, and network/volume configuration (19+ tools).
 
-### 6. **Financial Datasets MCP** (`financial-mcp-server`)
+### 7. **Financial Datasets MCP** (`financial-mcp-server`)
 
 - **Capabilities**: Accesses financial data via the Financial Datasets API, including company facts, stock prices, and income statements.
 
-### 7. **Knowledge Memory MCP** (`knowledge-memory-mcp`)
+### 8. **Knowledge Memory MCP** (`knowledge-memory-mcp`)
 
 - **Capabilities**: Offers persistent knowledge management with vector search, note CRUD operations, tagging, and semantic search capabilities.
 
-### 8. **N8n Workflow MCP** (`n8n-mcp-server`)
+### 9. **N8n Workflow MCP** (`n8n-mcp-server`)
 
 - **Capabilities**: Integrates with the N8n automation platform, enabling natural language generation and management of complex workflows.
 
-### 9. **Firecrawl Custom MCP** (`firecrawl-mcp-custom`)
+### 10. **Firecrawl Custom MCP** (`firecrawl-mcp-custom`)
 
 - **Capabilities**: A customized version of Firecrawl for advanced web scraping and content extraction tasks.
 
@@ -148,12 +273,14 @@ This MCP server ecosystem unlocks a wide range of capabilities:
 
 - **Hybrid Development Model**: Integrate Claude Desktop's strategic oversight with specialized code execution agents (`Claude Code Integration MCP`).
 - **Automated Coding Tasks**: Leverage Computer Use API compliance for automating IDE interactions, code generation, and testing (`Windows Computer Use MCP`, `Containerized Computer Use MCP`).
+- **Enhanced Desktop Control**: Resilient screenshot capture and secure shell command execution (`ClaudeDesktopAgent`).
 
 ### System Administration & Automation
 
 - **Comprehensive Desktop Automation**: Full GUI control, application management on Windows and in isolated Linux environments.
 - **Dockerized Operations**: Full lifecycle management of Docker containers, images, networks, and volumes.
 - **Cross-Platform Development**: WSL integration for bridging Windows and Linux environments.
+- **Secure Command Execution**: Allowlisted shell commands for safe system operations.
 
 ### Data Intelligence & Analysis
 
