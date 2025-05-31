@@ -39,11 +39,21 @@ class ContainerizedComputerUseMCP:
         
         # Initialize Docker client
         try:
-            self.docker_client = docker.from_env()
+            # Try to connect to Docker Desktop on Windows
+            self.docker_client = docker.DockerClient(base_url='npipe://./pipe/docker_engine')
+            # Test the connection
+            self.docker_client.ping()
             logging.info("Docker client initialized successfully")
         except Exception as e:
             logging.error(f"Failed to initialize Docker client: {e}")
-            
+            try:
+                # Fallback to default environment
+                self.docker_client = docker.from_env()
+                self.docker_client.ping()
+                logging.info("Docker client initialized via fallback method")
+            except Exception as e2:
+                logging.error(f"Docker fallback also failed: {e2}")
+                self.docker_client = None
         self._register_tools()
         
     def _register_tools(self):

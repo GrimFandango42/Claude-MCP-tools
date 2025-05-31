@@ -1,95 +1,96 @@
-# Claude Desktop Agent
+# Claude Desktop Agent MCP Server
 
-A framework for extending Claude's capabilities on desktop by providing access to custom tooling and automation features.
+A simple MCP (Model Context Protocol) server for Claude Desktop that provides screenshot capabilities.
 
-## Overview
+## Features
 
-This system enables Claude to interact with your computer through a custom bridge that connects the Claude desktop app to various computer control functions via the Agent API. The agent provides Claude with abilities such as:
+- **Screenshot Capture**: Take screenshots of the current desktop
+- **Windows Compatible**: Uses synchronous I/O for better Windows compatibility
+- **MCP Protocol Compliant**: Follows the MCP 2024-11-05 specification
+- **File Storage**: Screenshots are saved with timestamps
 
-- Taking screenshots and analyzing them
-- Browsing the web
-- Launching applications
-- Navigating the file system
-- Executing code
+## Requirements
 
-## Architecture
+- Python 3.12 or higher
+- pyautogui
+- Pillow (PIL)
 
-- **Claude Integration Layer**: Interfaces with Claude desktop app via Agent API
-- **Core Agent Service**: Central API server that handles incoming tool use requests
-- **Computer Control Modules**: Specialized modules for different computer interactions
-- **MCP Server**: Model Context Protocol server that provides custom capabilities to Claude
-- **Debugging & Monitoring Framework**: Tools for logging and diagnostics
+## Installation
 
-## Getting Started
+1. Install dependencies:
+```bash
+pip install pyautogui pillow
+```
 
-### Prerequisites
+2. The server is already configured in your Claude Desktop configuration.
 
-- Python 3.9+
-- Claude desktop app
-- Anthropic API key with Vision capabilities
+## Usage
 
-### Installation
+Once Claude Desktop is restarted, the server will be available. You can use the following tool:
 
-1. Clone this repository
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-3. Create a `.env` file with your Anthropic API key:
-   ```
-   ANTHROPIC_API_KEY=your_api_key_here
-   ```
-4. Run the server:
-   ```
-   python -m app.main
-   ```
+### take_screenshot
 
-### Running the MCP Server
+Takes a screenshot of the current desktop.
 
-The MCP (Model Context Protocol) server provides custom capabilities to Claude Desktop:
+**Parameters:**
+- `name` (optional): Custom name for the screenshot file
+- `width` (optional): Width in pixels (default: 1920)
+- `height` (optional): Height in pixels (default: 1080)
 
-1. Run the MCP server:
-   ```
-   python run_mcp_server.py
-   ```
-2. The MCP server will start on port 8090 by default (configurable in .env)
-3. Connect Claude Desktop to the MCP server by configuring the MCP URL in Claude settings
+**Example:**
+```
+Take a screenshot of the current desktop
+Take a screenshot named "before_changes"
+```
 
-## Modules
+## File Structure
 
-### Screenshot Module
+```
+ClaudeDesktopAgent/
+├── simple_mcp_server.py    # Main server implementation
+├── simple_mcp_server.log   # Server logs
+├── screenshots/            # Screenshot storage directory
+└── README.md              # This file
+```
 
-Captures desktop screenshots and uses Claude Vision API to analyze content.
+## Troubleshooting
 
-### MCP Capabilities
+### Check Server Status
+1. Look for the claude-desktop-agent in Claude Desktop's MCP servers list
+2. Check if it shows as "connected" (green status)
 
-The MCP server provides the following capabilities to Claude:
+### View Logs
+Logs are stored in `simple_mcp_server.log` in the same directory as the server.
 
-- **Screenshot Tool**: Capture screenshots of your desktop or specific regions
-- **Screenshot Analysis**: Analyze screenshots using Claude Vision API
-- More capabilities coming soon!
+### Common Issues
 
-### Web Browser Module (Planned)
+**Server not starting:**
+- Ensure Python 3.12 is installed at the specified path
+- Check that pyautogui and PIL are installed
+- Restart Claude Desktop after configuration changes
 
-Allows Claude to browse the web, extract content, and perform searches.
+**Screenshots not working:**
+- Ensure the screenshots directory exists and is writable
+- Check that your display is accessible (not locked)
+- Review the log file for specific errors
 
-### Application Launcher (Planned)
+## Technical Details
 
-Enables Claude to launch and manage desktop applications.
+- **Protocol**: JSON-RPC over stdio
+- **MCP Version**: 2024-11-05
+- **Communication**: Synchronous I/O (stdin/stdout)
+- **Logging**: File-based logging to avoid stderr conflicts
 
-## Development Roadmap
+## Development
 
-1. **Phase 1**: Core Infrastructure and Screenshot Module
-2. **Phase 2**: MCP Integration and Custom Capabilities
-3. **Phase 3**: Web Browser Module
-4. **Phase 4**: Application Launcher and File System Navigation
-5. **Phase 5**: Input Control and Window Management
-6. **Phase 6**: Code Execution Integration
+To modify the server:
+1. Edit `simple_mcp_server.py`
+2. Test changes outside Claude first
+3. Restart Claude Desktop to reload the server
 
-## Security Considerations
+### Adding New Tools
 
-This agent runs locally and has access to your computer. Please review the code and understand the security implications before running it.
-
-## License
-
-MIT
+To add a new tool:
+1. Add tool definition in `handle_tools_list()`
+2. Implement handler in `handle_tools_call()`
+3. Update this README with usage instructions
