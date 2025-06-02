@@ -47,7 +47,13 @@
       "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install --system fastmcp)",
       "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install --target \"C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\" fastmcp --upgrade)",
       "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe /mnt/c/AI_Projects/Claude-MCP-tools/servers/claude-code-integration-mcp/debug_import.py)",
-      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe debug_import.py)"
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe debug_import.py)",
+      "WebFetch(domain:github.com)",
+      "mcp__memory__search_nodes",
+      "mcp__memory__create_entities",
+      "mcp__memory__create_relations",
+      "mcp__memory__add_observations",
+      "Bash(mv:*)"
     ],
     "deny": []
   },
