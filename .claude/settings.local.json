@@ -34,7 +34,20 @@
       "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip_audit --format=json 2>/dev/null)",
       "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m safety check --json 2>/dev/null)",
       "Bash(rm:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(git commit:*)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe /mnt/c/AI_Projects/Claude-MCP-tools/servers/claude-code-integration-mcp/src/claude_code_integration/server_fixed.py --help 2 > /dev/null)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -c \"import fastmcp; print(''FastMCP available'')\")",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -c \"import fastmcp; print(''✅ FastMCP available'')\")",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -c \"import fastmcp; print(''FastMCP available'')\")",
+      "Bash(CLAUDE_CODE_MOCK=true timeout 5 /mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe server_simple.py)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install fastmcp)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -c \"import fastmcp; print('FastMCP imported successfully')\")",
+      "Bash(CLAUDE_CODE_MOCK=true timeout 3 /mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe server_simple.py)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install --system fastmcp)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install --target \"C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\" fastmcp --upgrade)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe /mnt/c/AI_Projects/Claude-MCP-tools/servers/claude-code-integration-mcp/debug_import.py)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe debug_import.py)"
     ],
     "deny": []
   },
