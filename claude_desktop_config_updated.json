@@ -1,0 +1,235 @@
+{
+  "darkMode": "dark",
+  "scale": 0,
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem@latest",
+        "C:\\Users\\Nithin\\Downloads",
+        "C:\\Users\\Nithin\\OneDrive\\Desktop",
+        "C:\\Users\\Nithin\\Documents",
+        "C:\\Users\\Nithin\\AppData\\Roaming\\Claude",
+        "C:\\AI_Projects",
+        "C:\\AI_Projects\\Jarvis-MCP\\config\\workflows\\scripts"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "sequentialthinking": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx -y @modelcontextprotocol/server-sequential-thinking@latest"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "firecrawl": {
+      "command": "node",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\firecrawl-mcp-custom\\firecrawl_direct.js"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\firecrawl-mcp-custom",
+      "env": {
+        "FIRECRAWL_API_KEY": "your-firecrawl-api-key-here"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@automatalabs/mcp-server-playwright@latest"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "financial-datasets": {
+      "command": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server\\.venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server\\server.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server",
+      "env": {
+        "FINANCIAL_DATASETS_API_KEY": "your-financial-datasets-api-key-here",
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\financial-mcp-server"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "fantasy-pl": {
+      "command": "C:\\Users\\Nithin\\AppData\\Local\\Microsoft\\WindowsApps\\python3.11.exe",
+      "args": [
+        "-m",
+        "fpl_mcp"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "mcp-pandoc": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "uvx mcp-pandoc"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "screenpilot": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\AI_Projects\\ScreenPilot\\final-screenpilot.bat"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Desktop automation server with screen capture, mouse control, and keyboard input capabilities"
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-sqlite-npx@latest",
+        "C:\\Users\\Nithin\\AppData\\Local\\Temp\\sqlite.db"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "windows-computer-use": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\windows-computer-use\\launch_mcp_framework.bat"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\windows-computer-use",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "FIXED - Windows Computer Use with proper MCP framework integration, async stream handling, and comprehensive desktop automation capabilities"
+    },
+    "containerized-computer-use": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\containerized-computer-use\\launch_containerized_mcp.bat"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\containerized-computer-use",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Containerized Computer Use with Docker isolation, VNC access, and secure GUI automation in isolated environment"
+    },
+    "n8n-workflow-generator": {
+      "command": "node",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server\\server.js"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\n8n-mcp-server",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "N8n workflow generation and management server with natural language processing capabilities"
+    },
+    "docker-orchestration": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp\\launch_fixed.bat"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\docker-orchestration-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "FIXED - Docker container orchestration with enhanced async stream handling, error recovery, and comprehensive tool support"
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-personal-access-token-here"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory@latest"
+      ],
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Official MCP memory server for persistent context storage"
+    },
+    "api-gateway": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\api-gateway-mcp\\launch_api_gateway.bat"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\api-gateway-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Unified API Gateway with intelligent routing, caching, and cost optimization for multiple AI providers (OpenAI + Anthropic)"
+    },
+    "claude-code-integration": {
+      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\claude-code-integration-mcp\\src\\claude_code_integration\\server_fixed.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\claude-code-integration-mcp",
+      "env": {
+        "CLAUDE_CODE_MOCK": "true"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "FIXED - Claude Code Integration using FastMCP with proper CLI detection and mock mode"
+    },
+    "vibetest": {
+      "command": "python",
+      "args": [
+        "-m", "vibetest.mcp_server"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\vibetest-use",
+      "env": {
+        "GOOGLE_API_KEY": "your-google-api-key-here",
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\vibetest-use"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Multi-agent browser QA testing swarm with intelligent bug detection and severity classification"
+    },
+    "agenticseek-mcp": {
+      "command": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\agenticseek-mcp\\.venv\\Scripts\\python.exe",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\agenticseek-mcp\\server_fastmcp_fixed.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\agenticseek-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "FIXED - AgenticSeek multi-provider AI routing with async compatibility fix - Smart routing between local DeepSeek (free), OpenAI GPT-3.5/4, and Google Gemini with cost optimization"
+    },
+    "code-formatter": {
+      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-formatter-mcp\\server.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-formatter-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Simple code formatting wrapper for black, prettier, and other formatters"
+    },
+    "security-scanner": {
+      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "args": [
+        "C:\\AI_Projects\\Claude-MCP-tools\\servers\\security-scanner-mcp\\server.py"
+      ],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\security-scanner-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "description": "Dependency vulnerability scanning with pip-audit, npm audit, and license checking"
+    }
+  }
+}
