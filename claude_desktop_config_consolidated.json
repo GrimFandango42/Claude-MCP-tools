@@ -1,0 +1,157 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/AI_Projects", "C:/Users/%USERNAME%/Downloads", "C:/Users/%USERNAME%/Desktop"],
+      "description": "Secure file operations with path sandboxing",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token-here"
+      },
+      "description": "Repository management via GitHub API",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "C:/AI_Projects/databases"],
+      "description": "Local database operations",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Official MCP memory for session context",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequentialthinking"],
+      "description": "Structured problem-solving framework",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-playwright"],
+      "description": "Browser automation and testing",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "windows-computer-use": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/windows-computer-use/server.py"],
+      "description": "Native Windows automation with Computer Use API",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "screenpilot": {
+      "command": "python",
+      "args": ["C:/AI_Projects/ScreenPilot/server.py"],
+      "description": "Advanced screen analysis and UI element detection",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "containerized-computer-use": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/containerized-computer-use/containerized_mcp_server.py"],
+      "description": "Secure isolated desktop automation",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "docker-orchestration": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/docker-orchestration-mcp/src/server.py"],
+      "description": "Container lifecycle management",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "agenticseek": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/agenticseek-mcp/server_fastmcp_fixed.py"],
+      "env": {
+        "OPENAI_API_KEY": "your-openai-key-here",
+        "GOOGLE_API_KEY": "your-google-key-here"
+      },
+      "description": "Multi-provider AI routing with cost optimization",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "firecrawl": {
+      "command": "node",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/firecrawl-mcp-custom/firecrawl_direct.js"],
+      "env": {
+        "FIRECRAWL_API_KEY": "your-firecrawl-key-here"
+      },
+      "description": "Advanced web scraping and content extraction",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "financial-datasets": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/financial-mcp-server/server.py"],
+      "env": {
+        "FINANCIAL_DATASETS_API_KEY": "your-financial-key-here"
+      },
+      "description": "Market data and financial analytics",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "claude-code-integration": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/claude-code-integration-mcp/src/claude_code_integration/server_fixed.py"],
+      "env": {
+        "CLAUDE_CODE_MOCK": "true"
+      },
+      "description": "Claude Code CLI integration (fixed version)",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "n8n-workflow": {
+      "command": "node",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/n8n-mcp-server/server.js"],
+      "description": "Workflow automation platform integration",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "api-gateway": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/api-gateway-mcp/server.py"],
+      "env": {
+        "OPENAI_API_KEY": "your-openai-key-here",
+        "ANTHROPIC_API_KEY": "your-anthropic-key-here"
+      },
+      "description": "Unified API management with caching",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "vibetest": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/vibetest-use/vibetest/mcp_server.py"],
+      "description": "Multi-agent browser QA testing",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "code-formatter": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/code-formatter-mcp/server.py"],
+      "description": "Simple code formatting (black, prettier)",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "security-scanner": {
+      "command": "python",
+      "args": ["C:/AI_Projects/Claude-MCP-tools/servers/security-scanner-mcp/server.py"],
+      "description": "Dependency vulnerability scanning",
+      "keepAlive": true,
+      "stderrToConsole": true
+    }
+  }
+}
