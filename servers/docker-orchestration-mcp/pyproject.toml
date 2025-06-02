@@ -23,8 +23,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "docker>=6.0.0",
-    "mcp>=0.3.0",
+    "docker>=7.1.0",
+    "mcp>=1.0.0",
     "asyncio",
     "pydantic>=2.5.3",
     "typing-extensions>=4.0.0"

@@ -4,22 +4,22 @@
 mcp==1.0.0
 
 # Docker Management
-docker==7.0.0
+docker>=7.1.0
 
 # Computer Use Dependencies
-pyautogui==0.9.54
-pillow==10.2.0
+pyautogui>=0.9.55
+pillow>=10.3.0
 python-xlib==0.33
-pynput==1.7.6
-opencv-python==4.9.0.80
-numpy==1.26.4
+pynput>=1.7.7
+opencv-python>=4.10.0
+numpy>=1.26.5
 
 # Async Support
 asyncio-mqtt==0.16.2
 
 # Utilities
-requests==2.31.0
-websocket-client==1.7.0
+requests>=2.32.0
+websocket-client>=1.8.0
 
 # Linux-specific screenshot support
 pyscreenshot==3.1

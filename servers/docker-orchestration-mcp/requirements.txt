@@ -2,7 +2,7 @@
 
 # Core Dependencies
 docker>=6.0.0
-mcp>=0.3.0
+mcp>=1.0.0
 pydantic>=2.5.3
 typing-extensions>=4.0.0
 
