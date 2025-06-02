@@ -1,0 +1,22 @@
+# Core dependencies
+fastapi>=0.104.0
+uvicorn>=0.23.2
+python-dotenv>=1.0.0
+pydantic>=2.5.3
+requests>=2.31.0
+pywin32>=306
+
+# Screenshot module
+pyautogui>=0.9.54
+pillow>=10.2.0
+
+# Web browser module
+selenium>=4.14.0
+webdriver-manager>=4.0.1
+
+# Testing
+pytest>=7.4.2
+httpx>=0.25.0
+
+# Anthropic SDK
+anthropic>=0.7.0

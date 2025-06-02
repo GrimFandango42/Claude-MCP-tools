@@ -2,8 +2,41 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(pip install:*)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user fastmcp python-json-logger tree-sitter jedi aiofiles)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user black isort flake8 pylint mypy autopep8 coverage)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user rope libcst gitpython pytest pytest-cov hypothesis)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user pip-audit safety requests packaging aiohttp)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user tree-sitter-python tree-sitter-javascript tree-sitter-typescript jinja2)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install --user python-json-logger)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -c \"import python_json_logger; print('✅ python-json-logger imported successfully')\")",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -m pip install python-json-logger --force-reinstall)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -c \"import python_json_logger; print('✅ python-json-logger imported successfully')\")",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -c \"import pythonjsonlogger; print('pythonjsonlogger imported successfully')\")",
+      "Bash(timeout:*)",
+      "Bash(\"/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe\" -c \"from fastmcp import FastMCP; help(FastMCP)\")",
+      "Bash(for server in code-quality-mcp code-intelligence-core refactoring-mcp test-intelligence-mcp dependency-analysis-mcp)",
+      "Bash(do)",
+      "Bash(if [ -f \"/mnt/c/AI_Projects/Claude-MCP-tools/servers/$server/server.py\" ])",
+      "Bash(then)",
+      "Bash(sed:*)",
+      "Bash(echo:*)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(grep:*)",
+      "Bash(python:*)",
+      "mcp__memory__read_graph",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe /mnt/c/AI_Projects/Claude-MCP-tools/servers/dependency-analysis-mcp/server.py)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip_audit --format=json 2>/dev/null)",
+      "Bash(/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m safety check --json 2>/dev/null)",
+      "Bash(rm:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

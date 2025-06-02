@@ -1,0 +1,15 @@
+[project]
+name = "security-scanner-mcp"
+version = "0.1.0"
+description = "Security and dependency scanning MCP server"
+
+dependencies = [
+    "fastmcp>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pip-audit",
+    "pip-licenses",
+    "safety",
+]

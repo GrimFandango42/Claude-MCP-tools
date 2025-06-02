@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test-intelligence-mcp"
+version = "0.1.0"
+description = "MCP server for automated test generation and test intelligence"
+authors = [{name = "Claude MCP Tools", email = "claude@anthropic.com"}]
+requires-python = ">=3.8"
+
+dependencies = [
+    "fastmcp>=0.1.0",
+    "python-json-logger>=2.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "coverage>=7.0.0",
+    "hypothesis>=6.0.0",
+    "jinja2>=3.0.0",
+    "aiofiles>=0.8.0",
+    "pydantic>=2.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0"
+]
+
+mutation = [
+    "mutmut>=2.4.0",
+    "cosmic-ray>=8.0.0"
+]
+
+javascript = [
+    "nodejs-wheel>=20.0.0"
+]
+
+[project.entry-points."console_scripts"]
+test-intelligence-mcp = "server:main"

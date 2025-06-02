@@ -29,3 +29,29 @@ servers/windows-computer-use/get-pip.py.1
 
 # Python virtual environments
 servers/windows-computer-use/claude_env/
+\n
+# Redundant files and logs
+*.log
+*_backup.json
+*.bak
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+*.pyc
+__pycache__/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archives
+archive/cleanup_*/
+
+# Temporary files
+temp/
+tmp/
+*.tmp

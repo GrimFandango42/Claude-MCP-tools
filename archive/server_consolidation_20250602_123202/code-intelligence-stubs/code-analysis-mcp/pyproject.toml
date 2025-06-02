@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "code-analysis-mcp"
+version = "0.1.0"
+description = "MCP server for semantic code analysis and symbol resolution"
+authors = [{name = "Claude MCP Tools", email = "claude@anthropic.com"}]
+requires-python = ">=3.8"
+
+dependencies = [
+    "fastmcp>=0.1.0",
+    "python-json-logger>=2.0.0",
+    "jedi>=0.18.0",
+    "tree-sitter>=0.20.0",
+    "aiofiles>=0.8.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0"
+]
+
+[project.entry-points."console_scripts"]
+code-analysis-mcp = "server:main"

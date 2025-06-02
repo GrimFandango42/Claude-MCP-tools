@@ -1,0 +1,48 @@
+{
+  "mcpServers": {
+    "code-analysis": {
+      "command": "python",
+      "args": ["servers/code-analysis-mcp/server.py"],
+      "cwd": "/mnt/c/AI_Projects/Claude-MCP-tools",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "env": {
+        "PYTHONPATH": "/mnt/c/AI_Projects/Claude-MCP-tools/servers/code-intelligence-core"
+      }
+    },
+    "code-quality": {
+      "command": "python",
+      "args": ["servers/code-quality-mcp/server.py"],
+      "cwd": "/mnt/c/AI_Projects/Claude-MCP-tools",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "refactoring": {
+      "command": "python",
+      "args": ["servers/refactoring-mcp/server.py"],
+      "cwd": "/mnt/c/AI_Projects/Claude-MCP-tools",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "env": {
+        "PYTHONPATH": "/mnt/c/AI_Projects/Claude-MCP-tools/servers/code-intelligence-core"
+      }
+    },
+    "test-intelligence": {
+      "command": "python",
+      "args": ["servers/test-intelligence-mcp/server.py"],
+      "cwd": "/mnt/c/AI_Projects/Claude-MCP-tools",
+      "keepAlive": true,
+      "stderrToConsole": true,
+      "env": {
+        "PYTHONPATH": "/mnt/c/AI_Projects/Claude-MCP-tools/servers/code-intelligence-core"
+      }
+    },
+    "dependency-analysis": {
+      "command": "python",
+      "args": ["servers/dependency-analysis-mcp/server.py"],
+      "cwd": "/mnt/c/AI_Projects/Claude-MCP-tools",
+      "keepAlive": true,
+      "stderrToConsole": true
+    }
+  }
+}

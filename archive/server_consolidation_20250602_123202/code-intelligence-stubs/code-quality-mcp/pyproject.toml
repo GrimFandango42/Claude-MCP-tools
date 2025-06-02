@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "code-quality-mcp"
+version = "0.1.0"
+description = "MCP server for code quality analysis, linting, and formatting"
+authors = [{name = "Claude MCP Tools", email = "claude@anthropic.com"}]
+requires-python = ">=3.8"
+
+dependencies = [
+    "fastmcp>=0.1.0",
+    "python-json-logger>=2.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+    "pylint>=2.17.0",
+    "autopep8>=2.0.0",
+    "coverage>=7.0.0",
+    "aiofiles>=0.8.0",
+    "subprocess-run>=0.1.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0"
+]
+
+javascript = [
+    "nodejs-wheel>=20.0.0"
+]
+
+[project.entry-points."console_scripts"]
+code-quality-mcp = "server:main"

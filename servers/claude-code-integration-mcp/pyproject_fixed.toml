@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-code-integration-mcp"
+version = "2.0.0"
+description = "Claude Code CLI integration for Claude Desktop via MCP"
+authors = [
+    {name = "Claude MCP Tools"}
+]
+dependencies = [
+    "fastmcp>=0.1.0"
+]
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.scripts]
+claude-code-integration = "claude_code_integration.server_fixed:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,14 @@
+[project]
+name = "code-formatter-mcp"
+version = "0.1.0"
+description = "Simple code formatting MCP server"
+
+dependencies = [
+    "fastmcp>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "prettier",  # npm install -g prettier needed
+]

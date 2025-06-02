@@ -1,0 +1,51 @@
+{
+  "archive_date": "2025-06-02T12:32:04.277376",
+  "archive_location": "archive/server_consolidation_20250602_123202",
+  "servers_archived": 8,
+  "errors_encountered": 0,
+  "archived_servers": [
+    {
+      "server": "code-analysis-mcp",
+      "from": "servers/code-analysis-mcp",
+      "to": "archive/server_consolidation_20250602_123202/code-intelligence-stubs/code-analysis-mcp"
+    },
+    {
+      "server": "code-quality-mcp",
+      "from": "servers/code-quality-mcp",
+      "to": "archive/server_consolidation_20250602_123202/code-intelligence-stubs/code-quality-mcp"
+    },
+    {
+      "server": "refactoring-mcp",
+      "from": "servers/refactoring-mcp",
+      "to": "archive/server_consolidation_20250602_123202/other/refactoring-mcp"
+    },
+    {
+      "server": "test-intelligence-mcp",
+      "from": "servers/test-intelligence-mcp",
+      "to": "archive/server_consolidation_20250602_123202/other/test-intelligence-mcp"
+    },
+    {
+      "server": "dependency-analysis-mcp",
+      "from": "servers/dependency-analysis-mcp",
+      "to": "archive/server_consolidation_20250602_123202/other/dependency-analysis-mcp"
+    },
+    {
+      "server": "code-intelligence-core",
+      "from": "servers/code-intelligence-core",
+      "to": "archive/server_consolidation_20250602_123202/code-intelligence-stubs/code-intelligence-core"
+    },
+    {
+      "server": "knowledge-memory-mcp",
+      "from": "servers/knowledge-memory-mcp",
+      "to": "archive/server_consolidation_20250602_123202/memory-consolidation/knowledge-memory-mcp"
+    },
+    {
+      "server": "ClaudeDesktopAgent",
+      "from": "ClaudeDesktopAgent/",
+      "to": "archive/server_consolidation_20250602_123202/desktop-consolidation/ClaudeDesktopAgent",
+      "note": "Copied instead of moved - may need manual cleanup"
+    }
+  ],
+  "errors": [],
+  "consolidation_plan": "Removing 8 servers as per FINAL_REMOVAL_LIST_FINAL.md"
+}

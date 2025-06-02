@@ -9,6 +9,50 @@
         "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\claude-code-integration-mcp",
         "PATH": "/home/nithin/.nvm/versions/node/v24.1.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       }
+    },
+    "code-analysis": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-analysis-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-analysis-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-intelligence-core"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "code-quality": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-quality-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-quality-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "refactoring": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\refactoring-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\refactoring-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-intelligence-core"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "test-intelligence": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\test-intelligence-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\test-intelligence-mcp",
+      "env": {
+        "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-intelligence-core"
+      },
+      "keepAlive": true,
+      "stderrToConsole": true
+    },
+    "dependency-analysis": {
+      "command": "python",
+      "args": ["C:\\AI_Projects\\Claude-MCP-tools\\servers\\dependency-analysis-mcp\\server.py"],
+      "cwd": "C:\\AI_Projects\\Claude-MCP-tools\\servers\\dependency-analysis-mcp",
+      "keepAlive": true,
+      "stderrToConsole": true
     }
   }
 }
