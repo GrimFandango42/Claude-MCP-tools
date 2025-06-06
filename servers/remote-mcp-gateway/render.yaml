@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: remote-mcp-gateway
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 8000
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+    resources:
+      cpu: 0.5
+      memory: 512MB
