@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Any, Union
 
 # Try to import MCP, fall back to mock if not available
 try:
-    from mcp.server.fastmcp import FastMCP
+    from fastmcp import FastMCP # Updated import
     MCP_AVAILABLE = True
 except ImportError:
     MCP_AVAILABLE = False

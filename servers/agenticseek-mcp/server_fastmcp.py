@@ -28,10 +28,10 @@ logger.addHandler(logHandler)
 logger.propagate = False
 
 try:
-    from mcp.server.fastmcp import FastMCP
+    from fastmcp import FastMCP  # Updated import
     logger.info("Imported FastMCP successfully")
 except ImportError:
-    logger.error("Failed to import FastMCP. Please install with: pip install mcp")
+    logger.error("Failed to import FastMCP. Please install with: pip install fastmcp")  # Updated pip install message
     sys.exit(1)
 
 # Configuration for AgenticSeek

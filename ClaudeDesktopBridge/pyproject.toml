@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ClaudeDesktopBridge"
+version = "0.1.0" # Placeholder version
+description = "Claude Desktop Bridge FastAPI Application with Streamlit UI"
+requires-python = ">=3.9" # Based on uvicorn 0.34.3 and FastAPI 0.115.0 requirements
+license = { text = "MIT" } # Assuming MIT
+authors = [
+    { name = "Claude", email = "claude@anthropic.com" } # Placeholder
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.3",
+    "pydantic>=2.5.3",
+    "pydantic-settings>=2.0.0",
+    "requests>=2.32.3", # Updated to resolve conflict
+    "python-dotenv>=1.1.0", # Updated to resolve conflict
+    "pywin32==306; sys_platform == 'win32'", # Preserving exact version and marker
+    "anthropic>=0.55.0",
+    "pyautogui==0.9.54", # Preserving exact version
+    "pillow>=10.2.0",
+    "keyboard==0.13.5", # Preserving exact version
+    "mouse==0.7.1", # Preserving exact version
+    "pynput==1.7.6", # Preserving exact version
+    "psutil>=7.0.0", # Updated to resolve conflict
+    "selenium>=4.14.0", # Updated to resolve conflict
+    "webdriver-manager>=4.0.1", # Updated to resolve conflict
+    "streamlit>=1.29.0",
+    "httpx>=0.27.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.4.1" # Updated to be compatible with pytest-asyncio
+]
+
+# TODO: Add tool configurations for black, isort, mypy if they are to be used for this component
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]

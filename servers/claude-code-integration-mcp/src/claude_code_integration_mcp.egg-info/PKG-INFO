@@ -5,8 +5,8 @@ Summary: Enhanced Claude Code Integration MCP Server with session management and
 Author-email: Claude <claude@anthropic.com>
 Requires-Python: >=3.8
 Description-Content-Type: text/markdown
-Requires-Dist: mcp>=1.0.0
-Requires-Dist: anthropic>=0.25.0
+Requires-Dist: fastmcp>=2.5.2
+Requires-Dist: anthropic>=0.55.0
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0.0; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"

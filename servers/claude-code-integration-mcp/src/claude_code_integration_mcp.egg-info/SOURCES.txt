@@ -3,6 +3,7 @@ pyproject.toml
 src/claude_code_integration/__init__.py
 src/claude_code_integration/server.py
 src/claude_code_integration/server_backup.py
+src/claude_code_integration/server_fixed.py
 src/claude_code_integration_mcp.egg-info/PKG-INFO
 src/claude_code_integration_mcp.egg-info/SOURCES.txt
 src/claude_code_integration_mcp.egg-info/dependency_links.txt

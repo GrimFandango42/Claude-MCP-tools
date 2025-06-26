@@ -1,0 +1,23 @@
+fastapi>=0.115.0
+uvicorn>=0.34.3
+pydantic>=2.5.3
+pydantic-settings>=2.0.0
+requests>=2.32.3
+python-dotenv>=1.1.0
+anthropic>=0.55.0
+pyautogui==0.9.54
+pillow>=10.2.0
+keyboard==0.13.5
+mouse==0.7.1
+pynput==1.7.6
+psutil>=7.0.0
+selenium>=4.14.0
+webdriver-manager>=4.0.1
+streamlit>=1.29.0
+httpx>=0.27.0
+
+[:sys_platform == "win32"]
+pywin32==306
+
+[dev]
+pytest>=8.4.1

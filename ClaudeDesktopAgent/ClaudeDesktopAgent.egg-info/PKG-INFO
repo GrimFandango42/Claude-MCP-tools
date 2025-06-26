@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: ClaudeDesktopAgent
+Version: 0.1.0
+Summary: Claude Desktop Agent FastAPI Application
+Author-email: Claude <claude@anthropic.com>
+License: MIT
+Requires-Python: >=3.9
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn>=0.34.3
+Requires-Dist: python-dotenv>=1.1.0
+Requires-Dist: pydantic>=2.5.3
+Requires-Dist: requests>=2.32.3
+Requires-Dist: pywin32>=306; sys_platform == "win32"
+Requires-Dist: pyautogui>=0.9.54
+Requires-Dist: pillow>=10.2.0
+Requires-Dist: selenium>=4.14.0
+Requires-Dist: webdriver-manager>=4.0.1
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: anthropic>=0.55.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.2; extra == "dev"

@@ -36,10 +36,10 @@ for handler in logging.getLogger().handlers:
 
 try:
     # Import FastMCP with the correct pattern for current version
-    from mcp.server.fastmcp import FastMCP
-    logger.info("Imported FastMCP from mcp.server.fastmcp")
+    from fastmcp import FastMCP # Updated import
+    logger.info("Imported FastMCP from fastmcp") # Updated log message
 except ImportError:
-    logger.error("Failed to import FastMCP. Please install with: uv sync")
+    logger.error("Failed to import FastMCP. Please install with: uv sync or pip install fastmcp") # Updated help
     sys.exit(1)
 
 # Constants

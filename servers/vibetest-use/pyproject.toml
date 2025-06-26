@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Browser-agent QA swarm with MCP interface for testing AI-generated websites"
 requires-python = ">=3.11"
 dependencies = [
-  "mcp[cli]>=1.0.0",
+  "fastmcp>=2.5.2", # Standardized MCP framework (removed [cli])
+  "anthropic>=0.55.0",  # Added Anthropic SDK
   "browser-use",
   "playwright",
   "langchain_google_genai",
