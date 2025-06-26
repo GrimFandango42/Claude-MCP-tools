@@ -20,6 +20,9 @@ if env_file.exists():
 # Add the server source to Python path
 sys.path.insert(0, 'src')
 
+import pytest # Added for asyncio marker
+
+@pytest.mark.asyncio # Added asyncio marker
 async def test_server():
     """Test the server functionality directly."""
     

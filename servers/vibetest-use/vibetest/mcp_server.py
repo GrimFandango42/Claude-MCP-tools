@@ -12,7 +12,7 @@ os.environ['BROWSER_USE_LOGGING_LEVEL'] = 'CRITICAL'
 if hasattr(sys.stderr, 'close'):
     sys.stderr = open(os.devnull, 'w')
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP # Updated import
 from .agents import run_pool, summarize_bug_reports
 
 # Create FastMCP instance

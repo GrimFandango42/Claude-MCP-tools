@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: ClaudeDesktopBridge
+Version: 0.1.0
+Summary: Claude Desktop Bridge FastAPI Application with Streamlit UI
+Author-email: Claude <claude@anthropic.com>
+License: MIT
+Requires-Python: >=3.9
+Requires-Dist: fastapi>=0.115.0
+Requires-Dist: uvicorn>=0.34.3
+Requires-Dist: pydantic>=2.5.3
+Requires-Dist: pydantic-settings>=2.0.0
+Requires-Dist: requests>=2.32.3
+Requires-Dist: python-dotenv>=1.1.0
+Requires-Dist: pywin32==306; sys_platform == "win32"
+Requires-Dist: anthropic>=0.55.0
+Requires-Dist: pyautogui==0.9.54
+Requires-Dist: pillow>=10.2.0
+Requires-Dist: keyboard==0.13.5
+Requires-Dist: mouse==0.7.1
+Requires-Dist: pynput==1.7.6
+Requires-Dist: psutil>=7.0.0
+Requires-Dist: selenium>=4.14.0
+Requires-Dist: webdriver-manager>=4.0.1
+Requires-Dist: streamlit>=1.29.0
+Requires-Dist: httpx>=0.27.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.4.1; extra == "dev"

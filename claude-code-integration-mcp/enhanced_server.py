@@ -24,7 +24,7 @@ except ImportError:
     psutil = None
 
 # MCP imports
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP # Updated import
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

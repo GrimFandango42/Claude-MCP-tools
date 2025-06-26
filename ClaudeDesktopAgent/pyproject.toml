@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ClaudeDesktopAgent"
+version = "0.1.0" # Placeholder version
+description = "Claude Desktop Agent FastAPI Application"
+requires-python = ">=3.9" # Based on uvicorn 0.34.3 and FastAPI 0.115.0 requirements
+license = { text = "MIT" } # Assuming MIT, common in this repo
+authors = [
+    { name = "Claude", email = "claude@anthropic.com" } # Placeholder
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.3",
+    "python-dotenv>=1.1.0", # Updated to resolve conflict
+    "pydantic>=2.5.3",
+    "requests>=2.32.3", # Updated to resolve conflict
+    "pywin32>=306; sys_platform == 'win32'",
+    "pyautogui>=0.9.54",
+    "pillow>=10.2.0",
+    "selenium>=4.14.0",
+    "webdriver-manager>=4.0.1",
+    "httpx>=0.27.0",
+    "anthropic>=0.55.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.2" # From original requirements.txt
+]
+
+# TODO: Add tool configurations for black, isort, mypy if they are to be used for this component
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
