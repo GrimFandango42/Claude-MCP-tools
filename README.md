@@ -1,3 +1,16 @@
+# ⚠️ ARCHIVED — Claude-MCP-tools
+
+> **This repository has been archived.** All functionality has been superseded by
+> OpenClaw’s native skill ecosystem, Desktop Commander, and community MCP connectors.
+>
+> **Routing concept (AgenticSeek)**: The smart provider-routing idea lives on as a
+> design reference for future OpenClaw cost-aware routing features.
+>
+> **Decision date**: 2026-02-14
+> **Reason**: 14 MCP servers evaluated; none provide unique value beyond existing tooling.
+
+---
+
 # Claude MCP Tools
 
 Professional Model Context Protocol (MCP) server ecosystem for Anthropic's Claude Desktop and Claude Code CLI integration.
