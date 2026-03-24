@@ -1,8 +1,8 @@
 ---
 name: last30days
 version: "2.9.5"
-description: "Deep research engine covering the last 30 days across 10+ sources - Reddit, X/Twitter, YouTube, TikTok, Instagram, Hacker News, Polymarket, Bluesky, Truth Social, web. AI synthesizes findings into grounded, cited reports. The most comprehensive recency research skill on ClawHub."
-argument-hint: 'last30 AI video tools, last30 best project management tools'
+description: "Deep research engine covering the last 30 days across 10+ sources with watchlist tracking, briefings, and history queries. Sources: Reddit, X/Twitter, YouTube, TikTok, Instagram, Hacker News, Polymarket, Bluesky, Truth Social, web."
+argument-hint: 'last30 AI video tools, last30 watch add AI agents, last30 briefing, last30 history trending'
 allowed-tools: Bash, Read, Write, AskUserQuestion, WebSearch
 homepage: https://github.com/mvanhorn/last30days-skill
 repository: https://github.com/mvanhorn/last30days-skill
@@ -59,9 +59,34 @@ metadata:
       - clawhub
 ---
 
-# last30days v2.9.5: Research Any Topic from the Last 30 Days
+# last30days v2.9.5: Research + Watchlist + Briefings
 
-> **Permissions overview:** Reads public web/platform data and optionally saves research briefings to `~/Documents/Last30Days/`. X/Twitter search uses optional user-provided tokens (AUTH_TOKEN/CT0 env vars). Bluesky search uses optional app password (BSKY_HANDLE/BSKY_APP_PASSWORD env vars - create at bsky.app/settings/app-passwords). Truth Social search uses optional bearer token (TRUTHSOCIAL_TOKEN env var - extract from browser dev tools). All credential usage and data writes are documented in the [Security & Permissions](#security--permissions) section.
+> **Permissions overview:** Reads public web/platform data and optionally saves research briefings to `~/Documents/Last30Days/`. X/Twitter search uses optional user-provided tokens (AUTH_TOKEN/CT0 env vars). Bluesky search uses optional app password (BSKY_HANDLE/BSKY_APP_PASSWORD env vars). Truth Social search uses optional bearer token (TRUTHSOCIAL_TOKEN env var). All credential usage and data writes are documented in the [Security & Permissions](#security--permissions) section.
+
+Multi-mode research skill with persistent knowledge accumulation.
+
+## Command Routing (Check FIRST)
+
+Parse the user's first argument to determine the mode:
+
+| First word | Mode | Action |
+|---|---|---|
+| `watch` | Watchlist management | Read `references/watchlist.md` in skill dir, follow those instructions |
+| `briefing` | Morning briefing | Read `references/briefing.md` in skill dir, follow those instructions |
+| `history` | Query accumulated knowledge | Read `references/history.md` in skill dir, follow those instructions |
+| *(anything else)* | One-shot research | Continue with the research flow below |
+
+For `watch`, `briefing`, or `history` modes: use the Read tool to load `${SKILL_ROOT}/references/{mode}.md` and follow those instructions exactly. **Do not continue to the research flow below.**
+
+### Shared Configuration (all modes)
+
+- **Database**: `~/.local/share/last30days/research.db` (SQLite, WAL mode, auto-created)
+- **Briefing archives**: `~/.local/share/last30days/briefs/`
+- **Context/preferences**: `${SKILL_ROOT}/context.md` — read at session start, update after interactions
+
+---
+
+## One-Shot Research Mode (default)
 
 Research ANY topic across Reddit, X, Bluesky, Truth Social, YouTube, TikTok, Hacker News, Polymarket, and the web. Surface what people are actually discussing, recommending, betting on, and debating right now.
 

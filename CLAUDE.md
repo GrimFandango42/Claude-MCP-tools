@@ -1,131 +1,28 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This repository is an **archived collection of MCP servers** (superseded by OpenClaw skills and Desktop Commander as of 2026-02-14) that now serves as a **Claude Code skills collection**.
 
-## 🚨 CRITICAL ENVIRONMENT INFORMATION
-**This project runs in a Windows + WSL2 environment**. See `WSL_ENVIRONMENT_GUIDE.md` for critical path translation information. Always use full Python path: `/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe`
+## Repository Status
 
-## Build & Test Commands
+The 14 MCP servers in `servers/` are archived reference implementations. Active development happens in other repos. This repo's current purpose is housing Claude Code skills in `.claude/skills/`.
 
-### Python MCP Servers (servers/ directory)
-- **Setup**: `pip install -e .` or `uv sync` in each server directory
-- **Run server**: `python server.py` (FastMCP servers use stdio transport)
-- **Testing**: `pytest` (when test dependencies included in pyproject.toml)
-- **Linting**: `black .` and `isort .` (for servers with dev dependencies)
+## Installed Skills
 
-### Node.js MCP Servers
-- **Setup**: `npm install` in server directory
-- **Run server**: `npm start` or `node server.js`
-- **Testing**: `npm test`
+### /last30days (v2.9.5)
+Deep research engine — searches Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, Bluesky, Truth Social, and web for the past 30 days. Supports one-shot research, comparisons, watchlist tracking, and briefings.
 
-### FastAPI Applications (ClaudeDesktopAgent, ClaudeDesktopBridge)
-- **Setup**: `pip install -r requirements.txt`
-- **Run**: `python app/main.py` or `uvicorn app.main:app --reload`
-- **Testing**: `pytest tests/`
-- **UI (Bridge only)**: `streamlit run app/ui/streamlit_app.py`
+- **Location**: `.claude/skills/last30days/`
+- **Core script**: `scripts/last30days.py`
+- **Watchlist/briefing**: `scripts/watchlist.py`, `scripts/briefing.py`, `scripts/store.py`
+- **Database**: `~/.local/share/last30days/research.db` (auto-created)
+- **Briefing archives**: `~/.local/share/last30days/briefs/`
+- **Required env**: `SCRAPECREATORS_API_KEY`
+- **Optional env**: `OPENAI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `APIFY_API_TOKEN`, `AUTH_TOKEN`, `CT0`, `BSKY_HANDLE`, `BSKY_APP_PASSWORD`, `TRUTHSOCIAL_TOKEN`
 
-## MCP Server Architecture
+## Archived MCP Servers (Reference Only)
 
-### Core Patterns
-This codebase implements Model Context Protocol (MCP) servers that communicate with Claude Desktop via JSON-RPC over stdio. The architecture follows these key patterns:
-
-**FastMCP Framework (Recommended)**:
-- Entry point: `from fastmcp import FastMCPServer` or similar
-- Tool registration: `@mcp.tool()` decorators with type hints
-- Transport: `mcp.run(transport="stdio")` for Claude Desktop integration
-- Configuration via environment variables
-
-**Logging Requirements**:
-- **Critical**: All MCP servers must log to stderr only (stdout reserved for JSON-RPC)
-- Use structured JSON logging: `python-json-logger` with JsonFormatter
-- Set `logger.propagate = False` to prevent stdout pollution
-
-**File Structure Conventions**:
-```
-servers/{name}-mcp-server/
-├── server.py          # Entry point/launcher
-├── mcp_server.py      # Main server implementation (simple servers)
-├── src/               # Source code (complex servers)
-│   ├── server.py      # Main server
-│   ├── storage/       # Persistence layer
-│   └── domain/        # Business logic modules
-├── pyproject.toml     # Dependencies and metadata
-└── README.md          # Setup and usage
-```
-
-### Dependencies and Configuration
-**Standard MCP Dependencies**:
-- `fastmcp>=0.1.0` - Core MCP framework
-- `python-json-logger>=2.0.0` - Structured logging
-- Domain-specific libraries (httpx, numpy, etc.)
-
-**Claude Desktop Integration**:
-- Servers are registered in `claude_desktop_config.json`
-- Use `keepAlive: true` and `stderrToConsole: true` in configuration
-- Environment variables passed via `cmd /c "set VAR=value && python server.py"`
-
-## Application Architecture
-
-### Desktop Agent & Bridge Applications
-These are FastAPI applications that extend Claude's capabilities beyond standard MCP:
-
-**ClaudeDesktopAgent**: MCP server with screenshot and desktop automation
-**ClaudeDesktopBridge**: HTTP bridge with Streamlit UI for system integration
-
-**Common FastAPI Patterns**:
-- API routes in `app/api/routes/` with domain separation
-- Utilities in `app/utils/` (config, logger, security)
-- Modules in `app/modules/` or `app/mcp/` for business logic
-- Global exception handlers and health check endpoints
-
-## Development Guidelines
-
-### MCP Tool Development
-- Tools should have descriptive docstrings (shown to Claude)
-- Use type hints for automatic JSON schema generation
-- Handle errors gracefully and return structured responses
-- Follow naming: `{domain}_{action}` (e.g., `memory_create`, `git_status`)
-
-### Error Handling Patterns
-- Signal handling for graceful shutdown (SIGINT, SIGTERM)
-- Import fallbacks for optional dependencies
-- Structured error responses with context
-
-### Testing Strategies
-- Unit tests with pytest for Python servers
-- Node.js servers use package.json test scripts
-- Integration testing with actual Claude Desktop for MCP protocol compliance
-
-## Configuration Management
-
-### Environment Variables
-- API keys and sensitive data via environment variables
-- Data directories: `os.path.expanduser("~/.app-name")` pattern
-- Configuration validation at startup
-
-### Claude Desktop Setup
-- Config file: `C:\Users\<Username>\AppData\Roaming\Claude\claude_desktop_config.json`
-- Logs: `C:\Users\<Username>\AppData\Roaming\Claude\logs/`
-- Always restart Claude Desktop after config changes
-
-## Common Development Tasks
-
-### Adding New MCP Server
-1. Create `servers/{name}-mcp-server/` directory
-2. Implement using FastMCP framework with stdio transport
-3. Add structured logging to stderr only
-4. Create pyproject.toml with fastmcp dependency
-5. Add configuration to claude_desktop_config.json
-6. Test integration with Claude Desktop
-
-### Extending Existing Server
-1. Add tools using `@mcp.tool()` decorator
-2. Follow type hints for automatic schema generation
-3. Update README.md with new capabilities
-4. Test new tools in Claude Desktop environment
-
-### Debugging MCP Servers
-- Check stderr logs in Claude Desktop logs directory
-- Verify stdout only contains JSON-RPC messages
-- Use `stderrToConsole: true` in Claude Desktop config for real-time logs
-- Test servers independently with `python server.py` before Claude Desktop integration
+The `servers/` directory contains 14 MCP servers built with FastMCP over stdio. Key patterns if referencing them:
+- All log to stderr (stdout reserved for JSON-RPC)
+- Structured JSON logging via `python-json-logger`
+- Registered in `claude_desktop_config.json` variants at repo root
+- See individual `README.md` files in each server directory for details
