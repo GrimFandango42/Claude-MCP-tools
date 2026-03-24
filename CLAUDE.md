@@ -19,6 +19,15 @@ Deep research engine — searches Reddit, X, YouTube, TikTok, Instagram, Hacker 
 - **Required env**: `SCRAPECREATORS_API_KEY`
 - **Optional env**: `OPENAI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `APIFY_API_TOKEN`, `AUTH_TOKEN`, `CT0`, `BSKY_HANDLE`, `BSKY_APP_PASSWORD`, `TRUTHSOCIAL_TOKEN`
 
+### /mychart (v1.0.0)
+Patient-authorized access to MyChart/Epic health records via FHIR R4. OAuth2+PKCE authentication with multi-organization support.
+
+- **Location**: `.claude/skills/mychart/`
+- **Core scripts**: `scripts/mychart.py`, `scripts/auth.py`
+- **Database**: `~/.local/share/mychart/mychart.db` (tokens + org configs, auto-created)
+- **Optional env**: `EPIC_CLIENT_ID` (not needed for sandbox testing)
+- **Modes**: `connect`, `orgs`, `labs`, `meds`, `conditions`, `allergies`, `vitals`, `patient`, `summary`
+
 ## Archived MCP Servers (Reference Only)
 
 The `servers/` directory contains 14 MCP servers built with FastMCP over stdio. Key patterns if referencing them:
