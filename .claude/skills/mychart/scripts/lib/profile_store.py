@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
     zip_code TEXT,
     preferred_radius_miles INTEGER,
     preferred_language TEXT,
+    onboarding_complete INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -145,6 +146,7 @@ def save_profile(
     zip_code: Optional[str] = None,
     preferred_radius: Optional[int] = None,
     preferred_language: Optional[str] = None,
+    onboarding_complete: Optional[bool] = None,
 ) -> None:
     """Save or update the singleton user profile.
 
@@ -152,6 +154,15 @@ def save_profile(
     """
     conn = _db()
     try:
+        # Ensure onboarding_complete column exists (migration for older DBs)
+        try:
+            conn.execute("SELECT onboarding_complete FROM user_profile LIMIT 0")
+        except sqlite3.OperationalError:
+            conn.execute(
+                "ALTER TABLE user_profile ADD COLUMN onboarding_complete INTEGER DEFAULT 0"
+            )
+            conn.commit()
+
         existing = conn.execute("SELECT * FROM user_profile WHERE id = 1").fetchone()
         now = datetime.utcnow().isoformat()
 
@@ -163,6 +174,8 @@ def save_profile(
                 updates["preferred_radius_miles"] = preferred_radius
             if preferred_language is not None:
                 updates["preferred_language"] = preferred_language
+            if onboarding_complete is not None:
+                updates["onboarding_complete"] = 1 if onboarding_complete else 0
 
             if updates:
                 updates["updated_at"] = now
@@ -175,9 +188,17 @@ def save_profile(
         else:
             conn.execute(
                 """INSERT INTO user_profile
-                   (id, zip_code, preferred_radius_miles, preferred_language, created_at, updated_at)
-                   VALUES (1, ?, ?, ?, ?, ?)""",
-                (zip_code, preferred_radius, preferred_language, now, now),
+                   (id, zip_code, preferred_radius_miles, preferred_language,
+                    onboarding_complete, created_at, updated_at)
+                   VALUES (1, ?, ?, ?, ?, ?, ?)""",
+                (
+                    zip_code,
+                    preferred_radius,
+                    preferred_language,
+                    1 if onboarding_complete else 0,
+                    now,
+                    now,
+                ),
             )
             conn.commit()
     finally:

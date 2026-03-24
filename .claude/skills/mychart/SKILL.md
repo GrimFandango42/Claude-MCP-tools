@@ -2,7 +2,7 @@
 name: mychart
 version: "2.0.0"
 description: "Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes including labs, meds, conditions, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports. Clinical knowledge tools for FDA drug lookup, ICD-10 codes, and drug interaction checking. Supports multi-organization with OAuth2+PKCE."
-argument-hint: 'mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart appointments, mychart immunizations, mychart encounters, mychart everything'
+argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart appointments, mychart immunizations, mychart encounters, mychart everything'
 allowed-tools: Bash, Read, Write, AskUserQuestion
 author: GrimFandango42
 license: MIT
@@ -60,6 +60,7 @@ Parse the user's first argument to determine the mode:
 
 | First word | Mode | Handler |
 |---|---|---|
+| `setup` | Onboarding wizard | Read `${SKILL_ROOT}/references/onboarding.md`, follow instructions |
 | `connect` | OAuth setup | Read `${SKILL_ROOT}/references/connect.md`, follow instructions |
 | `orgs` | Org management | Read `${SKILL_ROOT}/references/orgs.md`, follow instructions |
 | `labs` | Lab results | Inline — see below |
@@ -86,9 +87,26 @@ Parse the user's first argument to determine the mode:
 | `patient` | Demographics | Inline — see below |
 | `summary` | Full health overview | Inline — see below |
 
-For `connect` or `orgs`: read the reference file and follow those instructions. **Do not continue below.**
+For `setup`, `connect`, or `orgs`: read the reference file and follow those instructions. **Do not continue below.**
 
 For `drug`, `icd10`, `interactions`: these are **clinical knowledge tools** — they don't require MyChart authentication. Skip the pre-flight check.
+
+## First-Run Detection
+
+If the user invoked `/mychart` with **no arguments** or a data mode (not `setup`, `connect`, `orgs`, `drug`, `icd10`, `interactions`), check for first-run:
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SKILL_ROOT}/scripts')
+from lib.profile_store import get_profile
+p = get_profile()
+print('onboarding_complete' if p.get('onboarding_complete') else 'needs_onboarding')
+"
+```
+
+If output is `needs_onboarding` **AND** the user has no connected orgs (see pre-flight below), route to the onboarding wizard: read `${SKILL_ROOT}/references/onboarding.md` and follow those instructions. **Do not continue below.**
+
+Otherwise, proceed normally.
 
 ## Pre-flight: Check Connection
 

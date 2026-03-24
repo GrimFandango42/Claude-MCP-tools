@@ -2,11 +2,12 @@
 
 Extracts clinically meaningful fields from raw FHIR JSON
 and formats them for Claude synthesis or user display.
+Includes canvas card renderers for the onboarding wizard.
 """
 
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 def _safe(resource: Dict, *keys: str, default: str = "") -> str:
@@ -463,3 +464,266 @@ def _to_markdown_table(items: List[Dict[str, str]]) -> str:
         row = "| " + " | ".join(item.get(h, "") for h in headers) + " |"
         lines.append(row)
     return "\n".join(lines)
+
+
+# --- Canvas Card Renderers (Onboarding Wizard) ---
+
+
+def render_welcome_card() -> str:
+    """Render the onboarding welcome card with capability overview."""
+    return """### Welcome to MyChart
+
+Access your health records and medical reference tools — all from here.
+
+**No sign-in needed:**
+| Tool | What it does |
+|------|-------------|
+| Drug Lookup | Search FDA database for any medication — indications, warnings, side effects |
+| ICD-10 Codes | Look up diagnosis codes by name or code |
+| Drug Interactions | Check interactions between 2+ medications |
+
+**After connecting your health system:**
+| Category | What you can access |
+|----------|-------------------|
+| Lab Results | Blood work, metabolic panels, lipids — with trends over time |
+| Medications | Current prescriptions with dosages and prescribers |
+| Conditions | Active diagnoses and health conditions |
+| Vitals | Blood pressure, heart rate, weight, temperature |
+| Allergies | Known allergies with reaction details and severity |
+| Immunizations | Vaccination history and status |
+| Appointments | Upcoming and past visits |
+| And more... | Encounters, procedures, documents, coverage, care plans, goals, family history |
+
+---
+**What would you like to do?**
+1. Try a drug lookup right now (no sign-in needed)
+2. Connect my health system
+3. Just exploring — tell me more"""
+
+
+def render_progress_tracker(
+    current_step: int,
+    total_steps: int,
+    title: str,
+    items: List[Tuple[str, bool]],
+) -> str:
+    """Render a step progress tracker.
+
+    Args:
+        current_step: Current step number (1-based)
+        total_steps: Total number of steps
+        title: Title for the current step
+        items: List of (label, completed) tuples for checklist items
+    """
+    progress = f"Step {current_step} of {total_steps}"
+    bar_filled = current_step
+    bar_empty = total_steps - current_step
+    bar = "[" + "=" * bar_filled + "." * bar_empty + "]"
+
+    lines = [f"### {title}", f"{bar} {progress}", ""]
+    for label, done in items:
+        check = "x" if done else " "
+        lines.append(f"- [{check}] {label}")
+    return "\n".join(lines)
+
+
+def render_drug_card(data: Dict[str, Any]) -> str:
+    """Render a drug lookup result as a formatted card.
+
+    Args:
+        data: Dict with keys like brand_name, generic_name, drug_class,
+              route, indications, warnings (list)
+    """
+    name = data.get("brand_name") or data.get("generic_name", "Unknown Drug")
+    lines = [f"### {name}", ""]
+    lines.append("| Field | Details |")
+    lines.append("|-------|---------|")
+
+    field_map = [
+        ("Generic Name", "generic_name"),
+        ("Brand Names", "brand_name"),
+        ("Drug Class", "drug_class"),
+        ("Route", "route"),
+        ("Indications", "indications"),
+    ]
+    for label, key in field_map:
+        val = data.get(key, "")
+        if val:
+            display = str(val)[:200]
+            lines.append(f"| **{label}** | {display} |")
+
+    warnings = data.get("warnings", [])
+    if warnings:
+        lines.append("")
+        lines.append("**Key Warnings:**")
+        for w in warnings[:3]:
+            lines.append(f"- {str(w)[:150]}")
+
+    return "\n".join(lines)
+
+
+def render_connection_status(
+    state: str,
+    details: Optional[Dict[str, str]] = None,
+) -> str:
+    """Render an auth connection status card.
+
+    Args:
+        state: One of 'connecting', 'awaiting', 'success', 'error'
+        details: Optional dict with org, patient_id, expiry, error, auth_url
+    """
+    details = details or {}
+
+    if state == "connecting":
+        org = details.get("org", "your health system")
+        return render_progress_tracker(3, 5, f"Connecting to {org}...", [
+            ("Found endpoint", True),
+            ("Security handshake prepared", True),
+            ("Waiting for sign-in via browser...", False),
+        ])
+
+    if state == "awaiting":
+        lines = ["### Waiting for Sign-In", ""]
+        lines.append("A browser window should have opened. Sign in with your MyChart credentials.")
+        if details.get("auth_url"):
+            lines.append("\n> Browser didn't open? Use this link to sign in manually.")
+        return "\n".join(lines)
+
+    if state == "success":
+        lines = ["### Connected!", ""]
+        lines.append("| Detail | Value |")
+        lines.append("|--------|-------|")
+        for label, key in [
+            ("Health System", "org"),
+            ("Patient ID", "patient_id"),
+            ("Session expires", "expiry"),
+            ("Available data", "scopes"),
+        ]:
+            val = details.get(key, "")
+            if val:
+                lines.append(f"| {label} | {val} |")
+        return "\n".join(lines)
+
+    if state == "error":
+        error = details.get("error", "Unknown error")
+        return f"### Connection Error\n\n{error}\n\n> Want to try again, or explore the clinical tools (drug lookup, ICD-10) instead?"
+
+    return ""
+
+
+def render_insurance_review(fields: Dict[str, Tuple[str, str]]) -> str:
+    """Render parsed insurance card fields for user confirmation.
+
+    Args:
+        fields: Dict mapping field name to (value, confidence) tuples.
+               confidence is 'high', 'medium', or 'low'.
+    """
+    lines = ["### Insurance Card — Review", ""]
+    lines.append("| Field | Parsed Value | Confidence |")
+    lines.append("|-------|-------------|------------|")
+
+    conf_display = {"high": "High", "medium": "Medium", "low": "Low"}
+    for name, (value, confidence) in fields.items():
+        conf = conf_display.get(confidence, confidence)
+        lines.append(f"| {name} | {value} | {conf} |")
+
+    lines.extend([
+        "",
+        "**Does this look right?**",
+        "1. Yes — save it",
+        "2. I need to fix something",
+        "3. Discard — don't save",
+    ])
+    return "\n".join(lines)
+
+
+def render_health_snapshot(data: Dict[str, Any]) -> str:
+    """Render a health dashboard from summary data.
+
+    Args:
+        data: Dict with keys: conditions, medications, labs, vitals,
+              allergies, appointments, patient_name
+    """
+    now = datetime.now()
+    month_year = now.strftime("%B %Y")
+    name = data.get("patient_name", "Patient")
+
+    lines = [f"### Your Health Snapshot — {month_year}", ""]
+
+    conditions = data.get("conditions", [])
+    if conditions:
+        lines.append("**Active Conditions**")
+        for c in conditions:
+            onset = f" (onset: {c['onset']})" if c.get("onset") else ""
+            lines.append(f"- {c.get('condition', 'Unknown')}{onset}")
+        lines.append("")
+
+    meds = data.get("medications", [])
+    if meds:
+        lines.append(f"**Current Medications** ({len(meds)})")
+        lines.append("| Medication | Dosage | Status |")
+        lines.append("|-----------|--------|--------|")
+        for m in meds:
+            lines.append(f"| {m.get('drug', '')} | {m.get('dosage', '')} | {m.get('status', '')} |")
+        lines.append("")
+
+    labs = data.get("labs", [])
+    if labs:
+        lines.append("**Recent Labs**")
+        lines.append("| Test | Value | Range | Flag |")
+        lines.append("|------|-------|-------|------|")
+        for lab in labs:
+            flag = lab.get("flag", "")
+            lines.append(f"| {lab.get('test', '')} | {lab.get('value', '')} | {lab.get('range', '')} | {flag} |")
+        lines.append("")
+
+    vitals = data.get("vitals", [])
+    if vitals:
+        lines.append("**Recent Vitals**")
+        lines.append("| Vital | Reading | Date |")
+        lines.append("|-------|---------|------|")
+        for v in vitals:
+            lines.append(f"| {v.get('type', '')} | {v.get('value', '')} | {v.get('date', '')} |")
+        lines.append("")
+
+    allergies = data.get("allergies", [])
+    if allergies:
+        lines.append("**Allergies**")
+        for a in allergies:
+            crit = f" ({a['criticality']})" if a.get("criticality") else ""
+            lines.append(f"- {a.get('substance', 'Unknown')}{crit}")
+        lines.append("")
+
+    appts = data.get("appointments", [])
+    if appts:
+        lines.append("**Upcoming Appointments**")
+        lines.append("| Date | Provider | Type |")
+        lines.append("|------|----------|------|")
+        for a in appts:
+            lines.append(f"| {a.get('date', '')} | {a.get('provider', '')} | {a.get('type', '')} |")
+        lines.append("")
+
+    lines.append("> **Dive deeper:** `labs` `meds` `vitals` `conditions` `appointments` `summary`")
+    return "\n".join(lines)
+
+
+def render_quick_reference() -> str:
+    """Render the post-onboarding command reference card."""
+    return """### You're all set!
+
+| Command | What it does |
+|---------|-------------|
+| `/mychart labs` | Recent lab results with trends |
+| `/mychart meds` | Current medications |
+| `/mychart conditions` | Active diagnoses |
+| `/mychart vitals` | Blood pressure, weight, etc. |
+| `/mychart allergies` | Allergy list |
+| `/mychart appointments` | Upcoming visits |
+| `/mychart summary` | Full health overview |
+| `/mychart drug [name]` | Look up any medication |
+| `/mychart interactions [d1] [d2]` | Check drug interactions |
+| `/mychart icd10 [term]` | Look up diagnosis codes |
+| `/mychart connect [org]` | Add another health system |
+| `/mychart setup` | Re-run this wizard |
+
+Just ask — I can pull up any of your health data anytime."""
