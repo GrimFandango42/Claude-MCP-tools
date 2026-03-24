@@ -150,11 +150,56 @@ class FHIRClient:
         """Get the authenticated patient's record."""
         if self.patient_id:
             return self.read("Patient", self.patient_id)
-        # Search for self
-        results = self.search("Patient", {"_id": self.patient_id} if self.patient_id else {})
+        results = self.search("Patient", {})
         if results:
             return results[0]
         raise FHIRError("Could not find patient record")
+
+    def everything(self, resource_type: str = "Patient", resource_id: Optional[str] = None) -> List[Dict]:
+        """Execute $everything operation — comprehensive patient data in one call.
+
+        GET {base}/Patient/{id}/$everything
+        Returns all resources in the patient compartment.
+        """
+        rid = resource_id or self.patient_id
+        if not rid:
+            raise FHIRError("No patient ID for $everything operation")
+        url = f"{self.base_url}/{resource_type}/{rid}/$everything"
+        return self._unpack_bundle(self._request("GET", url))
+
+    def lastn(self, category: str = "vital-signs", max_per_code: int = 1) -> List[Dict]:
+        """Execute $lastn operation — latest N observations per code.
+
+        GET {base}/Observation/$lastn?patient={id}&category={cat}&max={n}
+        """
+        params = {"category": category, "max": str(max_per_code)}
+        if self.patient_id:
+            params["patient"] = self.patient_id
+        url = f"{self.base_url}/Observation/$lastn?{urlencode(params)}"
+        return self._unpack_bundle(self._request("GET", url))
+
+    def get_binary(self, binary_id: str) -> bytes:
+        """Download a Binary resource (document content).
+
+        Returns raw bytes of the document.
+        """
+        url = f"{self.base_url}/Binary/{binary_id}"
+        headers = dict(self._headers())
+        headers["Accept"] = "*/*"  # Accept any content type
+        try:
+            return http.request("GET", url, headers=headers, retries=2, raw=True)
+        except http.HTTPError as e:
+            raise FHIRError(f"Failed to download document: {e}", status_code=e.status_code)
+
+    def _unpack_bundle(self, response: Dict) -> List[Dict]:
+        """Extract resources from a Bundle response."""
+        if response.get("resourceType") == "Bundle":
+            return [
+                entry.get("resource", {})
+                for entry in response.get("entry", [])
+                if entry.get("resource")
+            ]
+        return [response]
 
 
 def get_client(org_id: Optional[int] = None) -> FHIRClient:

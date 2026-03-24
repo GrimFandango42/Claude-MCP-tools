@@ -1,8 +1,8 @@
 ---
 name: mychart
-version: "1.0.0"
-description: "Patient-authorized access to MyChart/Epic health records via FHIR R4. Read labs, meds, conditions, vitals, appointments, and more. Supports multi-organization with OAuth2+PKCE."
-argument-hint: 'mychart labs, mychart meds, mychart summary, mychart connect --sandbox, mychart allergies'
+version: "2.0.0"
+description: "Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes including labs, meds, conditions, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports. Clinical knowledge tools for FDA drug lookup, ICD-10 codes, and drug interaction checking. Supports multi-organization with OAuth2+PKCE."
+argument-hint: 'mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart appointments, mychart immunizations, mychart encounters, mychart everything'
 allowed-tools: Bash, Read, Write, AskUserQuestion
 author: GrimFandango42
 license: MIT
@@ -27,13 +27,16 @@ metadata:
       - labs
       - medications
       - ehr
+      - clinical-knowledge
+      - drug-interactions
+      - icd10
 ---
 
-# MyChart v1.0.0: Patient Health Records via FHIR
+# MyChart v2.0.0: Patient Health Records via FHIR
 
 > **Privacy notice**: This skill accesses your health records through Epic's FHIR API with your explicit authorization. Health data is processed during the conversation but NOT cached or stored locally. Only OAuth tokens and organization configs are persisted at `~/.local/share/mychart/mychart.db`.
 
-Access your MyChart health records — labs, medications, conditions, allergies, vitals, and more — through Epic's FHIR R4 API with patient-authorized OAuth2 access.
+Access your MyChart health records — labs, medications, conditions, allergies, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports — through Epic's FHIR R4 API with patient-authorized OAuth2 access. Also includes clinical knowledge tools (FDA drug info, ICD-10, drug interactions) that work without authentication.
 
 ## Setup: Find Skill Root
 
@@ -64,10 +67,28 @@ Parse the user's first argument to determine the mode:
 | `conditions` | Conditions/diagnoses | Inline — see below |
 | `allergies` | Allergies | Inline — see below |
 | `vitals` | Vital signs | Inline — see below |
+| `immunizations` | Immunization history | Inline — see below |
+| `appointments` | Appointments | Inline — see below |
+| `procedures` | Procedure history | Inline — see below |
+| `encounters` | Visit/encounter history | Inline — see below |
+| `documents` | Clinical documents | Inline — see below |
+| `coverage` | Insurance/coverage | Inline — see below |
+| `careplans` | Care plans | Inline — see below |
+| `goals` | Health goals | Inline — see below |
+| `familyhistory` | Family medical history | Inline — see below |
+| `diagnostics` | Diagnostic reports | Inline — see below |
+| `everything` | All patient data ($everything) | Inline — see below |
+| `lastn` | Latest observations ($lastn) | Inline — see below |
+| `search` | Generic FHIR search | Inline — see below |
+| `drug` | FDA drug lookup | Inline — no auth needed |
+| `icd10` | ICD-10 code lookup | Inline — no auth needed |
+| `interactions` | Drug interaction check | Inline — no auth needed |
 | `patient` | Demographics | Inline — see below |
 | `summary` | Full health overview | Inline — see below |
 
 For `connect` or `orgs`: read the reference file and follow those instructions. **Do not continue below.**
+
+For `drug`, `icd10`, `interactions`: these are **clinical knowledge tools** — they don't require MyChart authentication. Skip the pre-flight check.
 
 ## Pre-flight: Check Connection
 
@@ -162,7 +183,7 @@ Display basic demographics cleanly.
 python3 "${SKILL_ROOT}/scripts/mychart.py" summary --format compact
 ```
 
-This fetches conditions, allergies, medications, recent labs, and recent vitals in one call. Synthesize into a comprehensive overview:
+This fetches conditions, allergies, medications, recent labs, recent vitals, immunizations, upcoming appointments, and coverage in one call. Synthesize into a comprehensive overview:
 
 ```
 ## Health Summary for [Name]
@@ -182,6 +203,142 @@ This fetches conditions, allergies, medications, recent labs, and recent vitals 
 ### Recent Vitals
 [Most recent BP, HR, weight, temp]
 ```
+
+### Immunizations
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" immunizations --format compact --count 25
+```
+
+Synthesize: list each vaccine with date and status.
+
+### Appointments
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" appointments --format compact
+```
+
+Shows future appointments by default. Add `--past` for all. Synthesize: show date, time, provider, location, and type.
+
+### Procedures
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" procedures --format compact --count 20
+```
+
+Synthesize: list procedures with dates and outcomes.
+
+### Encounters
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" encounters --format compact --count 20
+```
+
+Synthesize: show visit history — type, date, provider, reason.
+
+### Documents
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" documents --format compact --count 10
+```
+
+Synthesize: list available clinical documents. Add `--doc-type <code>` to filter.
+
+### Coverage
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" coverage --format compact --active-only
+```
+
+Synthesize: show insurance info — payor, plan, subscriber ID, period.
+
+### Care Plans
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" careplans --format compact --active-only
+```
+
+Synthesize: list active care plans with activities.
+
+### Goals
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" goals --format compact --active-only
+```
+
+Synthesize: show health goals with achievement status.
+
+### Family History
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" familyhistory --format compact
+```
+
+Synthesize: list family medical history by relationship.
+
+### Diagnostic Reports
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" diagnostics --format compact --count 10
+```
+
+Synthesize: show reports with conclusions and categories.
+
+### Everything ($everything)
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" everything --format compact
+```
+
+Fetches ALL patient data in one call via FHIR `$everything`. Results grouped by resource type. Falls back to summary if server doesn't support the operation.
+
+### Latest Observations ($lastn)
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" lastn --category vital-signs --max 1
+```
+
+Gets the latest observation per code. Categories: `vital-signs`, `laboratory`.
+
+### Generic FHIR Search
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" search --type Observation --params category=laboratory code=2093-3
+```
+
+Search any FHIR resource type with custom parameters.
+
+## Clinical Knowledge Tools (No Auth Required)
+
+These tools use public FDA and NLM APIs — no MyChart connection needed.
+
+### Drug Lookup
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" drug "metformin"
+python3 "${SKILL_ROOT}/scripts/mychart.py" drug "lisinopril" --drug-type event
+python3 "${SKILL_ROOT}/scripts/mychart.py" drug "atorvastatin" --drug-type ndc
+```
+
+Types: `label` (default — indications, warnings, dosage), `event` (top adverse events), `ndc` (product codes).
+
+### ICD-10 Lookup
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" icd10 "diabetes"
+python3 "${SKILL_ROOT}/scripts/mychart.py" icd10 "E11.9"
+```
+
+Search by condition name or ICD-10 code.
+
+### Drug Interaction Checker
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" interactions aspirin warfarin
+python3 "${SKILL_ROOT}/scripts/mychart.py" interactions metformin lisinopril atorvastatin
+```
+
+Checks drug-drug interactions via RxNorm. Provide 2+ drug names.
 
 ## Output Presentation
 

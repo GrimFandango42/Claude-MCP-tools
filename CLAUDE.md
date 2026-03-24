@@ -19,14 +19,16 @@ Deep research engine — searches Reddit, X, YouTube, TikTok, Instagram, Hacker 
 - **Required env**: `SCRAPECREATORS_API_KEY`
 - **Optional env**: `OPENAI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `APIFY_API_TOKEN`, `AUTH_TOKEN`, `CT0`, `BSKY_HANDLE`, `BSKY_APP_PASSWORD`, `TRUTHSOCIAL_TOKEN`
 
-### /mychart (v1.0.0)
-Patient-authorized access to MyChart/Epic health records via FHIR R4. OAuth2+PKCE authentication with multi-organization support.
+### /mychart (v2.0.0)
+Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes with OAuth2+PKCE authentication and multi-organization support. Includes clinical knowledge tools (FDA drug info, ICD-10 codes, drug interactions) that work without authentication.
 
 - **Location**: `.claude/skills/mychart/`
 - **Core scripts**: `scripts/mychart.py`, `scripts/auth.py`
+- **Lib modules**: `scripts/lib/fhir_client.py`, `scripts/lib/display.py`, `scripts/lib/clinical.py`, `scripts/lib/token_store.py`, `scripts/lib/http.py`
 - **Database**: `~/.local/share/mychart/mychart.db` (tokens + org configs, auto-created)
 - **Optional env**: `EPIC_CLIENT_ID` (not needed for sandbox testing)
-- **Modes**: `connect`, `orgs`, `labs`, `meds`, `conditions`, `allergies`, `vitals`, `patient`, `summary`
+- **FHIR modes** (require auth): `connect`, `orgs`, `labs`, `meds`, `conditions`, `allergies`, `vitals`, `immunizations`, `appointments`, `procedures`, `encounters`, `documents`, `coverage`, `careplans`, `goals`, `familyhistory`, `diagnostics`, `everything`, `lastn`, `search`, `patient`, `summary`
+- **Clinical tools** (no auth): `drug`, `icd10`, `interactions`
 
 ## Archived MCP Servers (Reference Only)
 
