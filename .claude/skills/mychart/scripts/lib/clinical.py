@@ -110,6 +110,81 @@ def _truncate_list(items: List[str], max_chars: int) -> List[str]:
     return [item[:max_chars] + "..." if len(item) > max_chars else item for item in items[:2]]
 
 
+# --- FDA Drug Recalls (openFDA Enforcement API) ---
+
+
+def fda_drug_recalls(
+    drug_name: Optional[str] = None,
+    classification: Optional[str] = None,
+    limit: int = 10,
+) -> Dict[str, Any]:
+    """Search FDA drug recall/enforcement actions.
+
+    Args:
+        drug_name: Drug name to search (brand or generic). If None, returns recent recalls.
+        classification: Filter by severity — 'Class I' (most serious), 'Class II', 'Class III'
+        limit: Max results (1-25)
+
+    Returns:
+        Dict with recall events including reason, severity, status, and distribution
+    """
+    search_parts = []
+    if drug_name:
+        search_parts.append(
+            f'(product_description:"{quote(drug_name)}"'
+            f'+openfda.brand_name:"{quote(drug_name)}"'
+            f'+openfda.generic_name:"{quote(drug_name)}")'
+        )
+    if classification:
+        search_parts.append(f'classification:"{quote(classification)}"')
+
+    search = "+AND+".join(search_parts) if search_parts else ""
+    limit = min(max(limit, 1), 25)
+
+    url = f"{FDA_BASE}/enforcement.json?"
+    if search:
+        url += f"search={search}&"
+    url += f"sort=report_date:desc&limit={limit}"
+
+    try:
+        data = http.get(url, retries=2)
+        results = data.get("results", [])
+
+        recalls = []
+        for r in results:
+            openfda = r.get("openfda", {})
+            recalls.append({
+                "recall_number": r.get("recall_number", ""),
+                "classification": r.get("classification", ""),
+                "status": r.get("status", ""),
+                "reason": r.get("reason_for_recall", ""),
+                "product": r.get("product_description", "")[:300],
+                "recalling_firm": r.get("recalling_firm", ""),
+                "report_date": r.get("report_date", ""),
+                "city": r.get("city", ""),
+                "state": r.get("state", ""),
+                "distribution": r.get("distribution_pattern", "")[:200],
+                "brand_names": openfda.get("brand_name", []),
+                "generic_names": openfda.get("generic_name", []),
+            })
+
+        return {
+            "query": drug_name or "(recent recalls)",
+            "classification_filter": classification,
+            "total_found": data.get("meta", {}).get("results", {}).get("total", len(recalls)),
+            "recalls": recalls,
+        }
+
+    except http.HTTPError as e:
+        if e.status_code == 404:
+            return {
+                "query": drug_name or "(recent recalls)",
+                "recalls": [],
+                "message": "No recall events found",
+            }
+        raise
+
+
 # --- ICD-10 Code Lookup (NLM API) ---
 
 ICD10_BASE = "https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search"

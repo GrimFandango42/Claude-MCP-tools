@@ -19,17 +19,17 @@ Deep research engine — searches Reddit, X, YouTube, TikTok, Instagram, Hacker 
 - **Required env**: `SCRAPECREATORS_API_KEY`
 - **Optional env**: `OPENAI_API_KEY`, `XAI_API_KEY`, `OPENROUTER_API_KEY`, `BRAVE_API_KEY`, `APIFY_API_TOKEN`, `AUTH_TOKEN`, `CT0`, `BSKY_HANDLE`, `BSKY_APP_PASSWORD`, `TRUTHSOCIAL_TOKEN`
 
-### /mychart (v2.0.0)
-Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes with OAuth2+PKCE authentication and multi-organization support. Includes clinical knowledge tools (FDA drug info, ICD-10 codes, drug interactions) that work without authentication.
+### /mychart (v2.1.0)
+Patient health companion — MyChart/Epic records via FHIR R4, FDA drug/recall data, CMS hospital quality ratings, ICD-10 codes, drug interactions, provider search, and clinical trials. 27 modes organized by user intent: understand results, manage ongoing care, research & plan, or navigate the system. OAuth2+PKCE authentication with multi-organization support.
 
 - **Location**: `.claude/skills/mychart/`
 - **Core scripts**: `scripts/mychart.py`, `scripts/auth.py`
-- **Lib modules**: `scripts/lib/fhir_client.py`, `scripts/lib/display.py`, `scripts/lib/clinical.py`, `scripts/lib/token_store.py`, `scripts/lib/http.py`
+- **Lib modules**: `scripts/lib/fhir_client.py`, `scripts/lib/display.py`, `scripts/lib/clinical.py`, `scripts/lib/quality.py`, `scripts/lib/token_store.py`, `scripts/lib/http.py`
 - **Database**: `~/.local/share/mychart/mychart.db` (tokens + org configs, auto-created)
 - **Optional env**: `EPIC_CLIENT_ID` (not needed for sandbox testing)
 - **Setup**: `setup` (onboarding wizard — auto-triggered on first run, or run manually)
 - **FHIR modes** (require auth): `connect`, `orgs`, `labs`, `meds`, `conditions`, `allergies`, `vitals`, `immunizations`, `appointments`, `procedures`, `encounters`, `documents`, `coverage`, `careplans`, `goals`, `familyhistory`, `diagnostics`, `everything`, `lastn`, `search`, `patient`, `summary`
-- **Clinical tools** (no auth): `drug`, `icd10`, `interactions`, `providers`, `trials`
+- **Clinical tools** (no auth): `drug`, `icd10`, `interactions`, `providers`, `trials`, `recalls`, `hospitals`
 
 ## Archived MCP Servers (Reference Only)
 

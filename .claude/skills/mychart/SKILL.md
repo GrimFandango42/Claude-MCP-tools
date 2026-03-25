@@ -1,8 +1,8 @@
 ---
 name: mychart
-version: "2.0.0"
-description: "Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes including labs, meds, conditions, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports. Clinical knowledge tools for FDA drug lookup, ICD-10 codes, and drug interaction checking. Supports multi-organization with OAuth2+PKCE."
-argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart providers --specialty Cardiology --zip-code 90210, mychart trials "type 2 diabetes", mychart appointments, mychart immunizations, mychart encounters, mychart everything'
+version: "2.1.0"
+description: "Patient health companion — MyChart records via FHIR R4, FDA drug/recall data, ICD-10 codes, drug interactions, hospital quality ratings, provider search, and clinical trials. 27 modes organized by what you need: understand results, manage ongoing care, research & plan, or navigate the system."
+argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart recalls metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart providers --specialty Cardiology --zip-code 90210, mychart hospitals --state CA --city "Los Angeles", mychart trials "type 2 diabetes", mychart appointments, mychart everything'
 allowed-tools: Bash, Read, Write, AskUserQuestion
 author: GrimFandango42
 license: MIT
@@ -29,14 +29,16 @@ metadata:
       - ehr
       - clinical-knowledge
       - drug-interactions
+      - drug-recalls
+      - hospital-quality
       - icd10
 ---
 
-# MyChart v2.0.0: Patient Health Records via FHIR
+# MyChart v2.1.0: Patient Health Companion
 
 > **Privacy notice**: This skill accesses your health records through Epic's FHIR API with your explicit authorization. Health data is processed during the conversation but NOT cached or stored locally. Only OAuth tokens and organization configs are persisted at `~/.local/share/mychart/mychart.db`.
 
-Access your MyChart health records — labs, medications, conditions, allergies, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports — through Epic's FHIR R4 API with patient-authorized OAuth2 access. Also includes clinical knowledge tools (FDA drug info, ICD-10, drug interactions) that work without authentication.
+27 commands organized by what you're trying to do — from understanding new lab results to finding the best-rated hospital near you. Connects to MyChart/Epic via FHIR R4 for your records, plus public FDA, CMS, NLM, and NPI APIs for clinical knowledge (no login needed).
 
 ## Setup: Find Skill Root
 
@@ -54,48 +56,83 @@ if [ -z "${SKILL_ROOT:-}" ]; then
 fi
 ```
 
-## Command Routing
+## Mode Detection & Routing
 
-Parse the user's first argument to determine the mode:
+Detect what the user needs based on their first argument. Commands are grouped by user intent — use this to offer relevant follow-ups.
 
-| First word | Mode | Handler |
+### Account & Setup (run reference files, then stop)
+
+| Command | What it does | Handler |
 |---|---|---|
-| `setup` | Onboarding wizard | Read `${SKILL_ROOT}/references/onboarding.md`, follow instructions |
-| `connect` | OAuth setup | Read `${SKILL_ROOT}/references/connect.md`, follow instructions |
-| `orgs` | Org management | Read `${SKILL_ROOT}/references/orgs.md`, follow instructions |
-| `labs` | Lab results | Inline — see below |
-| `meds` | Medications | Inline — see below |
-| `conditions` | Conditions/diagnoses | Inline — see below |
-| `allergies` | Allergies | Inline — see below |
-| `vitals` | Vital signs | Inline — see below |
-| `immunizations` | Immunization history | Inline — see below |
-| `appointments` | Appointments | Inline — see below |
-| `procedures` | Procedure history | Inline — see below |
-| `encounters` | Visit/encounter history | Inline — see below |
-| `documents` | Clinical documents | Inline — see below |
-| `coverage` | Insurance/coverage | Inline — see below |
-| `careplans` | Care plans | Inline — see below |
-| `goals` | Health goals | Inline — see below |
-| `familyhistory` | Family medical history | Inline — see below |
-| `diagnostics` | Diagnostic reports | Inline — see below |
-| `everything` | All patient data ($everything) | Inline — see below |
-| `lastn` | Latest observations ($lastn) | Inline — see below |
-| `search` | Generic FHIR search | Inline — see below |
-| `drug` | FDA drug lookup | Inline — no auth needed |
-| `icd10` | ICD-10 code lookup | Inline — no auth needed |
-| `interactions` | Drug interaction check | Inline — no auth needed |
-| `providers` | Provider finder (NPI) | Inline — no auth needed |
-| `trials` | Clinical trials search | Inline — no auth needed |
-| `patient` | Demographics | Inline — see below |
-| `summary` | Full health overview | Inline — see below |
+| `setup` | First-time onboarding wizard | Read `${SKILL_ROOT}/references/onboarding.md` |
+| `connect` | OAuth authorization flow | Read `${SKILL_ROOT}/references/connect.md` |
+| `orgs` | Manage connected organizations | Read `${SKILL_ROOT}/references/orgs.md` |
 
-For `setup`, `connect`, or `orgs`: read the reference file and follow those instructions. **Do not continue below.**
+For these: read the reference file and follow those instructions. **Do not continue below.**
 
-For `drug`, `icd10`, `interactions`, `providers`, `trials`: these are **clinical knowledge tools** — they don't require MyChart authentication. Skip the pre-flight check.
+### "Understand What Just Happened" (interpret results, research a diagnosis or medication)
+
+These help when the user has new results, a new diagnosis, or a new prescription and wants to make sense of it. Modes marked **(no auth)** work without MyChart.
+
+| Command | What it does | Auth? |
+|---|---|---|
+| `labs` | Lab results (CBC, metabolic, lipid panels, etc.) | Yes |
+| `vitals` | Vital signs (BP, HR, weight, temp) | Yes |
+| `diagnostics` | Diagnostic reports with conclusions | Yes |
+| `drug` | FDA drug info — indications, warnings, dosage, adverse events **(no auth)** | No |
+| `icd10` | ICD-10 code lookup by condition or code **(no auth)** | No |
+| `interactions` | Drug-drug interaction check via RxNorm **(no auth)** | No |
+| `recalls` | FDA drug recall/enforcement actions **(no auth)** | No |
+
+### "Keep Me on Track" (manage ongoing care, medications, conditions)
+
+These help when the user is managing an ongoing condition, tracking medications, or following a care plan.
+
+| Command | What it does | Auth? |
+|---|---|---|
+| `meds` | Active medications with dosages and prescribers | Yes |
+| `conditions` | Active conditions/diagnoses | Yes |
+| `allergies` | Allergies and intolerances with severity | Yes |
+| `immunizations` | Vaccination history | Yes |
+| `careplans` | Active care plans and activities | Yes |
+| `goals` | Health goals and achievement status | Yes |
+| `appointments` | Upcoming (or past) appointments | Yes |
+| `summary` | Full health overview — conditions, meds, labs, vitals, appointments | Yes |
+
+### "Research & Plan" (find providers, compare hospitals, explore trials)
+
+These help when the user is proactively researching options — finding a specialist, comparing hospital quality, or exploring clinical trials. **All work without MyChart auth.**
+
+| Command | What it does |
+|---|---|
+| `providers` | Search NPI Registry by specialty, condition, location, or name |
+| `hospitals` | CMS Hospital Compare — quality ratings, star scores, patient experience |
+| `trials` | ClinicalTrials.gov — recruiting trials by condition and location |
+
+### "Deal With the System" (insurance, visit history, documents)
+
+These help when navigating administrative tasks — insurance coverage, billing questions, or accessing clinical documents.
+
+| Command | What it does | Auth? |
+|---|---|---|
+| `coverage` | Insurance/coverage — payor, plan, subscriber ID, period | Yes |
+| `encounters` | Visit/encounter history — type, date, provider, reason | Yes |
+| `procedures` | Procedure history with dates and outcomes | Yes |
+| `documents` | Clinical documents (filter by type) | Yes |
+| `familyhistory` | Family medical history by relationship | Yes |
+| `patient` | Demographics — name, DOB, address, contact | Yes |
+
+### Power User
+
+| Command | What it does | Auth? |
+|---|---|---|
+| `everything` | All patient data via FHIR `$everything` | Yes |
+| `lastn` | Latest observation per code (`vital-signs` or `laboratory`) | Yes |
+| `search` | Generic FHIR resource search with custom params | Yes |
 
 ## First-Run Detection
 
-If the user invoked `/mychart` with **no arguments** or a data mode (not `setup`, `connect`, `orgs`, `drug`, `icd10`, `interactions`, `providers`, `trials`), check for first-run:
+If the user invoked `/mychart` with **no arguments** or a data mode (not `setup`, `connect`, `orgs`, or any no-auth command), check for first-run:
 
 ```bash
 python3 -c "
@@ -108,11 +145,9 @@ print('onboarding_complete' if p.get('onboarding_complete') else 'needs_onboardi
 
 If output is `needs_onboarding` **AND** the user has no connected orgs (see pre-flight below), route to the onboarding wizard: read `${SKILL_ROOT}/references/onboarding.md` and follow those instructions. **Do not continue below.**
 
-Otherwise, proceed normally.
-
 ## Pre-flight: Check Connection
 
-Before any data mode, verify the user is connected:
+Before any **auth-required** data mode, verify the user is connected:
 
 ```bash
 python3 "${SKILL_ROOT}/scripts/auth.py" status
@@ -124,6 +159,8 @@ If the output shows `"status": "no_orgs"` or all tokens are expired with no refr
 
 If tokens are expired but refreshable, the data scripts handle refresh automatically.
 
+**No-auth commands** (`drug`, `icd10`, `interactions`, `providers`, `trials`, `recalls`, `hospitals`): skip the pre-flight check entirely.
+
 ## Data Modes (Inline)
 
 All data modes use the same pattern:
@@ -134,13 +171,15 @@ python3 "${SKILL_ROOT}/scripts/mychart.py" <mode> [--format compact|json|markdow
 
 Use a **timeout of 30000** (30 seconds) on the Bash call.
 
+---
+
 ### Labs
 
 ```bash
 python3 "${SKILL_ROOT}/scripts/mychart.py" labs --format compact --count 25
 ```
 
-After getting results, synthesize for the user:
+Synthesize:
 - Group by test type (CBC, metabolic panel, lipid panel, etc.)
 - Highlight any abnormal flags
 - Show trends if multiple results for the same test
@@ -328,9 +367,11 @@ python3 "${SKILL_ROOT}/scripts/mychart.py" search --type Observation --params ca
 
 Search any FHIR resource type with custom parameters.
 
+---
+
 ## Clinical Knowledge Tools (No Auth Required)
 
-These tools use public FDA and NLM APIs — no MyChart connection needed.
+These tools use public FDA, CMS, and NLM APIs — no MyChart connection needed.
 
 ### Drug Lookup
 
@@ -341,6 +382,23 @@ python3 "${SKILL_ROOT}/scripts/mychart.py" drug "atorvastatin" --drug-type ndc
 ```
 
 Types: `label` (default — indications, warnings, dosage), `event` (top adverse events), `ndc` (product codes).
+
+### Drug Recalls
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" recalls
+python3 "${SKILL_ROOT}/scripts/mychart.py" recalls "metformin"
+python3 "${SKILL_ROOT}/scripts/mychart.py" recalls "metformin" --classification "Class I"
+```
+
+Searches FDA drug enforcement/recall database. Omit drug name for recent recalls across all drugs. Classification filters: `Class I` (most serious — may cause death or serious harm), `Class II` (may cause temporary/reversible health effects), `Class III` (unlikely to cause harm).
+
+**Synthesis rules:**
+- Present recalls clearly: Recall # | Classification | Status | Firm | Reason
+- **Highlight Class I recalls prominently** — these are the most serious
+- Show the distribution pattern (nationwide vs. regional)
+- If the user is connected to MyChart, cross-reference with their active medications via `/mychart meds` and flag any matches
+- Include report dates so the user knows how recent the recall is
 
 ### ICD-10 Lookup
 
@@ -376,6 +434,30 @@ Searches the NPI Registry (public, free, no auth needed). Supports search by spe
 - If user has insurance on file (check profile_store), remind them to verify network participation
 - For condition-based search: show which conditions mapped to which specialties, and note any unmapped conditions
 - If `--org` was used and user is connected, suggest cross-referencing with their conditions via `/mychart conditions`
+
+### Hospital Quality (CMS Hospital Compare)
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" hospitals --state CA --city "Los Angeles"
+python3 "${SKILL_ROOT}/scripts/mychart.py" hospitals --name "Mayo"
+python3 "${SKILL_ROOT}/scripts/mychart.py" hospitals --zip-code 90210
+python3 "${SKILL_ROOT}/scripts/mychart.py" hospitals --provider-id 050454
+python3 "${SKILL_ROOT}/scripts/mychart.py" hospitals --provider-id 050454 --detail experience
+```
+
+Searches CMS Hospital Compare for hospital info, quality star ratings, and patient experience scores. Data sourced from Medicare — covers virtually all US hospitals.
+
+**Search mode** (no `--provider-id`): returns hospital list with overall star ratings, type, ownership, and emergency services.
+
+**Detail mode** (`--provider-id <id>`): returns domain-specific ratings — mortality, safety, readmission, patient experience, effectiveness, timeliness, efficient imaging. Add `--detail experience` for HCAHPS patient satisfaction survey scores.
+
+**Synthesis rules:**
+- Present hospitals in a clean table: Name | Overall Stars | Type | City, State | Phone
+- **Star ratings are 1-5** (5 = best). "N/A" means not enough data
+- For detail view: show all domain comparisons (Above/Same as/Below National Average)
+- For patient experience: summarize top-line satisfaction scores and response rates
+- If user has a specific procedure/condition in mind, note which quality domains are most relevant
+- Suggest looking at specific hospitals with `--provider-id` for deeper quality data
 
 ### Clinical Trials Search
 
@@ -430,9 +512,21 @@ Searches ClinicalTrials.gov v2 API (public, free, no auth needed). Comma-separat
 
 ## After Displaying Results
 
-Offer follow-up options based on what was shown:
-- If labs: "Want me to show trends for a specific test, or check your medications?"
-- If meds: "Want me to look up any of these medications, or check your recent labs?"
-- If summary: "Want to dive deeper into any section — labs, medications, or conditions?"
+Offer context-aware follow-ups based on which mental mode the user is in:
+
+**If interpreting results** (labs, vitals, diagnostics):
+- "Want me to look up any of these values, check your medications, or show trends?"
+- If abnormal results found: "Want me to check if any of your current medications could affect these values?" (offer `interactions`)
+
+**If managing ongoing care** (meds, conditions, careplans, summary):
+- "Want me to check for drug interactions, look up any of these medications, or check for recalls?"
+- If medications shown: "Want me to check if any of these have active FDA recalls?" (offer `recalls`)
+
+**If researching options** (providers, hospitals, trials):
+- "Want me to get detailed quality ratings for any of these hospitals, or search for clinical trials?"
+- If providers shown: "Want me to compare hospital quality in your area?" (offer `hospitals`)
+
+**If navigating the system** (coverage, encounters, documents):
+- "Want me to show your upcoming appointments, or pull up a specific document?"
 
 Stay in expert mode for the conversation — don't re-fetch data unless the user asks for a different mode or a refresh.

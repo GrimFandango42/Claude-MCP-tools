@@ -25,6 +25,9 @@ Usage:
     python3 mychart.py interactions <drug1> <drug2> [drug3 ...]
     python3 mychart.py providers [--specialty X] [--condition X] [--zip-code X]
     python3 mychart.py trials <condition> [--location X] [--nct-id X]
+    python3 mychart.py recalls [drug_name] [--classification "Class I"]
+    python3 mychart.py hospitals --state CA --city "Los Angeles"
+    python3 mychart.py hospitals --provider-id 050454 [--detail ratings|experience]
     python3 mychart.py summary [options]
     python3 mychart.py patient [options]
 """
@@ -376,6 +379,36 @@ def handle_providers(args):
     print(json.dumps(result, indent=2))
 
 
+def handle_recalls(args):
+    """Search FDA drug recall/enforcement actions."""
+    from lib.clinical import fda_drug_recalls
+    drug_name = getattr(args, "drug_name", None)
+    classification = getattr(args, "classification", None)
+    result = fda_drug_recalls(drug_name=drug_name, classification=classification, limit=args.count)
+    print(json.dumps(result, indent=2))
+
+
+def handle_hospitals(args):
+    """Search CMS Hospital Compare for quality ratings."""
+    from lib.quality import search_hospitals, hospital_ratings, hospital_patient_experience
+    provider_id = getattr(args, "provider_id", None)
+    detail = getattr(args, "detail", None)
+
+    if provider_id and detail == "experience":
+        result = hospital_patient_experience(provider_id)
+    elif provider_id:
+        result = hospital_ratings(provider_id)
+    else:
+        result = search_hospitals(
+            name=getattr(args, "name", None),
+            city=getattr(args, "city", None),
+            state=getattr(args, "state", None),
+            zip_code=getattr(args, "zip_code", None),
+            limit=args.count,
+        )
+    print(json.dumps(result, indent=2))
+
+
 def handle_trials(args):
     """Search ClinicalTrials.gov for recruiting trials."""
     from lib.trials import search_trials, match_trials_to_conditions, get_trial_details
@@ -530,6 +563,22 @@ def main():
     trials_parser.add_argument("--location", help="Location filter (city, state, or country)")
     trials_parser.add_argument("--status", default="RECRUITING", help="Trial status (default: RECRUITING)")
 
+    # Drug recalls (no auth required)
+    recalls_parser = subparsers.add_parser("recalls", help="FDA drug recall/enforcement search")
+    recalls_parser.add_argument("drug_name", nargs="?", help="Drug name (omit for recent recalls)")
+    recalls_parser.add_argument("--classification", choices=["Class I", "Class II", "Class III"],
+                                help="Filter by severity (Class I = most serious)")
+
+    # Hospital quality (no auth required)
+    hospitals_parser = subparsers.add_parser("hospitals", help="CMS Hospital Compare quality data")
+    hospitals_parser.add_argument("--provider-id", help="CMS facility ID for detailed ratings")
+    hospitals_parser.add_argument("--detail", choices=["ratings", "experience"], default="ratings",
+                                  help="Detail type when using --provider-id")
+    hospitals_parser.add_argument("--name", help="Hospital name (partial match)")
+    hospitals_parser.add_argument("--city", help="City name")
+    hospitals_parser.add_argument("--state", help="Two-letter state code")
+    hospitals_parser.add_argument("--zip-code", help="ZIP code")
+
     args = parser.parse_args()
 
     try:
@@ -559,6 +608,8 @@ def main():
             "interactions": handle_interactions,
             "providers": handle_providers,
             "trials": handle_trials,
+            "recalls": handle_recalls,
+            "hospitals": handle_hospitals,
         }
 
         handler = handlers.get(args.mode)
