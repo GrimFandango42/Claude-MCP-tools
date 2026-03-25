@@ -2,7 +2,7 @@
 name: mychart
 version: "2.0.0"
 description: "Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data modes including labs, meds, conditions, vitals, immunizations, appointments, encounters, procedures, documents, coverage, care plans, goals, family history, and diagnostic reports. Clinical knowledge tools for FDA drug lookup, ICD-10 codes, and drug interaction checking. Supports multi-organization with OAuth2+PKCE."
-argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart appointments, mychart immunizations, mychart encounters, mychart everything'
+argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart providers --specialty Cardiology --zip-code 90210, mychart trials "type 2 diabetes", mychart appointments, mychart immunizations, mychart encounters, mychart everything'
 allowed-tools: Bash, Read, Write, AskUserQuestion
 author: GrimFandango42
 license: MIT
@@ -84,16 +84,18 @@ Parse the user's first argument to determine the mode:
 | `drug` | FDA drug lookup | Inline — no auth needed |
 | `icd10` | ICD-10 code lookup | Inline — no auth needed |
 | `interactions` | Drug interaction check | Inline — no auth needed |
+| `providers` | Provider finder (NPI) | Inline — no auth needed |
+| `trials` | Clinical trials search | Inline — no auth needed |
 | `patient` | Demographics | Inline — see below |
 | `summary` | Full health overview | Inline — see below |
 
 For `setup`, `connect`, or `orgs`: read the reference file and follow those instructions. **Do not continue below.**
 
-For `drug`, `icd10`, `interactions`: these are **clinical knowledge tools** — they don't require MyChart authentication. Skip the pre-flight check.
+For `drug`, `icd10`, `interactions`, `providers`, `trials`: these are **clinical knowledge tools** — they don't require MyChart authentication. Skip the pre-flight check.
 
 ## First-Run Detection
 
-If the user invoked `/mychart` with **no arguments** or a data mode (not `setup`, `connect`, `orgs`, `drug`, `icd10`, `interactions`), check for first-run:
+If the user invoked `/mychart` with **no arguments** or a data mode (not `setup`, `connect`, `orgs`, `drug`, `icd10`, `interactions`, `providers`, `trials`), check for first-run:
 
 ```bash
 python3 -c "
@@ -357,6 +359,42 @@ python3 "${SKILL_ROOT}/scripts/mychart.py" interactions metformin lisinopril ato
 ```
 
 Checks drug-drug interactions via RxNorm. Provide 2+ drug names.
+
+### Provider Finder
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" providers --specialty "Cardiology" --zip-code 90210
+python3 "${SKILL_ROOT}/scripts/mychart.py" providers --condition "diabetes,hypertension" --zip-code 90210
+python3 "${SKILL_ROOT}/scripts/mychart.py" providers --name "Smith" --city "Los Angeles" --state CA
+```
+
+Searches the NPI Registry (public, free, no auth needed). Supports search by specialty, condition (auto-maps to specialty), location, or provider name.
+
+**Synthesis rules:**
+- Present providers in a clean table: Name | Specialty | Address | Phone
+- **Always note**: NPI Registry does not include insurance network data — providers listed may not accept the user's insurance
+- If user has insurance on file (check profile_store), remind them to verify network participation
+- For condition-based search: show which conditions mapped to which specialties, and note any unmapped conditions
+- If `--org` was used and user is connected, suggest cross-referencing with their conditions via `/mychart conditions`
+
+### Clinical Trials Search
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" trials "type 2 diabetes"
+python3 "${SKILL_ROOT}/scripts/mychart.py" trials "type 2 diabetes" --location "California"
+python3 "${SKILL_ROOT}/scripts/mychart.py" trials "diabetes,hypertension" --status RECRUITING
+python3 "${SKILL_ROOT}/scripts/mychart.py" trials --nct-id NCT12345678
+```
+
+Searches ClinicalTrials.gov v2 API (public, free, no auth needed). Comma-separated conditions trigger multi-condition search with deduplication.
+
+**Synthesis rules:**
+- Present trials with: Title | Phase | Status | Sponsor | Location(s)
+- Show eligibility summary: age range, sex, key inclusion/exclusion criteria
+- Include NCT ID for each trial
+- For multi-condition search: group results by condition, note any trials that match multiple conditions
+- If user is connected to MyChart, suggest cross-referencing with their active conditions
+- Note: trial details can be retrieved with `--nct-id` for deeper info on a specific trial
 
 ## Output Presentation
 

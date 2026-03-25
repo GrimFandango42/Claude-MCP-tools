@@ -32,9 +32,40 @@ If user says "switch to Mayo Clinic" or "use Mayo":
 
 ### Remove Organization
 
-If user wants to remove an org, note that this requires direct DB modification.
-For now, tell the user:
-> Organization removal will be available in a future update. For now, you can connect to a different org to change your default.
+If user wants to remove an org:
+
+1. First show them their orgs (use the status command above) so they can confirm which one to remove
+2. Get the org_id from the status output
+3. Confirm with the user before removing — this deletes all stored tokens for that org
+4. Run:
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SKILL_ROOT}/scripts')
+from lib.token_store import remove_org
+removed = remove_org(ORG_ID)
+print('removed' if removed else 'not_found')
+"
+```
+
+Replace `ORG_ID` with the actual integer org ID.
+
+If the removed org was the default, suggest setting a new default by reconnecting to another org.
+
+### Switch Default
+
+If user wants to switch their default org:
+
+```bash
+python3 -c "
+import sys; sys.path.insert(0, '${SKILL_ROOT}/scripts')
+from lib.token_store import set_default_org
+success = set_default_org(ORG_ID)
+print('default_set' if success else 'not_found')
+"
+```
+
+Replace `ORG_ID` with the actual integer org ID from the status listing.
 
 ### Token Issues
 

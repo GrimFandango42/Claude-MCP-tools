@@ -29,7 +29,7 @@ Patient-authorized access to MyChart/Epic health records via FHIR R4. 20+ data m
 - **Optional env**: `EPIC_CLIENT_ID` (not needed for sandbox testing)
 - **Setup**: `setup` (onboarding wizard — auto-triggered on first run, or run manually)
 - **FHIR modes** (require auth): `connect`, `orgs`, `labs`, `meds`, `conditions`, `allergies`, `vitals`, `immunizations`, `appointments`, `procedures`, `encounters`, `documents`, `coverage`, `careplans`, `goals`, `familyhistory`, `diagnostics`, `everything`, `lastn`, `search`, `patient`, `summary`
-- **Clinical tools** (no auth): `drug`, `icd10`, `interactions`
+- **Clinical tools** (no auth): `drug`, `icd10`, `interactions`, `providers`, `trials`
 
 ## Archived MCP Servers (Reference Only)
 
