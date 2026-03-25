@@ -25,6 +25,8 @@ Usage:
     python3 mychart.py interactions <drug1> <drug2> [drug3 ...]
     python3 mychart.py providers [--specialty X] [--condition X] [--zip-code X]
     python3 mychart.py trials <condition> [--location X] [--nct-id X]
+    python3 mychart.py prices metformin --quantity 90 --strength 500mg
+    python3 mychart.py prices --brand Glucophage --quantity 30
     python3 mychart.py recalls [drug_name] [--classification "Class I"]
     python3 mychart.py hospitals --state CA --city "Los Angeles"
     python3 mychart.py hospitals --provider-id 050454 [--detail ratings|experience]
@@ -379,6 +381,20 @@ def handle_providers(args):
     print(json.dumps(result, indent=2))
 
 
+def handle_prices(args):
+    """Look up drug prices on Cost Plus Drugs."""
+    from lib.clinical import costplus_drug_price
+    drug_name = getattr(args, "drug_name", None)
+    brand_name = getattr(args, "brand_name", None)
+    quantity = getattr(args, "quantity", None)
+    strength = getattr(args, "strength", None)
+    result = costplus_drug_price(
+        drug_name=drug_name, brand_name=brand_name,
+        quantity=quantity, strength=strength,
+    )
+    print(json.dumps(result, indent=2))
+
+
 def handle_recalls(args):
     """Search FDA drug recall/enforcement actions."""
     from lib.clinical import fda_drug_recalls
@@ -563,6 +579,13 @@ def main():
     trials_parser.add_argument("--location", help="Location filter (city, state, or country)")
     trials_parser.add_argument("--status", default="RECRUITING", help="Trial status (default: RECRUITING)")
 
+    # Drug pricing (no auth required)
+    prices_parser = subparsers.add_parser("prices", help="Cost Plus Drugs pricing lookup")
+    prices_parser.add_argument("drug_name", nargs="?", help="Generic drug name (e.g., 'metformin')")
+    prices_parser.add_argument("--brand", dest="brand_name", help="Search by brand name instead (e.g., 'Glucophage')")
+    prices_parser.add_argument("--quantity", type=int, help="Number of units for a price quote (e.g., 30, 90)")
+    prices_parser.add_argument("--strength", help="Filter by dosage strength (e.g., '500mg')")
+
     # Drug recalls (no auth required)
     recalls_parser = subparsers.add_parser("recalls", help="FDA drug recall/enforcement search")
     recalls_parser.add_argument("drug_name", nargs="?", help="Drug name (omit for recent recalls)")
@@ -608,6 +631,7 @@ def main():
             "interactions": handle_interactions,
             "providers": handle_providers,
             "trials": handle_trials,
+            "prices": handle_prices,
             "recalls": handle_recalls,
             "hospitals": handle_hospitals,
         }

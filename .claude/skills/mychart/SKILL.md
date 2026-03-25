@@ -1,8 +1,8 @@
 ---
 name: mychart
-version: "2.1.0"
-description: "Patient health companion — MyChart records via FHIR R4, FDA drug/recall data, ICD-10 codes, drug interactions, hospital quality ratings, provider search, and clinical trials. 27 modes organized by what you need: understand results, manage ongoing care, research & plan, or navigate the system."
-argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart recalls metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart providers --specialty Cardiology --zip-code 90210, mychart hospitals --state CA --city "Los Angeles", mychart trials "type 2 diabetes", mychart appointments, mychart everything'
+version: "2.2.0"
+description: "Patient health companion — MyChart records via FHIR R4, FDA drug/recall data, Cost Plus Drugs pricing, ICD-10 codes, drug interactions, hospital quality ratings, provider search, and clinical trials. 28 modes organized by what you need: understand results, manage ongoing care, research & plan, or navigate the system."
+argument-hint: 'mychart setup, mychart labs, mychart meds, mychart summary, mychart drug metformin, mychart prices metformin --quantity 90, mychart recalls metformin, mychart icd10 diabetes, mychart interactions aspirin warfarin, mychart providers --specialty Cardiology --zip-code 90210, mychart hospitals --state CA --city "Los Angeles", mychart trials "type 2 diabetes", mychart appointments, mychart everything'
 allowed-tools: Bash, Read, Write, AskUserQuestion
 author: GrimFandango42
 license: MIT
@@ -34,11 +34,11 @@ metadata:
       - icd10
 ---
 
-# MyChart v2.1.0: Patient Health Companion
+# MyChart v2.2.0: Patient Health Companion
 
 > **Privacy notice**: This skill accesses your health records through Epic's FHIR API with your explicit authorization. Health data is processed during the conversation but NOT cached or stored locally. Only OAuth tokens and organization configs are persisted at `~/.local/share/mychart/mychart.db`.
 
-27 commands organized by what you're trying to do — from understanding new lab results to finding the best-rated hospital near you. Connects to MyChart/Epic via FHIR R4 for your records, plus public FDA, CMS, NLM, and NPI APIs for clinical knowledge (no login needed).
+28 commands organized by what you're trying to do — from understanding new lab results to finding the best-rated hospital near you. Connects to MyChart/Epic via FHIR R4 for your records, plus public FDA, CMS, NLM, and NPI APIs for clinical knowledge (no login needed).
 
 ## Setup: Find Skill Root
 
@@ -97,6 +97,7 @@ These help when the user is managing an ongoing condition, tracking medications,
 | `careplans` | Active care plans and activities | Yes |
 | `goals` | Health goals and achievement status | Yes |
 | `appointments` | Upcoming (or past) appointments | Yes |
+| `prices` | Cost Plus Drugs pricing — unit prices + total quotes **(no auth)** | No |
 | `summary` | Full health overview — conditions, meds, labs, vitals, appointments | Yes |
 
 ### "Research & Plan" (find providers, compare hospitals, explore trials)
@@ -159,7 +160,7 @@ If the output shows `"status": "no_orgs"` or all tokens are expired with no refr
 
 If tokens are expired but refreshable, the data scripts handle refresh automatically.
 
-**No-auth commands** (`drug`, `icd10`, `interactions`, `providers`, `trials`, `recalls`, `hospitals`): skip the pre-flight check entirely.
+**No-auth commands** (`drug`, `icd10`, `interactions`, `providers`, `trials`, `recalls`, `hospitals`, `prices`): skip the pre-flight check entirely.
 
 ## Data Modes (Inline)
 
@@ -371,7 +372,25 @@ Search any FHIR resource type with custom parameters.
 
 ## Clinical Knowledge Tools (No Auth Required)
 
-These tools use public FDA, CMS, and NLM APIs — no MyChart connection needed.
+These tools use public FDA, CMS, NLM, and Cost Plus Drugs APIs — no MyChart connection needed.
+
+### Drug Pricing (Cost Plus Drugs)
+
+```bash
+python3 "${SKILL_ROOT}/scripts/mychart.py" prices metformin
+python3 "${SKILL_ROOT}/scripts/mychart.py" prices metformin --quantity 90 --strength 500mg
+python3 "${SKILL_ROOT}/scripts/mychart.py" prices --brand Glucophage --quantity 30
+```
+
+Searches the Mark Cuban Cost Plus Drug Company catalog (~2,300 medications, mostly generics). Returns unit prices and total quotes. Pricing model: manufacturer cost + 15% markup + ~$5 pharmacy fee + ~$5.25 shipping (mail-order only, 3-5 day delivery).
+
+**Synthesis rules:**
+- Present as a clean table: Drug | Strength | Form | Unit Price | Total (if quantity given)
+- **Always note** prices exclude ~$5.25 shipping and that Cost Plus Drugs is mail-order only
+- If multiple strengths/forms are available, show all so the user can compare
+- If the user is connected to MyChart and viewing their meds, cross-reference: check which of their active medications are available on Cost Plus Drugs
+- Include the direct URL to the product page so the user can order
+- Note that Cost Plus Drugs primarily carries generics — if a drug isn't found, suggest checking with their pharmacy or GoodRx for broader coverage
 
 ### Drug Lookup
 
@@ -519,8 +538,8 @@ Offer context-aware follow-ups based on which mental mode the user is in:
 - If abnormal results found: "Want me to check if any of your current medications could affect these values?" (offer `interactions`)
 
 **If managing ongoing care** (meds, conditions, careplans, summary):
-- "Want me to check for drug interactions, look up any of these medications, or check for recalls?"
-- If medications shown: "Want me to check if any of these have active FDA recalls?" (offer `recalls`)
+- "Want me to check for drug interactions, look up any of these medications, check for recalls, or compare prices?"
+- If medications shown: "Want me to check Cost Plus Drugs prices for any of these?" (offer `prices`) and "Want me to check if any have active FDA recalls?" (offer `recalls`)
 
 **If researching options** (providers, hospitals, trials):
 - "Want me to get detailed quality ratings for any of these hospitals, or search for clinical trials?"
