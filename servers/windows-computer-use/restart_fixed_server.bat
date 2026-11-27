@@ -26,7 +26,7 @@ echo [windows-computer-use] Installing fixed server... 1>&2
 copy /Y server_fixed.py server.py >nul 2>&1
 
 echo [windows-computer-use] Restarting Claude Desktop... 1>&2
-start "" "C:\Users\Nithin\AppData\Local\Programs\Claude\Claude.exe"
+start "" "C:\Users\YOUR_USERNAME\AppData\Local\Programs\Claude\Claude.exe"
 
 echo [windows-computer-use] Server update complete! 1>&2
 echo [windows-computer-use] Please wait a moment for Claude Desktop to start 1>&2

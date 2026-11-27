@@ -63,7 +63,7 @@ Should show `windows-computer-use` container running.
 
 1. Open Claude Desktop configuration:
    ```
-   C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json
+   C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json
    ```
 
 2. Add this configuration:

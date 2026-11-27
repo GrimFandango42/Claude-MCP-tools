@@ -76,7 +76,7 @@ class EnvironmentDetector:
         # WSL detected - prefer Windows Python for MCP compatibility
         if self.is_wsl:
             windows_python_paths = [
-                'C:\\\\Users\\\\Nithin\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe',
+                'C:\\\\Users\\\\YOUR_USERNAME\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python312\\\\python.exe',
                 'C:\\\\Python312\\\\python.exe',
                 'C:\\\\Program Files\\\\Python312\\\\python.exe'
             ]

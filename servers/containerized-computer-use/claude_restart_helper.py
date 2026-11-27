@@ -36,7 +36,7 @@ def start_claude():
     try:
         # Common paths for Claude Desktop
         possible_paths = [
-            r"C:\Users\Nithin\AppData\Local\Programs\claude-desktop\Claude.exe",
+            r"C:\Users\YOUR_USERNAME\AppData\Local\Programs\claude-desktop\Claude.exe",
             r"C:\Program Files\Claude\Claude.exe",
             os.path.expandvars(r"%LOCALAPPDATA%\Programs\claude-desktop\Claude.exe"),
         ]

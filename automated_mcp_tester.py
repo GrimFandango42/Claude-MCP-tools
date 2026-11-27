@@ -115,7 +115,7 @@ class MCPTestFramework:
         try:
             if config["type"] == "python":
                 cmd = [
-                    "/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe",
+                    "/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe",
                     config["entry"]
                 ]
             else:  # node

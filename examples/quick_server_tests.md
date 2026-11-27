@@ -109,7 +109,7 @@ Use these simple prompts to quickly verify that each MCP server is working corre
 ## Troubleshooting Quick Reference
 
 **If a server fails:**
-1. Check Claude Desktop logs: `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+1. Check Claude Desktop logs: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 2. Verify server configuration in `claude_desktop_config.json`
 3. For API servers: confirm API keys are valid and have remaining credits
 4. For custom servers: check server process is running and dependencies are installed

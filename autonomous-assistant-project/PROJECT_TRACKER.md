@@ -10,8 +10,8 @@ Transform Claude into a fully autonomous desktop assistant using modular MCP ser
 
 ## 🔍 DEBUGGING CAPABILITIES CONFIRMED
 ✅ **Full Debugging Access Available:**
-- Claude Desktop configuration: `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
-- MCP server logs: `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+- Claude Desktop configuration: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
+- MCP server logs: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 - Real-time error analysis and troubleshooting capabilities
 - Can read/write configurations and analyze log files autonomously
 

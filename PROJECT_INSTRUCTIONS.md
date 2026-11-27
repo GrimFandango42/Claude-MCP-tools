@@ -68,7 +68,7 @@ You have access to a persistent Memory MCP server that stores entities, relation
 - **Server READMEs**: Individual setup guides for each MCP server
 
 ### Configuration Files
-- **Claude Desktop Config**: `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+- **Claude Desktop Config**: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
 - **Contains**: 21 active MCP servers with proper paths and environment variables
 - **Shared**: Configuration works for both Claude Desktop and Claude Code
 

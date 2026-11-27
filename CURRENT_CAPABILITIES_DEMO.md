@@ -30,7 +30,7 @@ api.bash_20250124("mkdir -p ~/demo-project && cd ~/demo-project")
 
 # 3. Create files via text editor
 api.text_editor_20250429("create", 
-    path="/home/nithin/demo-project/hello.py",
+    path="/home/YOUR_USERNAME/demo-project/hello.py",
     file_text="print('Hello from Computer Use API!')")
 
 # 4. Run the Python script in WSL
@@ -49,7 +49,7 @@ api.bash_20250124("echo 'WSL file content' > ~/test.txt")
 
 # Access same file from Windows path
 api.text_editor_20250429("view", 
-    path="C:/Users/Nithin/AppData/Local/Packages/CanonicalGroupLimited.Ubuntu/LocalState/rootfs/home/nithin/test.txt")
+    path="C:/Users/YOUR_USERNAME/AppData/Local/Packages/CanonicalGroupLimited.Ubuntu/LocalState/rootfs/home/YOUR_USERNAME/test.txt")
 ```
 
 ## 🔄 **Node.js Installation Status**

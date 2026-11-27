@@ -2,7 +2,7 @@
 
 ## 🚨 **CRITICAL: This Project Uses Windows + WSL2**
 
-**User Environment**: Nithin is working in a complex Windows + WSL2 environment
+**User Environment**: The maintainer is working in a complex Windows + WSL2 environment
 **Key Challenge**: Constant path translation between Windows and Linux formats
 
 ## 🎉 **SUCCESS UPDATE: IT WORKS AND IT'S BLAZING FAST!**
@@ -15,7 +15,7 @@
 ### Python Executable Location
 ```bash
 # ALWAYS use full path for Python in this project:
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe
 
 # NOT just 'python' or 'python3' - these won't work correctly
 ```
@@ -35,13 +35,13 @@ C:\AI_Projects\Claude-MCP-tools
 ### User-Specific Paths
 ```bash
 # Claude Desktop Config:
-C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json
+C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json
 
 # WSL access to Windows user directory:
-/mnt/c/Users/Nithin/
+/mnt/c/Users/YOUR_USERNAME/
 
 # Python site-packages (Windows Python from WSL):
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/Lib/site-packages
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/Lib/site-packages
 ```
 
 ## 🔄 **Common Path Translation Issues**
@@ -50,7 +50,7 @@ C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json
 ```bash
 # Problem: Windows Python can't find modules installed in WSL
 # Solution: Install to Windows Python's site-packages:
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install --target "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages" package_name
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe -m pip install --target "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages" package_name
 ```
 
 ### Issue 2: Server Startup Failures
@@ -81,7 +81,7 @@ else:
 ### 1. **Always Use Full Python Path**
 ```bash
 # In all scripts and commands:
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe
 ```
 
 ### 2. **Test Path Formats**
@@ -99,7 +99,7 @@ dir C:\AI_Projects     # Windows format
 ### 4. **Environment Variables**
 ```bash
 # Set in WSL for consistency:
-export PYTHON_WIN="/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe"
+export PYTHON_WIN="/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe"
 export PROJECT_ROOT="/mnt/c/AI_Projects/Claude-MCP-tools"
 ```
 
@@ -116,13 +116,13 @@ When working on this project, remember:
 
 ```bash
 # Run Python script:
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe script.py
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe script.py
 
 # Install package for Windows Python from WSL:
-/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe -m pip install package_name
+/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe -m pip install package_name
 
 # Check Claude Desktop config:
-cat /mnt/c/Users/Nithin/AppData/Roaming/Claude/claude_desktop_config.json
+cat /mnt/c/Users/YOUR_USERNAME/AppData/Roaming/Claude/claude_desktop_config.json
 
 # Navigate to project:
 cd /mnt/c/AI_Projects/Claude-MCP-tools

@@ -2,18 +2,18 @@
 echo Installing Vibetest Dependencies...
 
 REM Use Windows Python directly
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install browser-use
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install langchain-google-genai
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install playwright
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install screeninfo
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install fastmcp
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install browser-use
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install langchain-google-genai
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install playwright
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install screeninfo
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install fastmcp
 
 REM Install Playwright browsers
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m playwright install chromium
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m playwright install chromium
 
 REM Install the vibetest package in development mode
 cd /d "C:\AI_Projects\Claude-MCP-tools\servers\vibetest-use"
-C:\Users\Nithin\AppData\Local\Programs\Python\Python312\python.exe -m pip install -e .
+C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\python.exe -m pip install -e .
 
 echo.
 echo ✅ Installation complete!

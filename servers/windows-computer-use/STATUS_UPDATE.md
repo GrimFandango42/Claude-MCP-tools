@@ -81,7 +81,7 @@ In Claude Desktop, verify:
 ### 3. Monitor Logs
 Check for clean startup in:
 ```
-C:\Users\Nithin\AppData\Roaming\Claude\logs\mcp-server-windows-computer-use.log
+C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\mcp-server-windows-computer-use.log
 ```
 
 ## Technical Architecture Now Matches Project Standards

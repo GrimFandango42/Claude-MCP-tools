@@ -54,7 +54,7 @@
 - ✅ **Applied to all 5 Code Intelligence servers**
 
 ### **Python Path Configuration**
-- ✅ **Using correct Python executable**: `C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe`
+- ✅ **Using correct Python executable**: `C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Programs\\Python\\Python312\\python.exe`
 - ✅ **PYTHONPATH configured** for Code Intelligence Core sharing
 
 ## 🧪 Testing Results
@@ -71,7 +71,7 @@
 ## 📁 Updated Configuration
 
 ### **Claude Desktop Config Updated**
-- ✅ **File**: `C:\\Users\\Nithin\\AppData\\Roaming\\Claude\\claude_desktop_config.json`
+- ✅ **File**: `C:\\Users\\YOUR_USERNAME\\AppData\\Roaming\\Claude\\claude_desktop_config.json`
 - ✅ **Added 5 new Code Intelligence servers**:
   1. `code-analysis`
   2. `code-quality`  

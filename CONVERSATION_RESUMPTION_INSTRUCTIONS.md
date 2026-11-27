@@ -33,7 +33,7 @@
 - ALWAYS implement proper async/await patterns
 
 **Configuration Patterns:**
-- Claude Desktop config: `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+- Claude Desktop config: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
 - Always include `"keepAlive": true` and `"stderrToConsole": true`
 - Use batch file launchers with virtual environment activation
 - Include descriptive comments in configuration
@@ -72,7 +72,7 @@
 - Top Examples: `C:\AI_Projects\Claude-MCP-tools\TOP_5_COMPREHENSIVE_EXAMPLES.md`
 
 **Log Locations:**
-- Claude Desktop Logs: `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+- Claude Desktop Logs: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 - Individual Server Logs: `mcp-server-[servername].log`
 - General MCP Log: `mcp.log`
 

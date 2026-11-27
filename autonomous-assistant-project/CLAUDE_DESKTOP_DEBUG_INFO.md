@@ -1,13 +1,13 @@
 # Claude Desktop Configuration & Debugging - Critical System Info
 
 ## Configuration Location
-**Claude Desktop Config File:** `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+**Claude Desktop Config File:** `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
 - This is where all MCP server configurations are stored
 - Changes require Claude Desktop restart to take effect
 - Critical for autonomous MCP server deployment
 
 ## Logging & Debugging Location  
-**Error Logs Directory:** `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+**Error Logs Directory:** `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 - Contains individual MCP server logs
 - Pattern: `mcp-server-<servername>.log`
 - Contains general MCP system logs: `mcp.log`

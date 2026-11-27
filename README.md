@@ -9,6 +9,10 @@
 > **Decision date**: 2026-02-14
 > **Reason**: 14 MCP servers evaluated; none provide unique value beyond existing tooling.
 
+>
+> **Paths:** scripts and configs here were written for one Windows + WSL machine. Wherever a path
+> contains `YOUR_USERNAME`, put your own Windows or WSL user name.
+
 ---
 
 # Claude MCP Tools

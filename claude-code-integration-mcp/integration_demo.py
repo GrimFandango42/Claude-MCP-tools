@@ -19,7 +19,7 @@ def demonstrate_integration():
     
     # Set up environment
     env = os.environ.copy()
-    env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+    env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
     
     tests = [
         {
@@ -119,7 +119,7 @@ def show_integration_architecture():
     print("├─ WSL2 (Ubuntu)")
     print("│  ├─ Node.js v24.1.0 (via nvm)")
     print("│  ├─ Claude Code v1.0.3 (npm global)")
-    print("│  └─ Binary: /home/nithin/.nvm/versions/node/v24.1.0/bin/claude")
+    print("│  └─ Binary: /home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin/claude")
     print("│")
     print("├─ Python MCP Server")
     print("│  ├─ enhanced_server.py (updated with correct PATH)")

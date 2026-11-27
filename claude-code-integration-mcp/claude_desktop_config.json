@@ -7,7 +7,7 @@
       ],
       "env": {
         "PYTHONPATH": "C:\\AI_Projects\\Claude-MCP-tools\\claude-code-integration-mcp",
-        "PATH": "/home/nithin/.nvm/versions/node/v24.1.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        "PATH": "/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       }
     },
     "code-analysis": {
