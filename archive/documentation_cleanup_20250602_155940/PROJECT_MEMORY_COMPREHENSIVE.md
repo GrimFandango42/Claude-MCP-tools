@@ -9,7 +9,7 @@
 **Current Focus**: Planning next server implementation
 
 ### Key Personnel & Environment
-- **User**: Nithin (Windows environment, experienced developer)
+- **User**: the maintainer (Windows environment, experienced developer)
 - **Location**: Windows 11 system with WSL2, Docker Desktop
 - **Claude Desktop**: Latest version with MCP support
 - **Development Style**: Rapid iteration, comprehensive testing, production focus
@@ -109,10 +109,10 @@ python server.py
 5. **N8n Workflow MCP** - External service integration pattern
 
 ### Configuration Management
-- **Location**: `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+- **Location**: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
 - **Backup Strategy**: Multiple backup versions maintained
 - **Restart Required**: After any configuration changes
-- **Log Location**: `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+- **Log Location**: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 
 ### Testing & Validation Strategy
 - **Individual Tests**: Each server has test_server.py or equivalent

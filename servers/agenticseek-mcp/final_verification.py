@@ -36,7 +36,7 @@ def check_mcp_server_files():
 
 def check_claude_config():
     """Check Claude Desktop configuration"""
-    config_path = "C:\\Users\\Nithin\\AppData\\Roaming\\Claude\\claude_desktop_config.json"
+    config_path = "C:\\Users\\YOUR_USERNAME\\AppData\\Roaming\\Claude\\claude_desktop_config.json"
     
     try:
         with open(config_path, 'r') as f:

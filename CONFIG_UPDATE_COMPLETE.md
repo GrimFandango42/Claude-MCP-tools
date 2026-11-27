@@ -4,7 +4,7 @@
 
 Your actual Claude Desktop configuration has been updated to reflect the server consolidation:
 
-**Location**: `/mnt/c/Users/Nithin/AppData/Roaming/Claude/claude_desktop_config.json`
+**Location**: `/mnt/c/Users/YOUR_USERNAME/AppData/Roaming/Claude/claude_desktop_config.json`
 
 ## Changes Made
 
@@ -62,7 +62,7 @@ Your actual Claude Desktop configuration has been updated to reflect the server 
 
 **Solution**: Installed FastMCP into system site-packages:
 ```bash
-python -m pip install --target "C:\Users\Nithin\AppData\Local\Programs\Python\Python312\Lib\site-packages" fastmcp --upgrade
+python -m pip install --target "C:\Users\YOUR_USERNAME\AppData\Local\Programs\Python\Python312\Lib\site-packages" fastmcp --upgrade
 ```
 
 **Result**: Server now connects successfully and runs in mock mode with `CLAUDE_CODE_MOCK=true`.

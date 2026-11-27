@@ -3,7 +3,7 @@
 ## ✅ CURRENT DEBUGGING CAPABILITIES VERIFIED
 
 ### Configuration Access
-- **Claude Desktop Config**: Can read/write `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+- **Claude Desktop Config**: Can read/write `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
 - **Current Servers**: Confirmed access to all configured MCP servers:
   - filesystem, sequentialthinking, firecrawl, playwright
   - KnowledgeMemory, financial-datasets, fantasy-pl
@@ -11,7 +11,7 @@
   - windows-computer-use, n8n-workflow-generator
 
 ### Log Analysis
-- **Log Directory Access**: Can read from `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+- **Log Directory Access**: Can read from `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 - **Available Log Files**: 25+ MCP server log files identified
 - **Log Detail Level**: Rich JSON-RPC protocol communication visible
 - **Error Detection**: Can identify initialization failures, tool call errors, etc.

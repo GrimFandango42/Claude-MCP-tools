@@ -246,7 +246,7 @@ class AutonomousDeployer:
         """Update Claude Desktop configuration."""
         logging.info("\n=== Updating Claude Desktop Configuration ===")
         
-        config_path = Path(r"C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json")
+        config_path = Path(r"C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json")
         
         try:
             # Read current config

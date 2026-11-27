@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 🚨 CRITICAL ENVIRONMENT INFORMATION
-**This project runs in a Windows + WSL2 environment**. See `WSL_ENVIRONMENT_GUIDE.md` for critical path translation information. Always use full Python path: `/mnt/c/Users/Nithin/AppData/Local/Programs/Python/Python312/python.exe`
+**This project runs in a Windows + WSL2 environment**. See `WSL_ENVIRONMENT_GUIDE.md` for critical path translation information. Always use full Python path: `/mnt/c/Users/YOUR_USERNAME/AppData/Local/Programs/Python/Python312/python.exe`
 
 ## Build & Test Commands
 

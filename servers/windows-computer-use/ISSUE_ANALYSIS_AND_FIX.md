@@ -103,7 +103,7 @@ cd C:\AI_Projects\Claude-MCP-tools\servers\windows-computer-use
 
 ### Check Claude Desktop Logs
 ```
-C:\Users\Nithin\AppData\Roaming\Claude\logs\mcp-server-windows-computer-use.log
+C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\mcp-server-windows-computer-use.log
 ```
 
 ### Test Tools in Claude

@@ -35,7 +35,7 @@ Start-Sleep -Seconds 2
 # Restart Claude Desktop
 Write-Host "`nRestarting Claude Desktop..." -ForegroundColor Yellow
 try {
-    Start-Process "C:\Users\Nithin\AppData\Local\Programs\Claude\Claude Desktop.exe"
+    Start-Process "C:\Users\YOUR_USERNAME\AppData\Local\Programs\Claude\Claude Desktop.exe"
     Write-Host "Claude Desktop started" -ForegroundColor Green
 }
 catch {

@@ -143,7 +143,7 @@ Add to Claude Desktop configuration (`claude_desktop_config.json`):
 - **Error Recovery**: Automatic retry and rollback mechanisms
 
 ### Integration with Claude Desktop Logs
-- Logs to `C:\Users\Nithin\AppData\Roaming\Claude\logs\mcp-server-docker-orchestration.log`
+- Logs to `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\mcp-server-docker-orchestration.log`
 - JSON-structured logging for easy parsing
 - Error categorization and suggested solutions
 - Performance metrics and timing information

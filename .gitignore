@@ -55,3 +55,6 @@ archive/cleanup_*/
 temp/
 tmp/
 *.tmp
+
+# Per-machine agent settings
+.claude/settings.local.json

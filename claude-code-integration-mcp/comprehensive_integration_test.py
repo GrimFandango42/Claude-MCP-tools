@@ -55,7 +55,7 @@ def test_claude_code_commands():
     
     # Set up environment
     env = os.environ.copy()
-    env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+    env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
     
     tests = [
         {
@@ -102,7 +102,7 @@ def test_claude_code_task():
     
     # Set up environment
     env = os.environ.copy()
-    env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+    env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
     
     # Test task: Create a simple calculator
     task_prompt = "Create a simple Python calculator function that can add, subtract, multiply, and divide two numbers. Save it as calculator.py"

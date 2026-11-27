@@ -107,7 +107,7 @@ def check_claude_desktop_config():
     """Verify Claude Desktop configuration has both servers properly configured."""
     print("⚙️  Checking Claude Desktop Configuration...")
     
-    config_path = Path("C:/Users/Nithin/AppData/Roaming/Claude/claude_desktop_config.json")
+    config_path = Path("C:/Users/YOUR_USERNAME/AppData/Roaming/Claude/claude_desktop_config.json")
     
     try:
         with open(config_path, 'r') as f:

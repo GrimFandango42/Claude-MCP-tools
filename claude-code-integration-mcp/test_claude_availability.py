@@ -10,7 +10,7 @@ def test_claude_availability():
     """Test if Claude Code is available with proper PATH"""
     # Set the PATH to include the node binary location
     env = os.environ.copy()
-    env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+    env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
     
     try:
         result = subprocess.run(
@@ -39,7 +39,7 @@ def test_claude_availability():
 def test_claude_help():
     """Test Claude help command"""
     env = os.environ.copy()
-    env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+    env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
     
     try:
         result = subprocess.run(

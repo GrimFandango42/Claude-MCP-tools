@@ -107,7 +107,7 @@ class EnhancedClaudeCodeMCP:
         try:
             # Set up proper environment with node binary path
             env = os.environ.copy()
-            env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+            env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
             
             result = subprocess.run(
                 ["claude", "--version"], 
@@ -223,7 +223,7 @@ class EnhancedClaudeCodeMCP:
             
             # Set up proper environment with node binary path
             env = os.environ.copy()
-            env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+            env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
             
             process = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -279,7 +279,7 @@ def check_claude_code_availability() -> dict:
     try:
         # Set up proper environment with node binary path
         env = os.environ.copy()
-        env['PATH'] = '/home/nithin/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
+        env['PATH'] = '/home/YOUR_USERNAME/.nvm/versions/node/v24.1.0/bin:' + env.get('PATH', '')
         
         result = subprocess.run(
             ["claude", "--version"], 

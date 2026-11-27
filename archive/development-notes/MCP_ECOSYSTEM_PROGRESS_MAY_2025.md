@@ -239,13 +239,13 @@ python -c "import docker; print('Docker module available')"
 
 **Log File Monitoring**
 ```
-C:\Users\Nithin\AppData\Roaming\Claude\logs\mcp-server-*.log
+C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\mcp-server-*.log
 ```
 
 **Health Check Commands**
 ```bash
 # Monitor real-time server logs
-tail -f "C:\Users\Nithin\AppData\Roaming\Claude\logs\mcp-server-*.log"
+tail -f "C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\mcp-server-*.log"
 
 # Validate database integrity
 sqlite3 ~/.knowledge-memory-mcp/knowledge.db "PRAGMA integrity_check;"

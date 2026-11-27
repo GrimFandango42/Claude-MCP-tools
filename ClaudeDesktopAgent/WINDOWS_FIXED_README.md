@@ -25,7 +25,7 @@ This Windows-compatible version uses synchronous I/O instead of async, which wor
    ```
 
 3. **The Claude Desktop configuration has been updated** to use the new server:
-   - Path: `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
+   - Path: `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
    - Server: `windows_fixed_mcp_server.py`
 
 ## Usage

@@ -8,8 +8,8 @@
 - **Timeline Defined**: 3-4 days per server with comprehensive testing
 
 ### ✅ **2. Debugging Capabilities Confirmed**
-- **Configuration Access**: Full read/write access to Claude Desktop config at `C:\Users\Nithin\AppData\Roaming\Claude\claude_desktop_config.json`
-- **Log Analysis**: Complete access to MCP server logs at `C:\Users\Nithin\AppData\Roaming\Claude\logs\`
+- **Configuration Access**: Full read/write access to Claude Desktop config at `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\claude_desktop_config.json`
+- **Log Analysis**: Complete access to MCP server logs at `C:\Users\YOUR_USERNAME\AppData\Roaming\Claude\logs\`
 - **Real-time Monitoring**: Can analyze JSON-RPC protocol communication and identify issues
 - **Autonomous Troubleshooting**: Capable of identifying, diagnosing, and suggesting fixes for common issues
 

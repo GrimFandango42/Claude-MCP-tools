@@ -7,10 +7,10 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem@latest",
-        "C:\\Users\\Nithin\\Downloads",
-        "C:\\Users\\Nithin\\OneDrive\\Desktop",
-        "C:\\Users\\Nithin\\Documents",
-        "C:\\Users\\Nithin\\AppData\\Roaming\\Claude",
+        "C:\\Users\\YOUR_USERNAME\\Downloads",
+        "C:\\Users\\YOUR_USERNAME\\OneDrive\\Desktop",
+        "C:\\Users\\YOUR_USERNAME\\Documents",
+        "C:\\Users\\YOUR_USERNAME\\AppData\\Roaming\\Claude",
         "C:\\AI_Projects",
         "C:\\AI_Projects\\Jarvis-MCP\\config\\workflows\\scripts"
       ],
@@ -61,7 +61,7 @@
       "stderrToConsole": true
     },
     "fantasy-pl": {
-      "command": "C:\\Users\\Nithin\\AppData\\Local\\Microsoft\\WindowsApps\\python3.11.exe",
+      "command": "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Microsoft\\WindowsApps\\python3.11.exe",
       "args": [
         "-m",
         "fpl_mcp"
@@ -93,7 +93,7 @@
       "args": [
         "-y",
         "mcp-server-sqlite-npx@latest",
-        "C:\\Users\\Nithin\\AppData\\Local\\Temp\\sqlite.db"
+        "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Temp\\sqlite.db"
       ],
       "keepAlive": true,
       "stderrToConsole": true
@@ -175,7 +175,7 @@
       "description": "Unified API Gateway with intelligent routing, caching, and cost optimization for multiple AI providers (OpenAI + Anthropic)"
     },
     "claude-code-integration": {
-      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command": "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
       "args": [
         "C:\\AI_Projects\\Claude-MCP-tools\\servers\\claude-code-integration-mcp\\src\\claude_code_integration\\server_fixed.py"
       ],
@@ -212,7 +212,7 @@
       "description": "FIXED - AgenticSeek multi-provider AI routing with async compatibility fix - Smart routing between local DeepSeek (free), OpenAI GPT-3.5/4, and Google Gemini with cost optimization"
     },
     "code-formatter": {
-      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command": "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
       "args": [
         "C:\\AI_Projects\\Claude-MCP-tools\\servers\\code-formatter-mcp\\server.py"
       ],
@@ -222,7 +222,7 @@
       "description": "Simple code formatting wrapper for black, prettier, and other formatters"
     },
     "security-scanner": {
-      "command": "C:\\Users\\Nithin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command": "C:\\Users\\YOUR_USERNAME\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
       "args": [
         "C:\\AI_Projects\\Claude-MCP-tools\\servers\\security-scanner-mcp\\server.py"
       ],
